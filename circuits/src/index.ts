@@ -7,7 +7,7 @@ async function main() {
   });
 
   // artifacts output at `build/multiplier_3` directory
-  await circomkit.compile("multiplier_3", {
+  await circomkit.compile("multiplie_3", {
     file: "multiplier",
     template: "Multiplier",
     params: [3],
