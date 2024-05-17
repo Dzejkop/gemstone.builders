@@ -1,6 +1,8 @@
 pragma circom 2.0.0;
 
 include "circomlib/circuits/bitify.circom";
+include "circomlib/circuits/mux2.circom";
+include "circomlib/circuits/comparators.circom";
 
 function N() {
   return 2;
@@ -30,7 +32,7 @@ function winc(x, B) {
     }
 }
 
-template Cell(B) {
+template Cell() {
   signal input building;
   signal input state[N()];
   signal input neighbours[N()][4];
@@ -42,20 +44,92 @@ template Cell(B) {
   // The export output
   signal output resourceExport[N()];
 
+  component rc[N()];
+
   for (var r = 0; r < N(); r++) {
-    out[r] <== 0;
+    rc[r] = ResourceCell();
+    rc[r].resource <== r;
+    rc[r].building <== building;
+    rc[r].state <== state[r];
+    rc[r].neighbours[0] <== neighbours[r][0];
+    rc[r].neighbours[1] <== neighbours[r][1];
+    rc[r].neighbours[2] <== neighbours[r][2];
+    rc[r].neighbours[3] <== neighbours[r][3];
 
-    neighboursOutput[r][0] <== 0;
-    neighboursOutput[r][1] <== state[r];
-    neighboursOutput[r][2] <== 0;
-    neighboursOutput[r][3] <== 0;
+    out[r] <== rc[r].out;
+    neighboursOutput[r][0] <== rc[r].neighboursOutput[0];
+    neighboursOutput[r][1] <== rc[r].neighboursOutput[1];
+    neighboursOutput[r][2] <== rc[r].neighboursOutput[2];
+    neighboursOutput[r][3] <== rc[r].neighboursOutput[3];
+  }
 
+  // TODO: Add resource exporting
+  for (var r = 0; r < N(); r++) {
     resourceExport[r] <== 0;
   }
 }
 
+template ResourceCell() {
+  signal input building;
+  signal input state;
+  signal input resource;
+  signal input neighbours[4];
+
+  component n2b = Num2Bits(2);
+  n2b.in <== building;
+
+  component isCarbon = IsEqual();
+  isCarbon.in[0] <== resource;
+  isCarbon.in[1] <== 0;
+
+  component mux = Mux2();
+  mux.s <== n2b.out;
+  mux.c[0] <== state; // persist state
+  mux.c[1] <== 0;
+  mux.c[2] <== 0;
+  mux.c[3] <== 0;
+
+  component nMux[4];
+  for (var n = 0; n < 4; n++) {
+    nMux[n] = Mux2();
+    nMux[n].s <== n2b.out;
+
+    // Empty building
+    // Always zero
+    nMux[n].c[0] <== 0;
+  }
+
+  // Right
+  nMux[0].c[1] <== 0;
+  nMux[0].c[2] <== 0;
+  nMux[0].c[3] <== 0;
+
+  // Down
+  nMux[1].c[1] <== isCarbon.out; // mine (1) produces carbon below (1)
+  nMux[1].c[2] <== state; // down belt (2) moves down (1)
+  nMux[1].c[3] <== 0;
+
+  // Left
+  nMux[2].c[1] <== 0;
+  nMux[2].c[2] <== 0;
+  nMux[2].c[3] <== 0;
+
+  // Up
+  nMux[3].c[1] <== 0;
+  nMux[3].c[2] <== 0;
+  nMux[3].c[3] <== 0;
+
+  signal output out;
+  signal output neighboursOutput[4];
+
+  out <== mux.out;
+  for (var n = 0; n < 4; n++) {
+    neighboursOutput[n] <== nMux[n].out;
+  }
+}
+
 // Reduces the state from the cell and neighbours
-template CellReducer(B) {
+template CellReducer() {
   signal input state[N()];
   signal input neighbours[N()][4];
 
@@ -80,8 +154,8 @@ template Factory(B) {
   // Init cells
   for (var y = 0; y < B; y++) {
     for (var x = 0; x < B; x++) {
-      cells[y][x] = Cell(B);
-      cellReducers[y][x] = CellReducer(B);
+      cells[y][x] = Cell();
+      cellReducers[y][x] = CellReducer();
 
       cells[y][x].building <== board[y][x];
     }

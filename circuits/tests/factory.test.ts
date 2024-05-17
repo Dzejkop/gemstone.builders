@@ -135,6 +135,46 @@ describe("factory", () => {
       );
     });
 
+    it("belt accumulates", async () => {
+      await circuit.expectPass(
+        {
+          board: [
+            [0, 2, 0],
+            [0, 0, 0],
+            [0, 0, 0],
+          ],
+          resourceState: [
+            [
+              [0, 1, 0],
+              [0, 1, 0],
+              [0, 0, 0],
+            ],
+            [
+              [0, 0, 0],
+              [0, 0, 0],
+              [0, 0, 0],
+            ],
+          ],
+          resourceInput: [0, 0],
+        },
+        {
+          resourceOutputState: [
+            [
+              [0, 0, 0],
+              [0, 2, 0],
+              [0, 0, 0],
+            ],
+            [
+              [0, 0, 0],
+              [0, 0, 0],
+              [0, 0, 0],
+            ],
+          ],
+          resourceOutput: [0, 0],
+        }
+      );
+    });
+
     it("exporter exports", async () => {
       await circuit.expectPass(
         {
