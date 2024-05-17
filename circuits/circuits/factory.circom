@@ -40,7 +40,7 @@ template Cell() {
   signal input state[N()];
   signal input neighbours[N()][4];
 
-    // The output value at the cell
+  // The output value at the cell
   signal output out[N()];
   // The outputs at neighbour cells
   signal output neighboursOutput[N()][4];
