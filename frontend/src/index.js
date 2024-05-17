@@ -1,13 +1,29 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { MetaMaskUIProvider } from "@metamask/sdk-react-ui";
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
+import consts from './consts';
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <App />
+    <MetaMaskUIProvider
+      debug={true}
+      sdkOptions={{
+        dappMetadata: {
+          name: "ZK Hack Diamonds",
+          url: window.location.href,
+        },
+        infuraAPIKey: consts.INFURE_API_KEY,
+        defaultReadOnlyChainId: 11155111,
+        preferDesktop: true,
+      }}
+    >
+      <App />
+    </MetaMaskUIProvider>
   </React.StrictMode>
 );
 
