@@ -54,5 +54,125 @@ describe("factory", () => {
         }
       );
     });
+
+    it("conveyor belt moves down", async () => {
+      await circuit.expectPass(
+        {
+          board: [
+            [0, 2, 0],
+            [0, 0, 0],
+            [0, 0, 0],
+          ],
+          resourceState: [
+            [
+              [0, 1, 0],
+              [0, 0, 0],
+              [0, 0, 0],
+            ],
+            [
+              [0, 0, 0],
+              [0, 0, 0],
+              [0, 0, 0],
+            ],
+          ],
+          resourceInput: [0, 0],
+        },
+        {
+          resourceOutputState: [
+            [
+              [0, 0, 0],
+              [0, 1, 0],
+              [0, 0, 0],
+            ],
+            [
+              [0, 0, 0],
+              [0, 0, 0],
+              [0, 0, 0],
+            ],
+          ],
+          resourceOutput: [0, 0],
+        }
+      );
+    });
+
+    it("mine creates carbon below it", async () => {
+      await circuit.expectPass(
+        {
+          board: [
+            [0, 1, 0],
+            [0, 0, 0],
+            [0, 0, 0],
+          ],
+          resourceState: [
+            [
+              [0, 0, 0],
+              [0, 0, 0],
+              [0, 0, 0],
+            ],
+            [
+              [0, 0, 0],
+              [0, 0, 0],
+              [0, 0, 0],
+            ],
+          ],
+          resourceInput: [0, 0],
+        },
+        {
+          resourceOutputState: [
+            [
+              [0, 0, 0],
+              [0, 1, 0],
+              [0, 0, 0],
+            ],
+            [
+              [0, 0, 0],
+              [0, 0, 0],
+              [0, 0, 0],
+            ],
+          ],
+          resourceOutput: [0, 0],
+        }
+      );
+    });
+
+    it("exporter exports", async () => {
+      await circuit.expectPass(
+        {
+          board: [
+            [0, 0, 0],
+            [0, 0, 0],
+            [0, 3, 0],
+          ],
+          resourceState: [
+            [
+              [0, 0, 0],
+              [0, 0, 0],
+              [0, 5, 0],
+            ],
+            [
+              [0, 0, 0],
+              [0, 0, 0],
+              [0, 0, 0],
+            ],
+          ],
+          resourceInput: [0, 0],
+        },
+        {
+          resourceOutputState: [
+            [
+              [0, 0, 0],
+              [0, 0, 0],
+              [0, 0, 0],
+            ],
+            [
+              [0, 0, 0],
+              [0, 0, 0],
+              [0, 0, 0],
+            ],
+          ],
+          resourceOutput: [5, 0],
+        }
+      );
+    });
   });
 });
