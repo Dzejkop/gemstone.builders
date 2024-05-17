@@ -1,0 +1,8 @@
+[package]
+name = "poseidon-helper"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+ff_ce = { version = "=0.11", features = ["derive"] }
+poseidon-rs = "0.0.10"
