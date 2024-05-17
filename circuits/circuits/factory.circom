@@ -4,6 +4,9 @@ include "circomlib/circuits/bitify.circom";
 include "circomlib/circuits/mux2.circom";
 include "circomlib/circuits/comparators.circom";
 
+// Number of resources
+// 0 == Carbon
+// 1 == Diamond
 function N() {
   return 2;
 }
@@ -42,7 +45,7 @@ template Cell() {
   // The outputs at neighbour cells
   signal output neighboursOutput[N()][4];
   // The export output
-  signal output resourceExport[N()];
+  signal output exports[N()];
 
   component rc[N()];
 
@@ -61,11 +64,8 @@ template Cell() {
     neighboursOutput[r][1] <== rc[r].neighboursOutput[1];
     neighboursOutput[r][2] <== rc[r].neighboursOutput[2];
     neighboursOutput[r][3] <== rc[r].neighboursOutput[3];
-  }
 
-  // TODO: Add resource exporting
-  for (var r = 0; r < N(); r++) {
-    resourceExport[r] <== 0;
+    exports[r] <== rc[r].export;
   }
 }
 
@@ -74,6 +74,15 @@ template ResourceCell() {
   signal input state;
   signal input resource;
   signal input neighbours[4];
+
+  signal output out;
+  signal output neighboursOutput[4];
+  signal output export;
+
+  var EMPTY = 0;
+  var CARBON_MINE = 1;
+  var DOWN_BELT = 2;
+  var EXPORTER = 3;
 
   component n2b = Num2Bits(2);
   n2b.in <== building;
@@ -84,10 +93,10 @@ template ResourceCell() {
 
   component mux = Mux2();
   mux.s <== n2b.out;
-  mux.c[0] <== state; // persist state
-  mux.c[1] <== 0;
-  mux.c[2] <== 0;
-  mux.c[3] <== 0;
+  mux.c[EMPTY] <== state; // persist state
+  mux.c[CARBON_MINE] <== 0;
+  mux.c[DOWN_BELT] <== 0;
+  mux.c[EXPORTER] <== 0;
 
   component nMux[4];
   for (var n = 0; n < 4; n++) {
@@ -96,36 +105,43 @@ template ResourceCell() {
 
     // Empty building
     // Always zero
-    nMux[n].c[0] <== 0;
+    nMux[n].c[EMPTY] <== 0;
   }
 
+  // Export mux
+  component eMux = Mux2();
+  eMux.s <== n2b.out;
+
+  eMux.c[EMPTY] <== 0;
+  eMux.c[CARBON_MINE] <== 0;
+  eMux.c[DOWN_BELT] <== 0;
+  eMux.c[EXPORTER] <== state; // Export state
+
   // Right
-  nMux[0].c[1] <== 0;
-  nMux[0].c[2] <== 0;
-  nMux[0].c[3] <== 0;
+  nMux[0].c[CARBON_MINE] <== 0;
+  nMux[0].c[DOWN_BELT] <== 0;
+  nMux[0].c[EXPORTER] <== 0;
 
   // Down
-  nMux[1].c[1] <== isCarbon.out; // mine (1) produces carbon below (1)
-  nMux[1].c[2] <== state; // down belt (2) moves down (1)
-  nMux[1].c[3] <== 0;
+  nMux[1].c[CARBON_MINE] <== isCarbon.out; // mine (1) produces carbon below (1)
+  nMux[1].c[DOWN_BELT] <== state; // down belt (2) moves down (1)
+  nMux[1].c[EXPORTER] <== 0;
 
   // Left
-  nMux[2].c[1] <== 0;
-  nMux[2].c[2] <== 0;
-  nMux[2].c[3] <== 0;
+  nMux[2].c[CARBON_MINE] <== 0;
+  nMux[2].c[DOWN_BELT] <== 0;
+  nMux[2].c[EXPORTER] <== 0;
 
   // Up
-  nMux[3].c[1] <== 0;
-  nMux[3].c[2] <== 0;
-  nMux[3].c[3] <== 0;
-
-  signal output out;
-  signal output neighboursOutput[4];
+  nMux[3].c[CARBON_MINE] <== 0;
+  nMux[3].c[DOWN_BELT] <== 0;
+  nMux[3].c[EXPORTER] <== 0;
 
   out <== mux.out;
   for (var n = 0; n < 4; n++) {
     neighboursOutput[n] <== nMux[n].out;
   }
+  export <== eMux.out;
 }
 
 // Reduces the state from the cell and neighbours
@@ -140,6 +156,29 @@ template CellReducer() {
   }
 }
 
+template GridAccumulate(B) {
+  signal input in[B][B];
+  signal output out;
+
+  signal rowSums[B][B];
+  signal sums[B];
+
+  for (var y = 0; y < B; y++) {
+    rowSums[y][0] <== in[y][0];
+
+    for (var x = 1; x < B; x++) {
+      rowSums[y][x] <== in[y][x] + rowSums[y][x - 1];
+    }
+  }
+
+  sums[0] <== rowSums[0][B - 1];
+  for (var y = 1; y < B; y++) {
+    sums[y] <== rowSums[y][B - 1] + sums[y - 1];
+  }
+
+  sums[B - 1] ==> out;
+}
+
 template Factory(B) {
   signal input board[B][B];
   signal input resourceState[N()][B][B];
@@ -147,6 +186,7 @@ template Factory(B) {
 
   component cells[B][B];
   component cellReducers[B][B];
+  component accumulators[N()];
 
   signal output resourceOutputState[N()][B][B];
   signal output resourceOutput[N()];
@@ -206,6 +246,14 @@ template Factory(B) {
 
   // TODO: Handle output state
   for (var r = 0; r < N(); r++) {
-    resourceOutput[r] <== 0;
+    accumulators[r] = GridAccumulate(B);
+
+    for (var y = 0; y < B; y++) {
+      for (var x = 0; x < B; x++) {
+        accumulators[r].in[y][x] <== cells[y][x].exports[r];
+      }
+    }
+
+    resourceOutput[r] <== accumulators[r].out;
   }
 }
