@@ -214,5 +214,45 @@ describe("factory", () => {
         }
       );
     });
+
+    it("compressor compresses", async () => {
+      await circuit.expectPass(
+        {
+          board: [
+            [0, 0, 0],
+            [0, 4, 0],
+            [0, 0, 0],
+          ],
+          resourceState: [
+            [
+              [0, 0, 0],
+              [0, 2, 0], // 2 carbon
+              [0, 0, 0],
+            ],
+            [
+              [0, 0, 0],
+              [0, 0, 0],
+              [0, 0, 0],
+            ],
+          ],
+          resourceInput: [0, 0],
+        },
+        {
+          resourceOutputState: [
+            [
+              [0, 0, 0],
+              [0, 0, 0],
+              [0, 0, 0],
+            ],
+            [
+              [0, 0, 0],
+              [0, 0, 1], // 1 diamond to the right
+              [0, 0, 0],
+            ],
+          ],
+          resourceOutput: [0, 0],
+        }
+      );
+    });
   });
 });

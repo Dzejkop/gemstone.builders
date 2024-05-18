@@ -8,6 +8,7 @@ pub const EMPTY: u8 = 0;
 pub const MINE: u8 = 1;
 pub const BELT_DOWN: u8 = 2;
 pub const EXPORTER: u8 = 3;
+pub const COMPRESSOR: u8 = 4;
 
 pub const CARBON: u8 = 0;
 pub const DIAMOND: u8 = 1;
@@ -70,6 +71,12 @@ impl GameState {
                         for r in 0..NUM_RESOURCES {
                             new_resource_state[r][y][x] -= self.resource_state[r][y][x];
                             resource_output[r] += self.resource_state[r][y][x];
+                        }
+                    }
+                    COMPRESSOR => {
+                        if self.resource_state[CARBON as usize][y][x] >= 2 {
+                            new_resource_state[CARBON as usize][y][x] -= 2;
+                            new_resource_state[DIAMOND as usize][y][(x + 1) % BOARD_SIZE] += 1;
                         }
                     }
                     _ => {}
@@ -164,11 +171,11 @@ mod tests {
         const INIT: &str = indoc::indoc! {r#"
             {
                 "board": [
-                    [0, 0, 0, 1, 0],
-                    [0, 0, 0, 2, 0],
-                    [0, 0, 0, 2, 0],
-                    [0, 0, 0, 2, 0],
-                    [0, 0, 0, 3, 0]
+                    [0, 1, 0, 0, 0],
+                    [0, 2, 0, 0, 0],
+                    [0, 4, 2, 0, 0],
+                    [0, 0, 3, 0, 0],
+                    [0, 0, 0, 0, 0]
                 ],
                 "resourceState": [
                     [
@@ -194,16 +201,16 @@ mod tests {
             [
                 [
                     [0, 0, 0, 0, 0],
-                    [0, 0, 0, 1, 0],
-                    [0, 0, 0, 1, 0],
-                    [0, 0, 0, 1, 0],
-                    [0, 0, 0, 1, 0]
+                    [0, 1, 0, 0, 0],
+                    [0, 2, 0, 0, 0],
+                    [0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0]
                 ],
                 [
                     [0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0],
-                    [0, 0, 0, 0, 0],
+                    [0, 0, 1, 0, 0],
                     [0, 0, 0, 0, 0]
                 ]
             ]
