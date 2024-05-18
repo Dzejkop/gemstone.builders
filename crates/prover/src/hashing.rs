@@ -83,7 +83,7 @@ pub fn hash_resource_state_to_decimal_string(r: &ResourceState) -> anyhow::Resul
     fr_to_decimal_string(hash)
 }
 
-trait Conv: Copy {
+pub trait Conv: Copy {
     fn conv(self) -> Fr;
 }
 

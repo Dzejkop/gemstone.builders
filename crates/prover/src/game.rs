@@ -72,9 +72,13 @@ impl GameState {
     }
 
     pub fn construct_prover_input(&self) -> anyhow::Result<ProverInput> {
+        tracing::info!("Constructing prover Hashing board");
         let board_hash = hash_board_to_decimal_string(&self.board)?;
+
+        tracing::info!("Hashing state");
         let state_hash = hash_resource_state_to_decimal_string(&self.resource_state)?;
 
+        tracing::info!("Generating new state");
         let new_state = self.clone().advance();
 
         Ok(ProverInput {

@@ -91,6 +91,12 @@ struct Args {
 
     #[clap(short, long, default_value = "./state")]
     pub state_dir: PathBuf,
+
+    #[clap(short, long, env, default_value = "./circuit.wasm")]
+    pub circuit_wasm: PathBuf,
+
+    #[clap(short, long, env, default_value = "./key.zkey")]
+    pub zkey: PathBuf,
 }
 
 #[tokio::main]
@@ -100,7 +106,8 @@ async fn main() -> anyhow::Result<()> {
 
     let args = Args::parse();
 
-    tracing::info!("Prover starting");
+    let working_dir = std::env::current_dir();
+    tracing::info!(?working_dir, "Prover starting");
 
     let client = Http::new(args.rpc_url.parse()?);
     let _client: RpcClient<Http<reqwest::Client>> = RpcClient::new(client, false);
@@ -124,7 +131,10 @@ async fn main() -> anyhow::Result<()> {
 
     app.cache_state().await?;
 
-    // tokio::task::spawn(tasks::main_loop(app.clone()));
+    let app_clone = app.clone();
+    tokio::task::spawn(async move {
+        tasks::main_loop(app_clone).await.unwrap();
+    });
 
     let router = Router::new()
         .route("/simulate", post(simulate))

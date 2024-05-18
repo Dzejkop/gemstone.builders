@@ -18,3 +18,7 @@ config = "0.14.0"
 serde = { version = "1.0.202", features = ["derive"] }
 tower-http = { version = "0.5.2", features = ["cors", "timeout", "trace"] }
 anyhow = "1.0"
+
+[profile.release]
+debug = true
+strip = false

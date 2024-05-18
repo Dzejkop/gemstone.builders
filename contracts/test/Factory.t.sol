@@ -17,8 +17,8 @@ contract FactoryTest is Test {
         resources[0] = new Resource("Carbon", "CRBN");
         resources[1] = new Resource("Diamond", "DMND");
 
-        factory.registerResrouce(0, resources[0]);
-        factory.registerResrouce(1, resources[1]);
+        factory.registerResource(0, resources[0]);
+        factory.registerResource(1, resources[1]);
     }
 
     function test_Lock() public {

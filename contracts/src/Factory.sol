@@ -28,7 +28,7 @@ contract Factory is Ownable {
     // Balances of resources per each player
     mapping(address => uint256[2]) public balances;
 
-    function registerResrouce(uint256 id, IERC20 token) external onlyOwner {
+    function registerResource(uint256 id, IERC20 token) external onlyOwner {
         resourceTokens[id] = token;
     }
 
@@ -64,13 +64,19 @@ contract Factory is Ownable {
     }
 
     function step(
-        uint256 factoryHash,
-        uint256 factoryState,
-        uint256[2] calldata resourceInputs,
-        uint256 outputStateHash,
-        uint256[2] calldata resourceOutputs,
-        uint256[8] calldata proof
+        uint256[2] calldata pa,
+        uint256[2][2] calldata pb,
+        uint256[2] calldata pc,
+        uint256[7] calldata publicInputs
     ) external {
+        // Unpack the public inputs
+        uint256 factoryHash = publicInputs[3];
+        uint256 factoryState = publicInputs[4];
+
+        uint256[2] memory resourceInputs = [publicInputs[5], publicInputs[6]];
+        uint256[2] memory resourceOutputs = [publicInputs[1], publicInputs[2]];
+        uint256 outputStateHash = publicInputs[0];
+
         require(factoryHashes[msg.sender] == factoryHash);
         require(factoryStates[factoryHash] == factoryState);
 
@@ -81,22 +87,7 @@ contract Factory is Ownable {
         require(userBalances[1] >= resourceInputs[1]);
 
         // Verify the proof
-        require(
-            verifier.verifyProof(
-                [proof[0], proof[1]],
-                [[proof[2], proof[3]], [proof[4], proof[5]]],
-                [proof[6], proof[7]],
-                [
-                    outputStateHash,
-                    resourceOutputs[0],
-                    resourceOutputs[1],
-                    factoryHash,
-                    factoryState,
-                    resourceInputs[0],
-                    resourceInputs[1]
-                ]
-            )
-        );
+        require(verifier.verifyProof(pa, pb, pc, publicInputs));
 
         // Update the state
         factoryStates[factoryHash] = outputStateHash;
