@@ -14,6 +14,7 @@ const MainGrid = ({mode, setMode}) => {
   const [selectedBuilding, setSelectedBuilding] = useState(null);
   const [newBoard, setNewBoard] = useState(null);
   const [simulationResources, setSimulationResources] = useState([]);
+  const [intervalCall, setIntervalCall] = useState(null);
 
   const isSimulation = mode === "simulation";
 
@@ -36,15 +37,29 @@ const MainGrid = ({mode, setMode}) => {
     setNewBoard(update);
   }
 
-  useEffect(() => {
-    const getBoard = async () => {
-      const state = await API.getBoard();
-      setState(state);
-      setNewBoard(state.board);
-    };
+  const updateData = async () => {
+    const state = await API.getBoard();
+    setState(state);
+    setNewBoard(state.board);
+  }
 
-    getBoard();
-  }, []);
+  useEffect(() => {
+    if (isSimulation) {
+      clearInterval(intervalCall);
+      setIntervalCall(null);
+    } else {
+    const intervalID = setInterval(() => {
+      updateData();
+    }, 3000);
+
+    setIntervalCall(intervalID)
+
+    return () => {
+      clearInterval(intervalID);
+    };
+  }
+}, [isSimulation]);
+
 
   const renderResources = () => {
     const data = mode === "chain" ? state.resourceState : simulationResources;

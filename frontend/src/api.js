@@ -15,7 +15,8 @@ const post = async (endpoint, data) => {
     });
 
     try {
-        return await response.json();
+        const r = await response.json();
+        return r;
     } catch (e) {
         return;
     }

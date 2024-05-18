@@ -9,6 +9,7 @@ const State = ({newGameState, resources, setMode, setSimulationResources}) => {
     const [simulationRunning, setSimulationRunning] = useState(null);
     const [steps, setSteps] = useState(0);
     const [submitted, setSubmitted] = useState(false);
+    const [counts, setCounts] = useState([0, 0]);
 
     console.log("State", newGameState);
 
@@ -21,6 +22,8 @@ const State = ({newGameState, resources, setMode, setSimulationResources}) => {
         setSimulationRunning(false);
         setMode("chain");
         setSteps(0);
+        setCounts([0, 0]);
+        setSimulationResources([]);
     }
 
     const runSimulationStep = () => {
@@ -33,19 +36,19 @@ const State = ({newGameState, resources, setMode, setSimulationResources}) => {
         const sym = async () => {
             
             const newState = await API.simulate(newGameState);
-            setSimulationResources(newState.resourceState);
+
+            console.log(newState);
+            setSimulationResources(newState.newState.resourceState);
+            const newCounts = newState.resourceOutput.map((item, index) => {
+                return counts[index] + item;
+            });
+            setCounts(newCounts)
         };
         sym();
     }, [steps]);
 
-
     const upload = () => {
-        if (submitted) {
-            return;
-        }
-
         API.submitBoard(newGameState.board);
-        setSubmitted(true);
     }
 
     return (
@@ -57,14 +60,14 @@ const State = ({newGameState, resources, setMode, setSimulationResources}) => {
             </div>
             <div className="state-item resources">
                 <div className="row-title">Resources</div>
-                <Resources state={resources} />
+                <Resources state={counts} />
             </div>
             {simulationRunning && (
                 <div className="state-item simulation">
                     <div className="row-title">Simulate factory work</div>
                     <Play displayName={true} onClick={runSimulationStep} />
                     <Stop displayName={true} onClick={stopSimulation} />
-                    <div>Steps: {steps}</div>
+                    <div className="row-title">Steps: {steps}</div>
                 </div>
             )}
             {!simulationRunning && (
