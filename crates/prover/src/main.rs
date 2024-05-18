@@ -1,4 +1,5 @@
 use std::net::SocketAddr;
+use std::path::PathBuf;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
 
@@ -14,10 +15,28 @@ use tower_http::cors::CorsLayer;
 use tower_http::trace::TraceLayer;
 
 mod game;
+mod hashing;
+mod tasks;
+
+pub const STATE_FILE: &str = "game.json";
 
 struct App {
+    pub args: Args,
     pub is_running: AtomicBool,
     pub game: Mutex<game::GameState>,
+}
+
+impl App {
+    async fn cache_state(&self) -> anyhow::Result<()> {
+        let state_file = self.args.state_dir.join(STATE_FILE);
+
+        let game = self.game.lock().await;
+        let state = serde_json::to_string_pretty(&*game)?;
+
+        tokio::fs::write(&state_file, state).await?;
+
+        Ok(())
+    }
 }
 
 #[tracing::instrument]
@@ -69,6 +88,9 @@ struct Args {
         default_value = "https://ethereum-sepolia.blockpi.network/v1/rpc/public"
     )]
     pub rpc_url: String,
+
+    #[clap(short, long, default_value = "./state")]
+    pub state_dir: PathBuf,
 }
 
 #[tokio::main]
@@ -80,14 +102,29 @@ async fn main() -> anyhow::Result<()> {
 
     tracing::info!("Prover starting");
 
-
     let client = Http::new(args.rpc_url.parse()?);
     let _client: RpcClient<Http<reqwest::Client>> = RpcClient::new(client, false);
 
+    tokio::fs::create_dir_all(&args.state_dir).await?;
+
+    let state_file = args.state_dir.join(STATE_FILE);
+    let game_state = if tokio::fs::try_exists(&state_file).await? {
+        let state = tokio::fs::read(&state_file).await?;
+        serde_json::from_slice(&state)?
+    } else {
+        GameState::empty()
+    };
+
+    let addr = args.addr;
     let app = Arc::new(App {
-        is_running: AtomicBool::new(false),
-        game: Mutex::new(GameState::empty()),
+        args,
+        is_running: AtomicBool::new(true),
+        game: Mutex::new(game_state),
     });
+
+    app.cache_state().await?;
+
+    // tokio::task::spawn(tasks::main_loop(app.clone()));
 
     let router = Router::new()
         .route("/simulate", post(simulate))
@@ -101,9 +138,9 @@ async fn main() -> anyhow::Result<()> {
         .layer(CorsLayer::permissive())
         .layer(TraceLayer::new_for_http());
 
-    let listener = tokio::net::TcpListener::bind(args.addr).await?;
+    let listener = tokio::net::TcpListener::bind(addr).await?;
 
-    tracing::info!(addr = ?args.addr, "Listening");
+    tracing::info!(?addr, "Listening");
 
     axum::serve(listener, router)
         .with_graceful_shutdown(common::shutdown_signal())

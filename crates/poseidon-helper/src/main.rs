@@ -60,6 +60,8 @@ fn main() {
         ],
     ];
 
+    // let f = Fr::
+
     let board_hash = hash_array(board);
     let state_hash = hash_tensor(resource_state);
 

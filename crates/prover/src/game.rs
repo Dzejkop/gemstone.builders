@@ -1,5 +1,7 @@
 use serde::{Deserialize, Serialize};
 
+use crate::hashing::ProverInput;
+
 pub const EMPTY: u8 = 0;
 pub const MINE: u8 = 1;
 pub const BELT_DOWN: u8 = 2;
@@ -13,9 +15,9 @@ pub const BOARD_SIZE: usize = 5;
 
 pub type Board = [[u8; BOARD_SIZE]; BOARD_SIZE];
 // Count of resources on each tile, per resource
-pub type State = [[[i32; BOARD_SIZE]; BOARD_SIZE]; NUM_RESOURCES];
+pub type ResourceState = [[[i32; BOARD_SIZE]; BOARD_SIZE]; NUM_RESOURCES];
 
-pub fn empty_state() -> State {
+pub fn empty_state() -> ResourceState {
     [[[0; BOARD_SIZE]; BOARD_SIZE]; NUM_RESOURCES]
 }
 
@@ -23,7 +25,7 @@ pub fn empty_state() -> State {
 #[serde(rename_all = "camelCase")]
 pub struct GameState {
     pub board: Board,
-    pub resource_state: State,
+    pub resource_state: ResourceState,
 }
 
 impl GameState {
@@ -65,6 +67,22 @@ impl GameState {
             board: self.board,
             resource_state: new_resource_state,
         }
+    }
+
+    pub fn construct_prover_input(&self) -> ProverInput {
+        // let board_hash = hash_array(self.board);
+        // let state_hash = hash_tensor(self.resource_state);
+
+        // ProverInput {
+        //     board: self.board,
+        //     board_hash,
+        //     resource_state: self.resource_state,
+        //     state_hash,
+        //     resource_input: [0; NUM_RESOURCES],
+        //     resource_output_state: empty_state(),
+        // }
+
+        todo!()
     }
 }
 
@@ -170,7 +188,7 @@ mod tests {
             state = state.advance();
         }
 
-        let expected: State =
+        let expected: ResourceState =
             serde_json::from_str(EXPECTED).unwrap();
 
         assert_eq!(state.resource_state, expected);

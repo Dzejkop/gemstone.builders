@@ -2812,6 +2812,8 @@ dependencies = [
  "dotenvy",
  "ff_ce",
  "indoc",
+ "num-bigint 0.4.5",
+ "num-traits",
  "poseidon-rs",
  "reqwest",
  "serde",
