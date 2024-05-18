@@ -15,5 +15,10 @@
       "outputStateHash",
       "resourceOutput"
     ]
+  },
+  "assembly5": {
+    "file": "assembly",
+    "template": "Assembly",
+    "params": [5]
   }
 }
