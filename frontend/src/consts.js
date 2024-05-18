@@ -1,4 +1,4 @@
-import { Empty, Belt, Mine, Exporter } from "./components/Element";
+import { Empty, Belt, Mine, Exporter, Diamond, Coal } from "./components/Element";
 
 const consts = {
     INFURE_API_KEY: 'c59cfc2bb2114215a9168fc9ec994dca',
@@ -9,11 +9,15 @@ const consts = {
     CARBON: 1,
     DIAMOND: 2,
     BUILDINGS: {
-        0: Empty,
-        1: Mine,
-        2: Belt,
-        3: Exporter,
-      }
+      0: Empty,
+      1: Mine,
+      2: Belt,
+      3: Exporter,
+    },
+    RESOURCES: {
+      0: Coal,
+      1: Diamond,
+    }
 };
 
 export default consts;

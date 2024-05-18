@@ -6,6 +6,7 @@ const get = async (endpoint) => {
 };
 
 const post = async (endpoint, data) => {
+    console.log("json",  JSON.stringify(data));
     const response = await fetch(url + endpoint, {
         method: "POST",
         headers: {

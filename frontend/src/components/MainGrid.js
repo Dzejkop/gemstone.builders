@@ -55,6 +55,11 @@ const MainGrid = () => {
     });
   ;}
 
+  const newGameState = state === null ? null : {
+    board: newBoard,
+    resourceState: state.resourceState
+  }
+
   return (
     <div className="main-container">
       <div className="column">
@@ -71,7 +76,7 @@ const MainGrid = () => {
         <ControlPanel selectedBuilding={selectedBuilding} selectBuilding={selectBuilding} />
       </div>
       <div className="column">
-        <State />
+        <State newGameState={newGameState} />
       </div>
     </div>
     );  
