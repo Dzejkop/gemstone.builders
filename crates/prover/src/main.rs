@@ -61,10 +61,10 @@ async fn delete_board(State(app): State<Arc<App>>) {
 }
 
 #[tracing::instrument(skip(app))]
-async fn get_board(State(app): State<Arc<App>>) -> Json<Board> {
+async fn get_board(State(app): State<Arc<App>>) -> Json<GameState> {
     let game = app.game.lock().await;
 
-    Json(game.board)
+    Json(game.clone())
 }
 
 #[tracing::instrument(skip(app))]

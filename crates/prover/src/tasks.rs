@@ -14,6 +14,8 @@ pub async fn main_loop(app: Arc<App>) -> anyhow::Result<()> {
 
         let mut game = app.game.lock().await;
 
+        let prover_input = game.construct_prover_input()?;
+
         // 1. Construct proof input
         // 2. Generate proof
         // 3. Submit step call with proof

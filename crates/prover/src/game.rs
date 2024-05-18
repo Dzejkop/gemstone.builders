@@ -1,6 +1,8 @@
 use serde::{Deserialize, Serialize};
 
-use crate::hashing::ProverInput;
+use crate::hashing::{
+    hash_board_to_decimal_string, hash_resource_state_to_decimal_string, ProverInput,
+};
 
 pub const EMPTY: u8 = 0;
 pub const MINE: u8 = 1;
@@ -69,20 +71,20 @@ impl GameState {
         }
     }
 
-    pub fn construct_prover_input(&self) -> ProverInput {
-        // let board_hash = hash_array(self.board);
-        // let state_hash = hash_tensor(self.resource_state);
+    pub fn construct_prover_input(&self) -> anyhow::Result<ProverInput> {
+        let board_hash = hash_board_to_decimal_string(&self.board)?;
+        let state_hash = hash_resource_state_to_decimal_string(&self.resource_state)?;
 
-        // ProverInput {
-        //     board: self.board,
-        //     board_hash,
-        //     resource_state: self.resource_state,
-        //     state_hash,
-        //     resource_input: [0; NUM_RESOURCES],
-        //     resource_output_state: empty_state(),
-        // }
+        let new_state = self.clone().advance();
 
-        todo!()
+        Ok(ProverInput {
+            board: self.board,
+            board_hash,
+            resource_state: self.resource_state,
+            state_hash,
+            resource_input: [0; NUM_RESOURCES],
+            resource_output_state: new_state.resource_state,
+        })
     }
 }
 
@@ -188,8 +190,7 @@ mod tests {
             state = state.advance();
         }
 
-        let expected: ResourceState =
-            serde_json::from_str(EXPECTED).unwrap();
+        let expected: ResourceState = serde_json::from_str(EXPECTED).unwrap();
 
         assert_eq!(state.resource_state, expected);
     }
