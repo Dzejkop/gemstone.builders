@@ -16,26 +16,26 @@ const post = async (endpoint, data) => {
     return response.json();
 };
 
-const delete_call = async (endpoint) => {
+const deleteCall = async (endpoint) => {
     return fetch(url + endpoint, {
         method: "DELETE",
     });
 }
 
 const API = {
-    get_board: async () => {
+    getBoard: async () => {
         return get("board");
     },
-    submit: async (data) => {
+    submitBoard: async (data) => {
         return post("board", data);
     },
-    delete_board: async () => {
-        return delete_call("board")
+    deleteBoard: async () => {
+        return deleteCall("board")
     },
     simulate: async (data) => {
         return post("simulate", data);
     },
-    get_balance: async () => {
+    getBalance: async () => {
         return get("balance");
     }
 }
