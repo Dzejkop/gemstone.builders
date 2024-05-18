@@ -98,9 +98,9 @@ contract Factory is Ownable {
         // Mint or burn resources
         for (uint256 i = 0; i < NUM_RESOURCES; i++) {
             if (resourceOutputs[i] > resourceInputs[i]) {
-                resourceTokens[i].mint(msg.sender, resourceOutputs[i] - resourceInputs[i]);
+                resourceTokens[i].mint(address(this), resourceOutputs[i] - resourceInputs[i]);
             } else {
-                resourceTokens[i].burn(msg.sender, resourceInputs[i] - resourceOutputs[i]);
+                resourceTokens[i].burn(address(this), resourceInputs[i] - resourceOutputs[i]);
             }
         }
 
