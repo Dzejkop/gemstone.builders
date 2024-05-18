@@ -5,52 +5,29 @@ import ModeSwitch from "./ModeSwitch";
 
 import API from "../api";
 
-const State = ({newGameState, setMode, setSimulationResources, balance = [0, 0]}) => {
+const State = ({upload, setMode, setSimulationResources, balance, simulate, fetchAndUpdate}) => {
     const [simulationRunning, setSimulationRunning] = useState(null);
     const [steps, setSteps] = useState(0);
-    const [counts, setCounts] = useState(balance);
 
-    console.log("State", newGameState);
+    console.log("balance", balance);
 
     const startSimulation = () => {
         setSimulationRunning(true);
         setMode("simulation");
         setSimulationResources([]);
         setSteps(0);
-        setCounts([0, 0]);
     }
 
     const stopSimulation = () => {
         setSimulationRunning(false);
         setMode("chain");
         setSteps(0);
-        setCounts([0, 0]);
-        setSimulationResources([]);
+        fetchAndUpdate();
     }
 
     const runSimulationStep = () => {
         setSteps(steps + 1);
-    }
-
-    useEffect(() => {
-        if (!simulationRunning) { return; }
-
-        const sym = async () => {
-            
-            const newState = await API.simulate(newGameState);
-
-            console.log(newState);
-            setSimulationResources(newState.newState.resourceState);
-            const newCounts = newState.resourceOutput.map((item, index) => {
-                return counts[index] + item;
-            });
-            setCounts(newCounts)
-        };
-        sym();
-    }, [steps]);
-
-    const upload = () => {
-        API.submitBoard(newGameState.board);
+        simulate();
     }
 
     return (
@@ -62,7 +39,7 @@ const State = ({newGameState, setMode, setSimulationResources, balance = [0, 0]}
             </div>
             <div className="state-item resources">
                 <div className="row-title">Resources</div>
-                <Resources state={counts} />
+                <Resources state={balance} />
             </div>
             {simulationRunning && (
                 <div className="state-item simulation">

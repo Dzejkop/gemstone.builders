@@ -38,28 +38,44 @@ const MainGrid = ({mode, setMode}) => {
     setNewBoard(update);
   }
 
-  const updateData = async () => {
+  const updateData = (state, balance) => {
+    console.log("lllll", state);
+    setState(state);
+    setNewBoard(state.board);
+    if (intervalCall === null) { setBalance(balance) };
+  }
+
+  const fetchAndUpdate = async () => {
     const state = await API.getBoard();
     const balance = await API.getBalance();
-    setState(state);
-    setBalance(balance);
-    setNewBoard(state.board);
+    updateData(state, balance);
   }
+
+  const simulate = async () => {
+    const newState = await API.simulate(newGameState);
+    setSimulationResources(newState.newState.resourceState);
+    const newBalance = newState.resourceOutput.map((item, index) => {
+        return balance[index] + item;
+    });
+
+    setBalance(newBalance)
+};
 
   useEffect(() => {
     if (isSimulation) {
       clearInterval(intervalCall);
       setIntervalCall(null);
+      setBalance([0, 0]);
     } else {
-    const intervalID = setInterval(() => {
-      updateData();
-    }, 3000);
+      const intervalID = setInterval(() => {
+        fetchAndUpdate();
+      }, 2000);
 
-    setIntervalCall(intervalID)
+      setIntervalCall(intervalID)
 
-    return () => {
-      clearInterval(intervalID);
-    };
+      return () => {
+        clearInterval(intervalID);
+      };
   }
 }, [isSimulation]);
 
@@ -72,9 +88,16 @@ const MainGrid = ({mode, setMode}) => {
     });
   ;}
 
+  console.log("state", state);
+  const newResources = isSimulation && simulationResources.length > 0 ? simulationResources : (state !== null ? state.resourceState : {});
+
   const newGameState = state === null ? null : {
     board: newBoard,
-    resourceState: isSimulation && simulationResources.length > 0 ? simulationResources : state.resourceState,
+    resourceState: newResources,
+  }
+
+  const upload = () => {
+    API.submitBoard(newBoard);
   }
 
   return (
@@ -93,7 +116,7 @@ const MainGrid = ({mode, setMode}) => {
         {isSimulation && <ControlPanel selectedBuilding={selectedBuilding} selectBuilding={selectBuilding}/>}
       </div>
       <div className="column">
-        <State newGameState={newGameState} setMode={setMode} setSimulationResources={setSimulationResources} balance={balance} />
+        <State setMode={setMode} setSimulationResources={setSimulationResources} balance={balance} simulate={simulate} fetchAndUpdate={fetchAndUpdate} upload={upload} />
       </div>
     </div>
     );  
