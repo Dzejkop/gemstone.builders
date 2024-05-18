@@ -7,7 +7,10 @@ use alloy::providers::ProviderBuilder;
 use alloy::signers::wallet::Wallet;
 use tokio::sync::Mutex;
 
-use crate::{game, Args, STATE_FILE};
+use crate::{
+    abi::Factory::{userBalanceCall, userBalanceReturn},
+    game, Args, STATE_FILE,
+};
 
 pub struct App {
     pub args: Args,
@@ -44,18 +47,36 @@ impl App {
         let user_factory_hash = contract.factoryHashes(wallet.address()).call().await?._0;
 
         if user_factory_hash != board_hash {
-            tracing::warn!(?user_factory_hash, ?board_hash, "User factory hash does not match board hash");
+            tracing::warn!(
+                ?user_factory_hash,
+                ?board_hash,
+                "User factory hash does not match board hash"
+            );
             return Ok(false);
         }
 
         let factory_state_hash = contract.factoryStates(user_factory_hash).call().await?._0;
 
         if factory_state_hash != resource_state_hash {
-            tracing::warn!(?factory_state_hash, ?resource_state_hash, "Factory state hash does not match resource state hash");
+            tracing::warn!(
+                ?factory_state_hash,
+                ?resource_state_hash,
+                "Factory state hash does not match resource state hash"
+            );
             return Ok(false);
         }
 
         Ok(true)
+    }
+
+    pub async fn get_balance(&self) -> anyhow::Result<Vec<u64>> {
+        let wallet = Wallet::from_str(&self.args.private_key)?;
+        let contract = init_contract!(self);
+
+        let balance = contract.userBalance(wallet.address()).call().await?;
+        let return_balance: Vec<u64> =
+            [balance._0[0].as_limbs()[0], balance._0[1].as_limbs()[0]].to_vec();
+        Ok(return_balance)
     }
 
     #[tracing::instrument(skip_all)]

@@ -3,6 +3,7 @@ use std::path::PathBuf;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
 
+use abi::Factory::userBalanceReturn;
 use axum::extract::State;
 use axum::routing::{get, post};
 use axum::{Json, Router};
@@ -49,6 +50,12 @@ async fn get_board(State(app): State<Arc<App>>) -> Json<GameState> {
     let game = app.game.lock().await;
 
     Json(game.clone())
+}
+
+#[tracing::instrument(skip(app))]
+async fn get_balance(State(app): State<Arc<App>>) -> Json<Vec<u64>> {
+    let balance = app.get_balance().await.unwrap();
+    Json(balance)
 }
 
 #[tracing::instrument(skip(app))]
@@ -143,6 +150,7 @@ async fn main() -> anyhow::Result<()> {
         )
         .route("/game/start", post(start_game))
         .route("/game/stop", post(stop_game))
+        .route("/balance", get(get_balance))
         .with_state(app.clone())
         .layer(CorsLayer::permissive())
         .layer(TraceLayer::new_for_http());

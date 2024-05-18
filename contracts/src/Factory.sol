@@ -48,7 +48,11 @@ contract Factory is Ownable {
         }
 
         for (uint256 i = 0; i < NUM_RESOURCES; i++) {
-            resourceTokens[i].transferFrom(msg.sender, address(this), amounts[i]);
+            resourceTokens[i].transferFrom(
+                msg.sender,
+                address(this),
+                amounts[i]
+            );
             balances[msg.sender][i] = amounts[i];
         }
     }
@@ -62,8 +66,10 @@ contract Factory is Ownable {
         }
     }
 
-    function userBalance() external view returns (uint256[2] memory) {
-        return balances[msg.sender];
+    function userBalance(
+        address user
+    ) external view returns (uint256[2] memory) {
+        return balances[user];
     }
 
     function step(
@@ -76,8 +82,14 @@ contract Factory is Ownable {
         uint256 factoryHash = publicInputs[3];
         uint256 factoryState = publicInputs[4];
 
-        uint256[NUM_RESOURCES] memory resourceInputs = [publicInputs[5], publicInputs[6]];
-        uint256[NUM_RESOURCES] memory resourceOutputs = [publicInputs[1], publicInputs[2]];
+        uint256[NUM_RESOURCES] memory resourceInputs = [
+            publicInputs[5],
+            publicInputs[6]
+        ];
+        uint256[NUM_RESOURCES] memory resourceOutputs = [
+            publicInputs[1],
+            publicInputs[2]
+        ];
         uint256 outputStateHash = publicInputs[0];
 
         require(factoryHashes[msg.sender] == factoryHash);
@@ -98,9 +110,15 @@ contract Factory is Ownable {
         // Mint or burn resources
         for (uint256 i = 0; i < NUM_RESOURCES; i++) {
             if (resourceOutputs[i] > resourceInputs[i]) {
-                resourceTokens[i].mint(address(this), resourceOutputs[i] - resourceInputs[i]);
+                resourceTokens[i].mint(
+                    address(this),
+                    resourceOutputs[i] - resourceInputs[i]
+                );
             } else {
-                resourceTokens[i].burn(address(this), resourceInputs[i] - resourceOutputs[i]);
+                resourceTokens[i].burn(
+                    address(this),
+                    resourceInputs[i] - resourceOutputs[i]
+                );
             }
         }
 

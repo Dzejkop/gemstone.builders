@@ -5,10 +5,10 @@ import ModeSwitch from "./ModeSwitch";
 
 import API from "../api";
 
-const State = ({newGameState, setMode, setSimulationResources}) => {
+const State = ({newGameState, setMode, setSimulationResources, balance = [0, 0]}) => {
     const [simulationRunning, setSimulationRunning] = useState(null);
     const [steps, setSteps] = useState(0);
-    const [counts, setCounts] = useState([0, 0]);
+    const [counts, setCounts] = useState(balance);
 
     console.log("State", newGameState);
 

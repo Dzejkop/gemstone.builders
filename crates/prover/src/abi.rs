@@ -12,6 +12,8 @@ alloy_sol_types::sol! {
         // Balances of resources per each player
         mapping(address => uint256[2]) public balances;
 
+        function userBalance(address user) external view returns (uint256[2] memory);
+
         function updateFactory(uint256 factoryHash) external;
         function step(
             uint256[2] calldata pa,

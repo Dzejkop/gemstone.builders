@@ -13,6 +13,7 @@ const MainGrid = ({mode, setMode}) => {
   const [state, setState] = useState(null);
   const [selectedBuilding, setSelectedBuilding] = useState(null);
   const [newBoard, setNewBoard] = useState(null);
+  const [balance, setBalance] = useState([0, 0]);
   const [simulationResources, setSimulationResources] = useState([]);
   const [intervalCall, setIntervalCall] = useState(null);
 
@@ -39,7 +40,9 @@ const MainGrid = ({mode, setMode}) => {
 
   const updateData = async () => {
     const state = await API.getBoard();
+    const balance = await API.getBalance();
     setState(state);
+    setBalance(balance);
     setNewBoard(state.board);
   }
 
@@ -90,7 +93,7 @@ const MainGrid = ({mode, setMode}) => {
         {isSimulation && <ControlPanel selectedBuilding={selectedBuilding} selectBuilding={selectBuilding}/>}
       </div>
       <div className="column">
-        <State newGameState={newGameState} setMode={setMode} setSimulationResources={setSimulationResources} />
+        <State newGameState={newGameState} setMode={setMode} setSimulationResources={setSimulationResources} balance={balance} />
       </div>
     </div>
     );  
