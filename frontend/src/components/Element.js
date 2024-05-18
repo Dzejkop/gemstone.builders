@@ -22,19 +22,27 @@ export const Element = ({ top, left, name, displayName, onClick, classes, disabl
         }}
       >
       </div>
-      
+
       {displayName && <div className="element-name">{name}</div>}
     </div>
   );
 };
 
 // grid
-export const Factory = ({displayName, onClick = () => {}, classes = ""}) => <Element top={90} left={180} name="Factory" displayName={displayName} onClick={onClick} classes={classes}/>
-export const Belt = ({displayName, onClick = () => {}, classes = ""}) => <Element top={446} left={631} name="Belt down" displayName={displayName} onClick={onClick} classes={classes} />
 export const Mine = ({displayName, onClick = () => {}, classes = ""}) => <Element top={178} left={270} name="Mine" displayName={displayName} onClick={onClick} classes={classes} />
+export const Factory = ({displayName, onClick = () => {}, classes = ""}) => <Element top={90} left={180} name="Factory" displayName={displayName} onClick={onClick} classes={classes}/>
+export const DiamondImporter = ({displayName, onClick = () => {}, classes = ""}) => <Element top={180} left={631} name="Diamond Importer" displayName={displayName} onClick={onClick} classes={classes}/>
 export const Exporter = ({displayName, onClick = () => {}, classes = ""}) => <Element top={0} left={810} name="Exporter" displayName={displayName} onClick={onClick} classes={classes} />
+export const BeltRight = ({displayName, onClick = () => {}, classes = ""}) => <Element top={360} left={541} name="Belt right" displayName={displayName} onClick={onClick} classes={classes} />
+export const BeltDown = ({displayName, onClick = () => {}, classes = ""}) => <Element top={446} left={631} name="Belt down" displayName={displayName} onClick={onClick} classes={classes} />
+export const BeltLeft = ({displayName, onClick = () => {}, classes = ""}) => <Element top={542} left={541} name="Belt left" displayName={displayName} onClick={onClick} classes={classes} />
+export const BeltUp = ({displayName, onClick = () => {}, classes = ""}) => <Element top={446} left={451} name="Belt up" displayName={displayName} onClick={onClick} classes={classes} />
+export const DiamondChipper = ({displayName, onClick = () => {}, classes = ""}) => <Element top={178} left={360} name="Diamond Chipper" displayName={displayName} onClick={onClick} classes={classes} />
+export const Burner = ({displayName, onClick = () => {}, classes = ""}) => <Element top={180} left={541} name="Burner" displayName={displayName} onClick={onClick} classes={classes} />
+
 export const Coal = ({displayName, onClick = () => {}, classes = ""}) => <Element top={543} left={0} name="Coal" displayName={displayName} onClick={onClick} classes={classes} />
 export const Diamond = ({displayName, onClick = () => {}, classes = ""}) => <Element top={634} left={0} name="Diamond" displayName={displayName} onClick={onClick} classes={classes} />
+
 export const Empty = ({displayName, onClick = () => {}, classes = ""}) => <Element top={514} left={800} name="Erase" displayName={displayName} onClick={onClick} classes={`blank ${classes}`} />
 
 // controls

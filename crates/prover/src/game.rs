@@ -67,7 +67,7 @@ impl GameState {
                     }
                     DIAMOND_IMPORTER => {
                         resource_input[DMND as usize] += 1;
-                        new_resource_state[DMND as usize][y][x] += 1;
+                        new_resource_state[DMND as usize][(y + 1) % BOARD_SIZE][x] += 1;
                     }
                     BELT_RIGHT => {
                         for r in 0..NUM_RESOURCES {

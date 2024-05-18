@@ -1,14 +1,5 @@
 import React from 'react';
-import { Belt, Mine, Exporter, Empty } from "./Element";
 import consts from "../consts";
-
-const buildings = {
-  [consts.EMPTY]: Empty,
-  [consts.MINE]: Mine,
-  [consts.BELT_DOWN]: Belt,
-  [consts.EXPORTER]: Exporter,
-  [consts.Fa]: Exporter,
-}
 
 const BuildingGrid = ({items, type}) => {
 
