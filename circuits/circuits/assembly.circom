@@ -17,15 +17,15 @@ template Assembly(B) {
   // Buildings on the board
   signal input board[B][B];
   // Hash of the board
-  signal input boardHash;
+  signal input boardHash; // public
 
   // State of resources on board
   signal input resourceState[N()][B][B];
   // Hash of this state
-  signal input stateHash;
+  signal input stateHash; // public
 
   // Resources imported by the factory
-  signal input resourceInput[N()];
+  signal input resourceInput[N()]; // public
 
   // State of the resources after the factory step
   signal input resourceOutputState[N()][B][B];
