@@ -105,8 +105,16 @@ body, html {
   height: 92px;
 }
 
-.grid-item:hover {
+
+.clickable {
+  z-index: 1000;
+}
+.clickable > .grid-item:hover {
   background-color: #d1c43964;
+}
+
+.clickable > .grid-item.selected {
+  background-color: #39d1433f;
 }
 
 .base-image {
@@ -148,15 +156,8 @@ body, html {
   gap: 10px;
 }
 
-.control-button {
-  background: #555;
-  border: none;
-  color: white;
-  padding: 10px;
-  margin: 5px;
-  cursor: pointer;
-  font-size: 0.8rem;
-  border: 2px solid #777;
+.control-panel > .element-container.selected {
+  border: 3px solid #ffe900c9;
 }
 
 .state-container {
