@@ -59,7 +59,7 @@ describe("factory", () => {
       await circuit.expectPass(
         {
           board: [
-            [0, 2, 0],
+            [0, 6, 0],
             [0, 0, 0],
             [0, 0, 0],
           ],
@@ -139,7 +139,7 @@ describe("factory", () => {
       await circuit.expectPass(
         {
           board: [
-            [0, 2, 0],
+            [0, 6, 0],
             [0, 0, 0],
             [0, 0, 0],
           ],
@@ -211,6 +211,46 @@ describe("factory", () => {
             ],
           ],
           resourceOutput: [5, 0],
+        }
+      );
+    });
+
+    it("diamond importer", async () => {
+      await circuit.expectPass(
+        {
+          board: [
+            [0, 2, 0],
+            [0, 0, 0],
+            [0, 0, 0],
+          ],
+          resourceState: [
+            [
+              [0, 0, 0],
+              [0, 0, 0],
+              [0, 0, 0],
+            ],
+            [
+              [0, 0, 0],
+              [0, 0, 0],
+              [0, 0, 0],
+            ],
+          ],
+          resourceInput: [0, 1],
+        },
+        {
+          resourceOutputState: [
+            [
+              [0, 0, 0],
+              [0, 0, 0],
+              [0, 0, 0],
+            ],
+            [
+              [0, 0, 0],
+              [0, 1, 0],
+              [0, 0, 0],
+            ],
+          ],
+          resourceOutput: [0, 0],
         }
       );
     });

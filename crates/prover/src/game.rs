@@ -6,12 +6,18 @@ use crate::hashing::{
 
 pub const EMPTY: u8 = 0;
 pub const MINE: u8 = 1;
-pub const BELT_DOWN: u8 = 2;
+pub const DIAMOND_IMPORTER: u8 = 2;
 pub const EXPORTER: u8 = 3;
 pub const COMPRESSOR: u8 = 4;
+pub const BELT_RIGHT: u8 = 5;
+pub const BELT_DOWN: u8 = 6;
+pub const BELT_LEFT: u8 = 7;
+pub const BELT_UP: u8 = 8;
+pub const DIAMOND_CHIPPER: u8 = 9;
+pub const BURNER: u8 = 10;
 
-pub const CARBON: u8 = 0;
-pub const DIAMOND: u8 = 1;
+pub const CRBN: u8 = 0;
+pub const DMND: u8 = 1;
 pub const NUM_RESOURCES: usize = 2;
 
 pub const BOARD_SIZE: usize = 5;
@@ -48,7 +54,7 @@ impl GameState {
     }
 
     pub fn advance(self) -> SimulateOutput {
-        let resource_input = [0; NUM_RESOURCES];
+        let mut resource_input = [0; NUM_RESOURCES];
         let mut resource_output = [0; NUM_RESOURCES];
 
         let mut new_resource_state = self.resource_state.clone();
@@ -57,11 +63,39 @@ impl GameState {
             for x in 0..BOARD_SIZE {
                 match self.board[y][x] {
                     MINE => {
-                        new_resource_state[CARBON as usize][(y + 1) % BOARD_SIZE][x] += 1;
+                        new_resource_state[CRBN as usize][(y + 1) % BOARD_SIZE][x] += 1;
+                    }
+                    DIAMOND_IMPORTER => {
+                        resource_input[DMND as usize] += 1;
+                        new_resource_state[DMND as usize][y][x] += 1;
+                    }
+                    BELT_RIGHT => {
+                        for r in 0..NUM_RESOURCES {
+                            new_resource_state[r][y][(x + 1) % BOARD_SIZE] +=
+                                self.resource_state[r][y][x];
+
+                            new_resource_state[r][y][x] -= self.resource_state[r][y][x];
+                        }
                     }
                     BELT_DOWN => {
                         for r in 0..NUM_RESOURCES {
                             new_resource_state[r][(y + 1) % BOARD_SIZE][x] +=
+                                self.resource_state[r][y][x];
+
+                            new_resource_state[r][y][x] -= self.resource_state[r][y][x];
+                        }
+                    }
+                    BELT_LEFT => {
+                        for r in 0..NUM_RESOURCES {
+                            new_resource_state[r][y][(x + BOARD_SIZE - 1) % BOARD_SIZE] +=
+                                self.resource_state[r][y][x];
+
+                            new_resource_state[r][y][x] -= self.resource_state[r][y][x];
+                        }
+                    }
+                    BELT_UP => {
+                        for r in 0..NUM_RESOURCES {
+                            new_resource_state[r][(y + BOARD_SIZE - 1) % BOARD_SIZE][x] +=
                                 self.resource_state[r][y][x];
 
                             new_resource_state[r][y][x] -= self.resource_state[r][y][x];
@@ -74,9 +108,30 @@ impl GameState {
                         }
                     }
                     COMPRESSOR => {
-                        if self.resource_state[CARBON as usize][y][x] >= 2 {
-                            new_resource_state[CARBON as usize][y][x] -= 2;
-                            new_resource_state[DIAMOND as usize][y][(x + 1) % BOARD_SIZE] += 1;
+                        if self.resource_state[CRBN as usize][y][x] >= 2 {
+                            new_resource_state[CRBN as usize][y][x] -= 2;
+                            new_resource_state[DMND as usize][y][(x + 1) % BOARD_SIZE] += 1;
+                        }
+                    }
+                    DIAMOND_CHIPPER => {
+                        let at_least_2_carbon = self.resource_state[CRBN as usize][y][x] >= 2;
+                        let at_least_1_diamond = self.resource_state[DMND as usize][y][x] >= 1;
+
+                        if at_least_1_diamond && at_least_2_carbon {
+                            new_resource_state[CRBN as usize][y][x] -= 2;
+                            new_resource_state[DMND as usize][y][x] -= 1;
+
+                            new_resource_state[CRBN as usize][y][(x + BOARD_SIZE - 1) % BOARD_SIZE] += 1;
+                            new_resource_state[DMND as usize][(y + 1) % BOARD_SIZE ][x] += 2;
+                        }
+                    }
+                    BURNER => {
+                        let at_least_2_carbon = self.resource_state[CRBN as usize][y][x] >= 2;
+                        let at_least_1_diamond = self.resource_state[DMND as usize][y][x] >= 1;
+
+                        if at_least_1_diamond && at_least_2_carbon {
+                            new_resource_state[CRBN as usize][y][x] = 0;
+                            new_resource_state[DMND as usize][y][x] = 0;
                         }
                     }
                     _ => {}
@@ -112,12 +167,14 @@ impl GameState {
         tracing::info!("Generating new state");
         let new_state = self.clone().advance();
 
+        let imported_diamonds = self.board.iter().flatten().filter(|b| **b == DIAMOND_IMPORTER).count();
+
         Ok(ProverInput {
             board: self.board,
             board_hash,
             resource_state: self.resource_state,
             state_hash,
-            resource_input: [0; NUM_RESOURCES],
+            resource_input: [0, imported_diamonds as i32],
             resource_output_state: new_state.new_state.resource_state,
         })
     }
@@ -172,8 +229,8 @@ mod tests {
             {
                 "board": [
                     [0, 1, 0, 0, 0],
-                    [0, 2, 0, 0, 0],
-                    [0, 4, 2, 0, 0],
+                    [0, 6, 0, 0, 0],
+                    [0, 4, 6, 0, 0],
                     [0, 0, 3, 0, 0],
                     [0, 0, 0, 0, 0]
                 ],
@@ -211,6 +268,134 @@ mod tests {
                     [0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0],
                     [0, 0, 1, 0, 0],
+                    [0, 0, 0, 0, 0]
+                ]
+            ]
+            "#
+        };
+
+        let initial: GameState = serde_json::from_str(INIT).unwrap();
+
+        let mut state = initial.clone();
+
+        for _ in 0..5 {
+            state = state.advance().new_state;
+        }
+
+        let expected: ResourceState = serde_json::from_str(EXPECTED).unwrap();
+
+        assert_eq!(state.resource_state, expected);
+    }
+
+    #[test]
+    fn loop_around() {
+        const INIT: &str = indoc::indoc! {r#"
+            {
+                "board": [
+                    [0, 0, 0, 0, 0],
+                    [0, 5, 5, 6, 0],
+                    [0, 8, 0, 6, 0],
+                    [0, 8, 7, 7, 0],
+                    [0, 0, 0, 0, 0]
+                ],
+                "resourceState": [
+                    [
+                        [0, 0, 0, 0, 0],
+                        [0, 1, 0, 0, 0],
+                        [0, 0, 0, 0, 0],
+                        [0, 0, 0, 0, 0],
+                        [0, 0, 0, 0, 0]
+                    ],
+                    [
+                        [0, 0, 0, 0, 0],
+                        [0, 0, 0, 0, 0],
+                        [0, 0, 0, 0, 0],
+                        [0, 0, 0, 1, 0],
+                        [0, 0, 0, 0, 0]
+                    ]
+                ]
+            }
+        "#};
+
+        const EXPECTED: &str = indoc::indoc! {
+            r#"
+            [
+                [
+                    [0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0],
+                    [0, 0, 1, 0, 0],
+                    [0, 0, 0, 0, 0]
+                ],
+                [
+                    [0, 0, 0, 0, 0],
+                    [0, 0, 1, 0, 0],
+                    [0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0]
+                ]
+            ]
+            "#
+        };
+
+        let initial: GameState = serde_json::from_str(INIT).unwrap();
+
+        let mut state = initial.clone();
+
+        for _ in 0..5 {
+            state = state.advance().new_state;
+        }
+
+        let expected: ResourceState = serde_json::from_str(EXPECTED).unwrap();
+
+        assert_eq!(state.resource_state, expected);
+    }
+
+    #[test]
+    fn diamond_chipper_and_burner() {
+        const INIT: &str = indoc::indoc! {r#"
+            {
+                "board": [
+                    [0, 0, 0, 0, 0],
+                    [0, 0, 9, 0, 0],
+                    [0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 10],
+                    [0, 0, 0, 0, 0]
+                ],
+                "resourceState": [
+                    [
+                        [0, 0, 0, 0, 0],
+                        [0, 0, 2, 0, 0],
+                        [0, 0, 0, 0, 0],
+                        [0, 0, 0, 0, 123],
+                        [0, 0, 0, 0, 0]
+                    ],
+                    [
+                        [0, 0, 0, 0, 0],
+                        [0, 0, 1, 0, 0],
+                        [0, 0, 0, 0, 0],
+                        [0, 0, 0, 0, 321],
+                        [0, 0, 0, 0, 0]
+                    ]
+                ]
+            }
+        "#};
+
+        const EXPECTED: &str = indoc::indoc! {
+            r#"
+            [
+                [
+                    [0, 0, 0, 0, 0],
+                    [0, 1, 0, 0, 0],
+                    [0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0]
+                ],
+                [
+                    [0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0],
+                    [0, 0, 2, 0, 0],
+                    [0, 0, 0, 0, 0],
                     [0, 0, 0, 0, 0]
                 ]
             ]

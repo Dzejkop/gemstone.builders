@@ -1,6 +1,7 @@
 pragma circom 2.0.0;
 
 include "circomlib/circuits/bitify.circom";
+include "circomlib/circuits/gates.circom";
 include "circomlib/circuits/mux1.circom";
 include "circomlib/circuits/mux4.circom";
 include "circomlib/circuits/comparators.circom";
@@ -45,21 +46,24 @@ template Cell() {
   signal output out[N()];
   // The outputs at neighbour cells
   signal output neighboursOutput[N()][4];
+  // The import output
+  signal output imports[N()];
   // The export output
   signal output exports[N()];
 
+  // Buildings
   var EMPTY = 0;
   var CARBON_MINE = 1;
-  var DOWN_BELT = 2;
+  var DIAMOND_IMPORTER = 2;
   var EXPORTER = 3;
-  var COMPRESSOR = 4;
-  var FIRST_UNDEFINED = 5;
-  var UD05 = 5;
-  var UD06 = 6;
-  var UD07 = 7;
-  var UD08 = 8;
-  var UD09 = 9;
-  var UD10 = 10;
+  var CARBON_COMPRESSOR = 4;
+  var RIGHT_BELT = 5;
+  var DOWN_BELT = 6;
+  var LEFT_BELT = 7;
+  var UP_BELT = 8;
+  var DIAMOND_CHIPPER = 9; // 2 CRBN + 1 DMND => 1 CRBN (left) + 2 DMND (down)
+  var BURNER = 10;
+  var FIRST_UNDEFINED = 11;
   var UD11 = 11;
   var UD12 = 12;
   var UD13 = 13;
@@ -67,13 +71,31 @@ template Cell() {
   var UD15 = 15;
   var NUM_BUILDINGS = 16;
 
+  // Resources
+  var CRBN = 0;
+  var DMND = 1;
+
+  // Directions
+  var R = 0;
+  var D = 1;
+  var L = 2;
+  var U = 3;
+
   component n2b = Num2Bits(4);
   n2b.in <== building;
 
   // ### Conditions ###
   component atLeastTwoCarbonPresent = GreaterEqThan(32);
-  atLeastTwoCarbonPresent.in[0] <== state[0];
+  atLeastTwoCarbonPresent.in[0] <== state[CRBN];
   atLeastTwoCarbonPresent.in[1] <== 2;
+
+  component atLeastOneDiamondPresent = GreaterEqThan(32);
+  atLeastOneDiamondPresent.in[0] <== state[DMND];
+  atLeastOneDiamondPresent.in[1] <== 1;
+
+  component diamondChipperShouldProduce = AND();
+  diamondChipperShouldProduce.a <== atLeastOneDiamondPresent.out;
+  diamondChipperShouldProduce.b <== atLeastTwoCarbonPresent.out;
 
   component compressorCarbonState = Mux1();
   compressorCarbonState.s <== atLeastTwoCarbonPresent.out;
@@ -85,29 +107,51 @@ template Cell() {
   compressorDiamondOutput.c[0] <== 0; // Not enough carbon, nothing
   compressorDiamondOutput.c[1] <== 1; // Enough carbon,
 
+  component diamondChipperCarbonState = Mux1();
+  diamondChipperCarbonState.s <== diamondChipperShouldProduce.out;
+  diamondChipperCarbonState.c[0] <== state[CRBN];
+  diamondChipperCarbonState.c[1] <== state[CRBN] - 2;
+
+  component diamondChipperDiamondState = Mux1();
+  diamondChipperDiamondState.s <== diamondChipperShouldProduce.out;
+  diamondChipperDiamondState.c[0] <== state[DMND];
+  diamondChipperDiamondState.c[1] <== state[DMND] - 1;
+
+  component diamondChipperCarbonOutput = Mux1();
+  diamondChipperCarbonOutput.s <== diamondChipperShouldProduce.out;
+  diamondChipperCarbonOutput.c[0] <== 0;
+  diamondChipperCarbonOutput.c[1] <== 1;
+
+  component diamondChipperDiamondOutput = Mux1();
+  diamondChipperDiamondOutput.s <== diamondChipperShouldProduce.out;
+  diamondChipperDiamondOutput.c[0] <== 0;
+  diamondChipperDiamondOutput.c[1] <== 2;
+
   // ### State muxes ###
   component mux[2];
 
-  mux[0] = Mux4();
-  mux[0].s <== n2b.out;
-  // Every building except empty and compressor destroys carbon
+  mux[CRBN] = Mux4();
+  mux[CRBN].s <== n2b.out;
+  // Every building except empty, carbon compressor and diamond chipper destroys carbon
   for (var b = 0; b < NUM_BUILDINGS; b++) {
-    if (b != EMPTY && b != COMPRESSOR) {
-      mux[0].c[b] <== 0;
+    if (b != EMPTY && b != CARBON_COMPRESSOR && b != DIAMOND_CHIPPER) {
+      mux[CRBN].c[b] <== 0;
     }
   }
-  mux[0].c[EMPTY] <== state[0]; // persist state
-  mux[0].c[COMPRESSOR] <== compressorCarbonState.out;
+  mux[CRBN].c[EMPTY] <== state[0]; // persist state
+  mux[CRBN].c[CARBON_COMPRESSOR] <== compressorCarbonState.out;
+  mux[CRBN].c[DIAMOND_CHIPPER] <== diamondChipperCarbonState.out;
 
-  mux[1] = Mux4();
-  mux[1].s <== n2b.out;
-  // Every building except empty destroys diamonds
+  mux[DMND] = Mux4();
+  mux[DMND].s <== n2b.out;
+  // Every building except empty and DIAMOND_CHIPPER destroys diamonds
   for (var b = 0; b < NUM_BUILDINGS; b++) {
-    if (b != EMPTY) {
-      mux[1].c[b] <== 0;
+    if (b != EMPTY && b != DIAMOND_CHIPPER) {
+      mux[DMND].c[b] <== 0;
     }
   }
-  mux[1].c[EMPTY] <== state[1]; // persist state
+  mux[DMND].c[EMPTY] <== state[DMND]; // persist state
+  mux[DMND].c[DIAMOND_CHIPPER] <== diamondChipperDiamondState.out;
 
 
   // ### Neighbour muxes ###
@@ -145,64 +189,130 @@ template Cell() {
     }
   }
 
+  // ### Import muxes ###
+  component iMux[N()];
+  for (var r = 0; r < N(); r++) {
+    iMux[r] = Mux4();
+    iMux[r].s <== n2b.out;
+
+    // Only DIAMOND_IMPORTER imports anything
+    for (var b = 0; b < NUM_BUILDINGS; b++) {
+      if (b != DIAMOND_IMPORTER) {
+        iMux[r].c[b] <== 0;
+      }
+    }
+  }
+
+  iMux[CRBN].c[DIAMOND_IMPORTER] <== 0;
+  iMux[DMND].c[DIAMOND_IMPORTER] <== 1;
+
   // ### Logic ###
   // Right - Carbon
-  nMux[0][0].c[CARBON_MINE] <== 0;
-  nMux[0][0].c[DOWN_BELT] <== 0;
-  nMux[0][0].c[EXPORTER] <== 0;
-  nMux[0][0].c[COMPRESSOR] <== 0;
+  nMux[CRBN][R].c[CARBON_MINE] <== 0;
+  nMux[CRBN][R].c[DIAMOND_IMPORTER] <== 0;
+  nMux[CRBN][R].c[EXPORTER] <== 0;
+  nMux[CRBN][R].c[CARBON_COMPRESSOR] <== 0;
+  nMux[CRBN][R].c[RIGHT_BELT] <== state[CRBN];
+  nMux[CRBN][R].c[DOWN_BELT] <== 0;
+  nMux[CRBN][R].c[LEFT_BELT] <== 0;
+  nMux[CRBN][R].c[UP_BELT] <== 0;
+  nMux[CRBN][R].c[DIAMOND_CHIPPER] <== 0;
+  nMux[CRBN][R].c[BURNER] <== 0;
 
   // Right - Diamond
-  nMux[1][0].c[CARBON_MINE] <== 0;
-  nMux[1][0].c[DOWN_BELT] <== 0;
-  nMux[1][0].c[EXPORTER] <== 0;
-  nMux[1][0].c[COMPRESSOR] <== compressorDiamondOutput.out;
+  nMux[DMND][R].c[CARBON_MINE] <== 0;
+  nMux[DMND][R].c[DIAMOND_IMPORTER] <== 0;
+  nMux[DMND][R].c[EXPORTER] <== 0;
+  nMux[DMND][R].c[CARBON_COMPRESSOR] <== compressorDiamondOutput.out;
+  nMux[DMND][R].c[RIGHT_BELT] <== state[DMND];
+  nMux[DMND][R].c[DOWN_BELT] <== 0;
+  nMux[DMND][R].c[LEFT_BELT] <== 0;
+  nMux[DMND][R].c[UP_BELT] <== 0;
+  nMux[DMND][R].c[DIAMOND_CHIPPER] <== 0;
+  nMux[DMND][R].c[BURNER] <== 0;
 
   // Down - Carbon
-  nMux[0][1].c[CARBON_MINE] <== 1; // mine (1) produces carbon below (1)
-  nMux[0][1].c[DOWN_BELT] <== state[0]; // down belt (2) moves down (1)
-  nMux[0][1].c[EXPORTER] <== 0;
-  nMux[0][1].c[COMPRESSOR] <== 0;
+  nMux[CRBN][D].c[CARBON_MINE] <== 1; // mine (1) produces carbon below (1)
+  nMux[CRBN][D].c[DIAMOND_IMPORTER] <== 0;
+  nMux[CRBN][D].c[EXPORTER] <== 0;
+  nMux[CRBN][D].c[CARBON_COMPRESSOR] <== 0;
+  nMux[CRBN][D].c[RIGHT_BELT] <== 0;
+  nMux[CRBN][D].c[DOWN_BELT] <== state[CRBN]; // down belt (2) moves down (1)
+  nMux[CRBN][D].c[LEFT_BELT] <== 0;
+  nMux[CRBN][D].c[UP_BELT] <== 0;
+  nMux[CRBN][D].c[DIAMOND_CHIPPER] <== 0;
+  nMux[CRBN][D].c[BURNER] <== 0;
 
   // Down - Diamond
-  nMux[1][1].c[CARBON_MINE] <== 0;
-  nMux[1][1].c[DOWN_BELT] <== state[1]; // down belt (2) moves down (1)
-  nMux[1][1].c[EXPORTER] <== 0;
-  nMux[1][1].c[COMPRESSOR] <== 0;
+  nMux[DMND][D].c[CARBON_MINE] <== 0;
+  nMux[DMND][D].c[DIAMOND_IMPORTER] <== 1;
+  nMux[DMND][D].c[EXPORTER] <== 0;
+  nMux[DMND][D].c[CARBON_COMPRESSOR] <== 0;
+  nMux[DMND][D].c[RIGHT_BELT] <== 0;
+  nMux[DMND][D].c[DOWN_BELT] <== state[DMND]; // down belt (2) moves down (1)
+  nMux[DMND][D].c[LEFT_BELT] <== 0;
+  nMux[DMND][D].c[UP_BELT] <== 0;
+  nMux[DMND][D].c[DIAMOND_CHIPPER] <== diamondChipperDiamondOutput.out;
+  nMux[DMND][D].c[BURNER] <== 0;
 
   // Left - Carbon
-  nMux[0][2].c[CARBON_MINE] <== 0;
-  nMux[0][2].c[DOWN_BELT] <== 0;
-  nMux[0][2].c[EXPORTER] <== 0;
-  nMux[0][2].c[COMPRESSOR] <== 0;
+  nMux[CRBN][L].c[CARBON_MINE] <== 0;
+  nMux[CRBN][L].c[DIAMOND_IMPORTER] <== 0;
+  nMux[CRBN][L].c[EXPORTER] <== 0;
+  nMux[CRBN][L].c[CARBON_COMPRESSOR] <== 0;
+  nMux[CRBN][L].c[RIGHT_BELT] <== 0;
+  nMux[CRBN][L].c[DOWN_BELT] <== 0;
+  nMux[CRBN][L].c[LEFT_BELT] <== state[CRBN];
+  nMux[CRBN][L].c[UP_BELT] <== 0;
+  nMux[CRBN][L].c[DIAMOND_CHIPPER] <== diamondChipperCarbonOutput.out;
+  nMux[CRBN][L].c[BURNER] <== 0;
 
   // Left - Diamond
-  nMux[1][2].c[CARBON_MINE] <== 0;
-  nMux[1][2].c[DOWN_BELT] <== 0;
-  nMux[1][2].c[EXPORTER] <== 0;
-  nMux[1][2].c[COMPRESSOR] <== 0;
+  nMux[DMND][L].c[CARBON_MINE] <== 0;
+  nMux[DMND][L].c[DIAMOND_IMPORTER] <== 0;
+  nMux[DMND][L].c[EXPORTER] <== 0;
+  nMux[DMND][L].c[CARBON_COMPRESSOR] <== 0;
+  nMux[DMND][L].c[RIGHT_BELT] <== 0;
+  nMux[DMND][L].c[DOWN_BELT] <== 0;
+  nMux[DMND][L].c[LEFT_BELT] <== state[DMND];
+  nMux[DMND][L].c[UP_BELT] <== 0;
+  nMux[DMND][L].c[DIAMOND_CHIPPER] <== 0;
+  nMux[DMND][L].c[BURNER] <== 0;
 
   // Up - Carbon
-  nMux[0][3].c[CARBON_MINE] <== 0;
-  nMux[0][3].c[DOWN_BELT] <== 0;
-  nMux[0][3].c[EXPORTER] <== 0;
-  nMux[0][3].c[COMPRESSOR] <== 0;
+  nMux[CRBN][U].c[CARBON_MINE] <== 0;
+  nMux[CRBN][U].c[DIAMOND_IMPORTER] <== 0;
+  nMux[CRBN][U].c[EXPORTER] <== 0;
+  nMux[CRBN][U].c[CARBON_COMPRESSOR] <== 0;
+  nMux[CRBN][U].c[RIGHT_BELT] <== 0;
+  nMux[CRBN][U].c[DOWN_BELT] <== 0;
+  nMux[CRBN][U].c[LEFT_BELT] <== 0;
+  nMux[CRBN][U].c[UP_BELT] <== state[CRBN];
+  nMux[CRBN][U].c[DIAMOND_CHIPPER] <== 0;
+  nMux[CRBN][U].c[BURNER] <== 0;
 
-  // Up - Carbon
-  nMux[1][3].c[CARBON_MINE] <== 0;
-  nMux[1][3].c[DOWN_BELT] <== 0;
-  nMux[1][3].c[EXPORTER] <== 0;
-  nMux[1][3].c[COMPRESSOR] <== 0;
+  // Up - Diamond
+  nMux[DMND][U].c[CARBON_MINE] <== 0;
+  nMux[DMND][U].c[DIAMOND_IMPORTER] <== 0;
+  nMux[DMND][U].c[EXPORTER] <== 0;
+  nMux[DMND][U].c[CARBON_COMPRESSOR] <== 0;
+  nMux[DMND][U].c[RIGHT_BELT] <== 0;
+  nMux[DMND][U].c[DOWN_BELT] <== 0;
+  nMux[DMND][U].c[LEFT_BELT] <== 0;
+  nMux[DMND][U].c[UP_BELT] <== state[DMND];
+  nMux[DMND][U].c[DIAMOND_CHIPPER] <== 0;
+  nMux[DMND][U].c[BURNER] <== 0;
 
   for (var r = 0; r < N(); r++) {
     out[r] <== mux[r].out;
 
-    neighboursOutput[r][0] <== nMux[r][0].out;
-    neighboursOutput[r][1] <== nMux[r][1].out;
-    neighboursOutput[r][2] <== nMux[r][2].out;
-    neighboursOutput[r][3] <== nMux[r][3].out;
+    neighboursOutput[r][R] <== nMux[r][R].out;
+    neighboursOutput[r][D] <== nMux[r][D].out;
+    neighboursOutput[r][L] <== nMux[r][L].out;
+    neighboursOutput[r][U] <== nMux[r][U].out;
 
     exports[r] <== eMux[r].out;
+    imports[r] <== iMux[r].out;
   }
 }
 
@@ -248,7 +358,8 @@ template Factory(B) {
 
   component cells[B][B];
   component cellReducers[B][B];
-  component accumulators[N()];
+  component importAccumulators[N()];
+  component exportAccumulators[N()];
 
   signal output resourceOutputState[N()][B][B];
   signal output resourceOutput[N()];
@@ -308,14 +419,17 @@ template Factory(B) {
 
   // TODO: Handle output state
   for (var r = 0; r < N(); r++) {
-    accumulators[r] = GridAccumulate(B);
+    importAccumulators[r] = GridAccumulate(B);
+    exportAccumulators[r] = GridAccumulate(B);
 
     for (var y = 0; y < B; y++) {
       for (var x = 0; x < B; x++) {
-        accumulators[r].in[y][x] <== cells[y][x].exports[r];
+        importAccumulators[r].in[y][x] <== cells[y][x].imports[r];
+        exportAccumulators[r].in[y][x] <== cells[y][x].exports[r];
       }
     }
 
-    resourceOutput[r] <== accumulators[r].out;
+    resourceInput[r] === importAccumulators[r].out;
+    resourceOutput[r] <== exportAccumulators[r].out;
   }
 }
