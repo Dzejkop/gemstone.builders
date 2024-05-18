@@ -17,7 +17,7 @@ mod game;
 
 struct App {
     pub is_running: AtomicBool,
-    pub game: Mutex<Option<game::GameState>>,
+    pub game: Mutex<game::GameState>,
 }
 
 #[tracing::instrument]
@@ -29,32 +29,23 @@ async fn simulate(Json(game): Json<GameState>) -> Json<GameState> {
 async fn update_board(State(app): State<Arc<App>>, Json(new_board): Json<Board>) {
     let mut game = app.game.lock().await;
 
-    if let Some(game) = game.as_mut() {
-        game.board = new_board;
-        game.resource_state = game::empty_state();
-    } else {
-        *game = Some(GameState {
-            board: new_board,
-            resource_state: game::empty_state(),
-        });
-    }
+    *game = GameState {
+        board: new_board,
+        resource_state: game::empty_state(),
+    };
 }
 
 #[tracing::instrument(skip(app))]
 async fn delete_board(State(app): State<Arc<App>>) {
     let mut game = app.game.lock().await;
-    *game = None;
+    *game = GameState::empty();
 }
 
 #[tracing::instrument(skip(app))]
-async fn get_board(State(app): State<Arc<App>>) -> Json<Option<Board>> {
+async fn get_board(State(app): State<Arc<App>>) -> Json<Board> {
     let game = app.game.lock().await;
 
-    if let Some(game) = game.as_ref() {
-        Json(Some(game.board))
-    } else {
-        Json(None)
-    }
+    Json(game.board)
 }
 
 #[tracing::instrument(skip(app))]
@@ -95,7 +86,7 @@ async fn main() -> anyhow::Result<()> {
 
     let app = Arc::new(App {
         is_running: AtomicBool::new(false),
-        game: Mutex::new(None),
+        game: Mutex::new(GameState::empty()),
     });
 
     let router = Router::new()
