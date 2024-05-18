@@ -1,21 +1,21 @@
 import React from "react";
 import Grid from "./Grid";
-import { Belt, Factory, Mine, Exporter, Coal, Diamont } from "./Element";
+import ControlPanel from "./ControlPanel";
+import State from "./State";
 
 function MainGrid() {
   return (
     <div className="main-container">
       <div className="column">
-        <Grid />
+        Factory
+        <div className="board">
+          <Grid className="fields" />
+          <Grid className="resources"/>
+        </div>
+        <ControlPanel />
       </div>
       <div className="column">
-        Controls
-        <Factory />
-        <Belt />
-        <Mine />
-        <Exporter />
-        <Coal />
-        <Diamont />
+        <State />
       </div>
     </div>
     );  

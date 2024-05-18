@@ -8,10 +8,8 @@ import "./App.css";
 import NotConnected from "./components/NotConnected";
 import Header from "./components/Header";
 import MainGrid from "./components/MainGrid";
-import ControlPanel from "./components/ControlPanel";
 import Footer from "./components/Footer";
-
-export const UserContext = React.createContext(null);
+import { UserContext } from "./UserContext";
 
 function AppReady() {
   const { isConnected, address } = useAccount();

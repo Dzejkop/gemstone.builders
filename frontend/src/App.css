@@ -70,12 +70,80 @@ body, html {
   box-sizing: border-box;
 }
 
+.footer {
+  background-color: #333;
+  padding: 10px;
+}
+
+.subtitle {
+  line-height: 4rem;
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-template-rows: repeat(5, 1fr);
+  gap: 10px;
+  width: 400px;
+  height: 400px;
+  margin: 0 auto;
+  padding: 20px;
+  position: absolute;
+  z-index: 100;
+}
+
+.grid-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+  border: 1px solid #626161;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.grid-item:hover {
+  background-color: #d1c43964;
+}
+
+.base-image {
+  display: none;
+}
+
+.image-element {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid #383838;
+  box-sizing: border-box;
+}
+
+.board { 
+  height: 600px;
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  width: 600px;
+}
+
+.element-container {
+  position: relative;
+  width: 90px;
+  height: 90px;
+}
+
+.element-name {
+  font-size: 0.6rem;
+  padding: 10px;
+}
+
 .control-panel {
   padding: 20px;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   flex-basis: 100%;
   flex: 1;
+  gap: 10px;
 }
 
 .control-button {
@@ -89,47 +157,43 @@ body, html {
   border: 2px solid #777;
 }
 
-.footer {
-  background-color: #333;
-  padding: 10px;
-}
-
-.subtitle {
-  line-height: 4rem;
-}
-
-.grid-container {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  grid-template-rows: repeat(4, 1fr);
-  gap: 10px;
-  width: 400px;
-  height: 400px;
-  margin: 0 auto;
-}
-
-.grid-item {
+.state-container {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #f0f0f0;
-  border: 1px solid #ccc;
-  cursor: pointer;
-  font-size: 16px;
-  font-weight: bold;
+  flex-direction: column;
+  gap: 20px;
 }
 
-.grid-item:hover {
-  background-color: #e0e0e0;
+.state-item {
+  margin-bottom: 1rem;
 }
 
-.base-image {
-  display: none;
-}
-
-.image-element {
-  position: relative;
+.rotating-image-container {
+  display: inline-block;
   overflow: hidden;
-  border: 1px solid #383838;
-  box-sizing: border-box;
 }
+
+.rotating-image {
+  width: 100px; /* Adjust size as needed */
+  height: 100px; /* Adjust size as needed */
+  animation: rotate360 2s linear infinite;
+}
+
+@keyframes rotate360 {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.simulation, .upload {
+  display: flex;
+  gap: 20px;
+}
+
+.row-title {
+  line-height: 5rem;
+}
+
+

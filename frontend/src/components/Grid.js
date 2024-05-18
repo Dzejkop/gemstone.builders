@@ -1,17 +1,17 @@
 import React from 'react';
-import { Belt, Factory, Mine, Exporter, Coal, Diamont } from "./Element";
+import { Belt, Factory, Mine, Exporter, Coal, Diamond, Empty } from "./Element";
 
 const Grid = () => {
   const handleClick = (row, col) => {
     console.log(`Row: ${row}, Column: ${col}`);
   };
 
-  const elements = [Belt, Factory, Mine, Exporter, Coal, Diamont ];
+  const elements = [Belt, Factory, Mine, Exporter, Coal, Diamond, Empty ];
 
   const renderGrid = () => {
     const grid = [];
-    for (let row = 0; row < 4; row++) {
-      for (let col = 0; col < 4; col++) {
+    for (let row = 0; row < 5; row++) {
+      for (let col = 0; col < 5; col++) {
         const randomIndex = Math.floor(Math.random() * elements.length);
         const ComponentToRender = elements[randomIndex];
         grid.push(
