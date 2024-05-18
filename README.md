@@ -1,13 +1,32 @@
-# zk-hack-diamonds
+# Gemstone Builders
+
+Gemstone Builders is a resource gathering type of game with a ZK rule engine and on-chain global economy.
+
+Deployed to Ethereum Sepolia testnet and ZK-Sync Era.
+
+It was created as a project for ZK Hack Kraków 2024.
+
+## Tech stack
+
+- ZK: circom, snarkjs
+- Local server: Rust, Solidity
+- Local client: JS/React
+
+## Chellanges
+
+- Game board size limited to 16x16 - proving time for bigger boards was taking too long to provide decent UX
+- Bringing game rules to the curcuit
 
 ## Running locally
 
 1. Start anvil
+
 ```
 > anvil
 ```
 
 2. Deploy & setup the contracts
+
 ```
 > cd contracts
 > source deployLocal.sh
@@ -17,31 +36,22 @@
 > bash registerFactory.sh
 ```
 
-3. If cleaning up the state
-```
-> rm -rf state
-```
+3. Start prover
 
-4. Start prover
 ```
 > cargo run --release -p prover
 ```
 
-And cancel it after the first transaction
+4. Start browser client
 
-5. Update the local state
-In the file `./state/game.json`
-
-Ensure the the factory looks like this
 ```
-1  0  0  0  0
-2  0  0  0  0
-2  0  0  0  0
-2  0  0  0  0
-3  0  0  0  0
+> cd frontend
+> npm start
 ```
 
-1. Start the prover again
+### Need to clean the state?
+
 ```
+> rm -rf state
 > cargo run --release -p prover
 ```
