@@ -30,6 +30,11 @@ const State = ({upload, setMode, setSimulationResources, balance, simulate, fetc
         simulate();
     }
 
+    const uploadAndProduce = () => {
+        upload();
+        stopSimulation();
+    }
+
     return (
         <div className="state-container">
             <div className="title">State</div>
@@ -52,7 +57,7 @@ const State = ({upload, setMode, setSimulationResources, balance, simulate, fetc
             {simulationRunning && (
                 <div className="state-item upload">
                 <div className="row-title">Run on chain</div>
-                <Upload disabled onClick={upload}/>
+                <Upload disabled onClick={uploadAndProduce}/>
             </div>
             )}  
         </div>

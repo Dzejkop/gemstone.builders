@@ -7,6 +7,7 @@ const buildings = {
   [consts.MINE]: Mine,
   [consts.BELT_DOWN]: Belt,
   [consts.EXPORTER]: Exporter,
+  [consts.Fa]: Exporter,
 }
 
 const BuildingGrid = ({items, type}) => {
@@ -16,7 +17,7 @@ const BuildingGrid = ({items, type}) => {
     for (let row = 0; row < 5; row++) {
       for (let col = 0; col < 5; col++) {
         const index = items[row][col];
-        const ComponentToRender = buildings[index];
+        const ComponentToRender = consts.BUILDINGS[index];
 
         grid.push(
           <div
