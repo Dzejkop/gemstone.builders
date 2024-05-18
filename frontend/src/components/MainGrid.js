@@ -87,7 +87,7 @@ const MainGrid = ({mode, setMode}) => {
             <ClickableGrid build={build} />
           </div>
         )}
-        <ControlPanel selectedBuilding={selectedBuilding} selectBuilding={selectBuilding}/>
+        {isSimulation && <ControlPanel selectedBuilding={selectedBuilding} selectBuilding={selectBuilding}/>}
       </div>
       <div className="column">
         <State newGameState={newGameState} setMode={setMode} setSimulationResources={setSimulationResources} />

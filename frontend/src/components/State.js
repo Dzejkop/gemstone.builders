@@ -5,10 +5,9 @@ import ModeSwitch from "./ModeSwitch";
 
 import API from "../api";
 
-const State = ({newGameState, resources, setMode, setSimulationResources}) => {
+const State = ({newGameState, setMode, setSimulationResources}) => {
     const [simulationRunning, setSimulationRunning] = useState(null);
     const [steps, setSteps] = useState(0);
-    const [submitted, setSubmitted] = useState(false);
     const [counts, setCounts] = useState([0, 0]);
 
     console.log("State", newGameState);
@@ -16,6 +15,9 @@ const State = ({newGameState, resources, setMode, setSimulationResources}) => {
     const startSimulation = () => {
         setSimulationRunning(true);
         setMode("simulation");
+        setSimulationResources([]);
+        setSteps(0);
+        setCounts([0, 0]);
     }
 
     const stopSimulation = () => {
@@ -55,7 +57,7 @@ const State = ({newGameState, resources, setMode, setSimulationResources}) => {
         <div className="state-container">
             <div className="title">State</div>
             <div className="state-item resources">
-                Mode: {simulationRunning ? "Simulation" : "On-Chain"}
+                Mode: {simulationRunning ? "Building" : "Production"}
                 <ModeSwitch simulation={simulationRunning} startSimulation={startSimulation} stopSimulation={stopSimulation} />
             </div>
             <div className="state-item resources">
@@ -70,11 +72,11 @@ const State = ({newGameState, resources, setMode, setSimulationResources}) => {
                     <div className="row-title">Steps: {steps}</div>
                 </div>
             )}
-            {!simulationRunning && (
+            {simulationRunning && (
                 <div className="state-item upload">
-                    <div className="row-title">Run on chain</div>
-                    <Upload disabled onClick={upload}/>
-                </div>
+                <div className="row-title">Run on chain</div>
+                <Upload disabled onClick={upload}/>
+            </div>
             )}  
         </div>
     );  

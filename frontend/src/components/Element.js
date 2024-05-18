@@ -41,5 +41,5 @@ export const Empty = ({displayName, onClick = () => {}, classes = ""}) => <Eleme
 export const Play = ({displayName, onClick = () => {}, classes = ""}) => <Element top={361} left={538} name="Next production step" displayName={displayName} onClick={onClick} classes={classes} />
 export const Stop = ({displayName, onClick = () => {}, classes = ""}) => <Element top={809} left={362} name="Reset" displayName={displayName} onClick={onClick} classes={classes} />
 export const Upload = ({displayName, onClick = () => {}, classes = ""}) => <Element top={92} left={721} name="Upload" displayName={displayName} onClick={onClick} classes={classes} />
-export const StartSimulation = ({displayName, onClick = () => {}, classes = ""}) => <Element top={361} left={268} name="Simulation mode" displayName={displayName} onClick={onClick} classes={classes} />
-export const StopSimulation = ({displayName, onClick = () => {}, classes = ""}) => <Element top={270} left={268} name="On-chain mode" displayName={displayName} onClick={onClick} classes={classes} />
+export const StartSimulation = ({displayName, onClick = () => {}, classes = ""}) => <Element top={361} left={268} name="Building mode" displayName={displayName} onClick={onClick} classes={classes} />
+export const StopSimulation = ({displayName, onClick = () => {}, classes = ""}) => <Element top={270} left={268} name="Production mode" displayName={displayName} onClick={onClick} classes={classes} />
