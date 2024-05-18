@@ -19,13 +19,16 @@ contract FactoryTest is Test {
 
         factory.registerResource(0, resources[0]);
         factory.registerResource(1, resources[1]);
+
+        resources[0].mint(address(this), 1000);
+        resources[1].mint(address(this), 1000);
+
+        resources[0].transferOwnership(address(factory));
+        resources[1].transferOwnership(address(factory));
     }
 
     function test_Lock() public {
         console.log("Locking resources");
-
-        resources[0].mint(address(this), 1000);
-        resources[1].mint(address(this), 1000);
 
         resources[0].approve(address(factory), 1000);
         resources[1].approve(address(factory), 1000);
@@ -51,9 +54,6 @@ contract FactoryTest is Test {
     }
 
     function test_Step() public {
-        resources[0].mint(address(this), 1000);
-        resources[1].mint(address(this), 1000);
-
         resources[0].approve(address(factory), 1000);
         resources[1].approve(address(factory), 1000);
 
@@ -95,5 +95,10 @@ contract FactoryTest is Test {
                 0x0000000000000000000000000000000000000000000000000000000000000000
             ]
         );
+
+        uint256[2] memory balances = factory.userBalance();
+
+        assertEq(balances[0], 100);
+        assertEq(balances[1], 100);
     }
 }

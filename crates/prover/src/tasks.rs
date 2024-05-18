@@ -1,7 +1,11 @@
 use std::path::PathBuf;
+use std::str::FromStr;
 use std::sync::atomic::Ordering;
 use std::sync::Arc;
-use std::time::Duration;
+
+use alloy::network::EthereumSigner;
+use alloy::providers::ProviderBuilder;
+use alloy::signers::wallet::Wallet;
 
 use crate::calldata::CalldataRaw;
 use crate::App;
@@ -40,7 +44,6 @@ pub async fn main_loop(app: Arc<App>) -> anyhow::Result<()> {
         tracing::info!(board_hash = prover_input.board_hash, "Input ready");
 
         let input_file_path = working_dir.join(INPUT_FILE);
-        let witness_file_path = working_dir.join(WITNESS_FILE);
 
         let circuit_wasm_path = app.args.circuit_wasm.canonicalize()?;
         let zkey_path = app.args.zkey.canonicalize()?;
@@ -114,9 +117,35 @@ pub async fn main_loop(app: Arc<App>) -> anyhow::Result<()> {
         let calldata: CalldataRaw = serde_json::from_str(&calldata_in_brackets)?;
 
         tracing::info!("Submitting step");
-        tokio::time::sleep(Duration::from_secs_f32(0.0)).await;
+        let step_call = calldata.to_step_call()?;
+
+        let wallet = Wallet::from_str(&app.args.private_key)?;
+        let signer: EthereumSigner = wallet.into();
+        let provider = ProviderBuilder::new()
+            .with_recommended_fillers()
+            .signer(signer)
+            .on_http(app.args.rpc_url.parse()?);
+
+        let contract = crate::abi::Factory::new(app.args.factory_address.parse()?, provider);
+
+        let tx_builder = contract
+            .step(
+                step_call.pa,
+                step_call.pb,
+                step_call.pc,
+                step_call.publicInputs,
+            )
+            .gas(1_000_000);
+
+        let pending_tx = tx_builder.send().await?;
+        let tx_hash = pending_tx.watch().await?;
+
+        tracing::info!(?tx_hash, "Successfull state transition");
 
         tracing::info!("Advancing game");
         *game = game.clone().advance();
+
+        drop(game); // NEED TO DROP THE LOCK
+        app.cache_state().await?;
     }
 }

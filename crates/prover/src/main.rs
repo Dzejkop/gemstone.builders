@@ -85,7 +85,8 @@ struct Args {
     #[clap(
         short,
         long,
-        default_value = "https://ethereum-sepolia.blockpi.network/v1/rpc/public"
+        // default_value = "https://ethereum-sepolia.blockpi.network/v1/rpc/public"
+        default_value = "http://localhost:8545"
     )]
     pub rpc_url: String,
 
@@ -97,6 +98,13 @@ struct Args {
 
     #[clap(short, long, env, default_value = "./key.zkey")]
     pub zkey: PathBuf,
+
+    // Default value is first default anvil key
+    #[clap(short, long, env, default_value = "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80")]
+    pub private_key: String,
+
+    #[clap(short, long, env, default_value = "0x5FbDB2315678afecb367f032d93F642f64180aa3")]
+    pub factory_address: String,
 }
 
 #[tokio::main]
@@ -108,9 +116,6 @@ async fn main() -> anyhow::Result<()> {
 
     let working_dir = std::env::current_dir();
     tracing::info!(?working_dir, "Prover starting");
-
-    // let client = Http::new(args.rpc_url.parse()?);
-    // let _client: RpcClient<Http<reqwest::Client>> = RpcClient::new(client, false);
 
     tokio::fs::create_dir_all(&args.state_dir).await?;
 

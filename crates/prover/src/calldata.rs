@@ -1,7 +1,33 @@
 use serde::{Deserialize, Serialize};
 
+use crate::abi::Factory;
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct CalldataRaw(pub ([String; 2], [[String; 2]; 2], [String; 2], [String; 7]));
+
+impl CalldataRaw {
+    pub fn to_step_call(&self) -> anyhow::Result<Factory::stepCall> {
+        let calldata = &self.0;
+
+        Ok(Factory::stepCall {
+            pa: [calldata.0[0].parse()?, calldata.0[1].parse()?],
+            pb: [
+                [calldata.1[0][0].parse()?, calldata.1[0][1].parse()?],
+                [calldata.1[1][0].parse()?, calldata.1[1][1].parse()?],
+            ],
+            pc: [calldata.2[0].parse()?, calldata.2[1].parse()?],
+            publicInputs: [
+                calldata.3[0].parse()?,
+                calldata.3[1].parse()?,
+                calldata.3[2].parse()?,
+                calldata.3[3].parse()?,
+                calldata.3[4].parse()?,
+                calldata.3[5].parse()?,
+                calldata.3[6].parse()?,
+            ],
+        })
+    }
+}
 
 #[cfg(test)]
 mod tests {
@@ -32,26 +58,7 @@ mod tests {
         let in_brackets = format!("[{}]", SAMPLE);
 
         let parsed: CalldataRaw = serde_json::from_str(&in_brackets).unwrap();
-
-        let step_call = Factory::stepCall {
-            pa: [parsed.0 .0[0].parse()?, parsed.0 .0[1].parse()?],
-            pb: [
-                [parsed.0 .1[0][0].parse()?, parsed.0 .1[0][1].parse()?],
-                [parsed.0 .1[1][0].parse()?, parsed.0 .1[1][1].parse()?],
-            ],
-            pc: [parsed.0 .2[0].parse()?, parsed.0 .2[1].parse()?],
-            publicInputs: [
-                parsed.0 .3[0].parse()?,
-                parsed.0 .3[1].parse()?,
-                parsed.0 .3[2].parse()?,
-                parsed.0 .3[3].parse()?,
-                parsed.0 .3[4].parse()?,
-                parsed.0 .3[5].parse()?,
-                parsed.0 .3[6].parse()?,
-            ],
-        };
-
-        println!("step_call = {:#?}", step_call);
+        let step_call = parsed.to_step_call()?;
 
         let wallet =
             Wallet::from_str("0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80")?;

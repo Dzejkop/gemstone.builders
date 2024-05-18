@@ -4,8 +4,10 @@ pragma solidity ^0.8.13;
 import {IERC20} from "openzeppelin-contracts/contracts/token/ERC20/IERC20.sol";
 import {Ownable} from "openzeppelin-contracts/contracts/access/Ownable.sol";
 import {Groth16Verifier} from "./groth16_verifier.sol";
+import {Resource} from "./Resource.sol";
 
 contract Factory is Ownable {
+    uint256 constant NUM_RESOURCES = 2;
     uint256 CLEAR_STATE_HASH =
         19566192433199768019714648174629306541205224169280620721690837488103428951668;
 
@@ -23,12 +25,12 @@ contract Factory is Ownable {
     mapping(uint256 => uint256) public factoryStates;
 
     // Resource token contracts
-    IERC20[2] public resourceTokens;
+    Resource[NUM_RESOURCES] public resourceTokens;
 
     // Balances of resources per each player
-    mapping(address => uint256[2]) public balances;
+    mapping(address => uint256[NUM_RESOURCES]) public balances;
 
-    function registerResource(uint256 id, IERC20 token) external onlyOwner {
+    function registerResource(uint256 id, Resource token) external onlyOwner {
         resourceTokens[id] = token;
     }
 
@@ -41,22 +43,23 @@ contract Factory is Ownable {
 
     // Lock resources
     function lock(uint8[2] calldata amounts) external {
-        require(resourceTokens[0].balanceOf(msg.sender) >= amounts[0]);
-        require(resourceTokens[1].balanceOf(msg.sender) >= amounts[1]);
+        for (uint256 i = 0; i < NUM_RESOURCES; i++) {
+            require(resourceTokens[i].balanceOf(msg.sender) >= amounts[i]);
+        }
 
-        resourceTokens[0].transferFrom(msg.sender, address(this), amounts[0]);
-        resourceTokens[1].transferFrom(msg.sender, address(this), amounts[1]);
-
-        balances[msg.sender][0] = amounts[0];
-        balances[msg.sender][1] = amounts[1];
+        for (uint256 i = 0; i < NUM_RESOURCES; i++) {
+            resourceTokens[i].transferFrom(msg.sender, address(this), amounts[i]);
+            balances[msg.sender][i] = amounts[i];
+        }
     }
 
     function payout(uint8[2] calldata amounts) external {
-        require(balances[msg.sender][0] >= amounts[0]);
-        require(balances[msg.sender][1] >= amounts[1]);
-
-        resourceTokens[0].transfer(msg.sender, amounts[0]);
-        resourceTokens[1].transfer(msg.sender, amounts[1]);
+        for (uint256 i = 0; i < NUM_RESOURCES; i++) {
+            require(balances[msg.sender][i] >= amounts[i]);
+        }
+        for (uint256 i = 0; i < NUM_RESOURCES; i++) {
+            resourceTokens[i].transfer(msg.sender, amounts[i]);
+        }
     }
 
     function userBalance() external view returns (uint256[2] memory) {
@@ -73,18 +76,18 @@ contract Factory is Ownable {
         uint256 factoryHash = publicInputs[3];
         uint256 factoryState = publicInputs[4];
 
-        uint256[2] memory resourceInputs = [publicInputs[5], publicInputs[6]];
-        uint256[2] memory resourceOutputs = [publicInputs[1], publicInputs[2]];
+        uint256[NUM_RESOURCES] memory resourceInputs = [publicInputs[5], publicInputs[6]];
+        uint256[NUM_RESOURCES] memory resourceOutputs = [publicInputs[1], publicInputs[2]];
         uint256 outputStateHash = publicInputs[0];
 
         require(factoryHashes[msg.sender] == factoryHash);
         require(factoryStates[factoryHash] == factoryState);
 
-        uint256[2] memory userBalances = balances[msg.sender];
-
         // Require input to match balance
-        require(userBalances[0] >= resourceInputs[0]);
-        require(userBalances[1] >= resourceInputs[1]);
+        for (uint256 i = 0; i < NUM_RESOURCES; i++) {
+            // Must have at least that much in their balance
+            require(balances[msg.sender][i] >= resourceInputs[i]);
+        }
 
         // Verify the proof
         require(verifier.verifyProof(pa, pb, pc, publicInputs));
@@ -92,10 +95,19 @@ contract Factory is Ownable {
         // Update the state
         factoryStates[factoryHash] = outputStateHash;
 
+        // Mint or burn resources
+        for (uint256 i = 0; i < NUM_RESOURCES; i++) {
+            if (resourceOutputs[i] > resourceInputs[i]) {
+                resourceTokens[i].mint(msg.sender, resourceOutputs[i] - resourceInputs[i]);
+            } else {
+                resourceTokens[i].burn(msg.sender, resourceInputs[i] - resourceOutputs[i]);
+            }
+        }
+
         // Update the balances
-        userBalances[0] -= resourceInputs[0];
-        userBalances[1] -= resourceInputs[1];
-        userBalances[0] += resourceOutputs[0];
-        userBalances[1] += resourceOutputs[1];
+        for (uint256 i = 0; i < NUM_RESOURCES; i++) {
+            balances[msg.sender][i] -= resourceInputs[i];
+            balances[msg.sender][i] += resourceOutputs[i];
+        }
     }
 }
