@@ -1,7 +1,5 @@
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.App-logo {
+  image-rendering: pixelated;
 }
 
 .App-header {
@@ -92,6 +90,14 @@ body, html {
   line-height: 3rem;
 }
 
+.white {
+  color: white;
+}
+
+.no-decoration {
+  text-decoration: none;
+}
+
 .grid-container {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
@@ -141,7 +147,7 @@ body, html {
   box-sizing: border-box;
 }
 
-.board { 
+.board {
   height: 600px;
   position: relative;
   display: flex;
