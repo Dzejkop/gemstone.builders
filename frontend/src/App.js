@@ -1,6 +1,5 @@
-import React from "react";
+import React, { useState } from "react";
 import {
-  MetaMaskButton,
   useAccount,
   useSDK,
 } from "@metamask/sdk-react-ui";
@@ -13,15 +12,21 @@ import { UserContext } from "./UserContext";
 
 function AppReady() {
   const { isConnected, address } = useAccount();
+  const [ mode, setMode ] = useState("chain");
+
+  let classes = "App";
+  if (mode === "simulation") {
+    classes = `${classes} simulation`;
+  }
 
   return (
     <UserContext.Provider value={{ userAddress: address }}>
-      <div className="App">
+      <div className={classes}>
         {!isConnected && <NotConnected />
         }
         {isConnected && (<>
           <Header/>
-          <MainGrid/>
+          <MainGrid mode={mode} setMode={setMode}/>
           <Footer/>
         </>)}
       </div>

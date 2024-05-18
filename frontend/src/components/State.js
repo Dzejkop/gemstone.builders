@@ -1,35 +1,45 @@
 import React, { useState, useEffect } from "react";
-import Loader from "./Loader";
 import Resources from "./Resources";
 import { Play, Stop, Upload } from "./Element";
+import ModeSwitch from "./ModeSwitch";
 
 import API from "../api";
 
-const State = ({newGameState, resources}) => {
+const State = ({newGameState, resources, setMode, setSimulationResources}) => {
     const [simulationRunning, setSimulationRunning] = useState(null);
+    const [steps, setSteps] = useState(0);
     const [submitted, setSubmitted] = useState(false);
+
+    console.log("State", newGameState);
 
     const startSimulation = () => {
         setSimulationRunning(true);
+        setMode("simulation");
     }
 
-    console.log(simulationRunning);
+    const stopSimulation = () => {
+        setSimulationRunning(false);
+        setMode("chain");
+        setSteps(0);
+    }
+
+    const runSimulationStep = () => {
+        setSteps(steps + 1);
+    }
 
     useEffect(() => {
-        const sym = async () => {
-            if (simulationRunning === null || !simulationRunning) { return; }
+        if (!simulationRunning) { return; }
 
+        const sym = async () => {
+            
             const newState = await API.simulate(newGameState);
-            console.log(newState);
-            // Update resource counters
-            setSimulationRunning(false);
-          };
+            setSimulationResources(newState.resourceState);
+        };
         sym();
-    }, [simulationRunning, newGameState]);
+    }, [steps]);
 
 
     const upload = () => {
-        console.log("dddd");
         if (submitted) {
             return;
         }
@@ -42,19 +52,27 @@ const State = ({newGameState, resources}) => {
         <div className="state-container">
             <div className="title">State</div>
             <div className="state-item resources">
+                Mode: {simulationRunning ? "Simulation" : "On-Chain"}
+                <ModeSwitch simulation={simulationRunning} startSimulation={startSimulation} stopSimulation={stopSimulation} />
+            </div>
+            <div className="state-item resources">
                 <div className="row-title">Resources</div>
                 <Resources state={resources} />
             </div>
-            <div className="state-item simulation">
-                <div className="row-title">Simulate factory work</div>
-                {!simulationRunning && <Play displayName={true} onClick={startSimulation} />}
-                {simulationRunning && <Loader />}
-                <Stop displayName={true} onClick={() => setSimulationRunning(false)} />
-            </div>
-            <div className="state-item upload">
-                <div className="row-title">Run on chain</div>
-                <Upload disabled onClick={upload}/>
-            </div>
+            {simulationRunning && (
+                <div className="state-item simulation">
+                    <div className="row-title">Simulate factory work</div>
+                    <Play displayName={true} onClick={runSimulationStep} />
+                    <Stop displayName={true} onClick={stopSimulation} />
+                    <div>Steps: {steps}</div>
+                </div>
+            )}
+            {!simulationRunning && (
+                <div className="state-item upload">
+                    <div className="row-title">Run on chain</div>
+                    <Upload disabled onClick={upload}/>
+                </div>
+            )}  
         </div>
     );  
 }

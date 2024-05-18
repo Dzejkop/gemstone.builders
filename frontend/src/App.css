@@ -43,6 +43,10 @@ body, html {
   flex-direction: column;
 }
 
+.App.simulation {
+  background-color: #1a1542;
+}
+
 .header, .footer {
   background-color: #333;
   padding: 10px;
@@ -138,8 +142,12 @@ body, html {
 
 .element-container {
   position: relative;
-  width: 90px;
+  width: auto;
   height: auto;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
 }
 
 .element-name {

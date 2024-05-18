@@ -6,7 +6,6 @@ const get = async (endpoint) => {
 };
 
 const post = async (endpoint, data) => {
-    console.log("json",  JSON.stringify(data));
     const response = await fetch(url + endpoint, {
         method: "POST",
         headers: {
@@ -14,7 +13,12 @@ const post = async (endpoint, data) => {
         },
         body: JSON.stringify(data),
     });
-    return response.json();
+
+    try {
+        return await response.json();
+    } catch (e) {
+        return;
+    }
 };
 
 const deleteCall = async (endpoint) => {
