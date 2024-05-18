@@ -4,8 +4,8 @@ import { circomkit } from "./common";
 describe("assembly", () => {
   const B = 3;
   let circuit: WitnessTester<
-    ["board", "boardHash", "resourceState", "stateHash", "resourceInput"],
-    ["resourceOutputState", "outputStateHash", "resourceOutput"]
+    ["board", "boardHash", "resourceState", "stateHash", "resourceInput", "resourceOutputState"],
+    ["outputStateHash", "resourceOutput"]
   >;
 
   describe("basic", () => {
@@ -41,8 +41,6 @@ describe("assembly", () => {
           ],
           stateHash: "563012732457004937300219974948322150019032550112199487599075704750360529532",
           resourceInput: [0, 0],
-        },
-        {
           resourceOutputState: [
             [
               [0, 0, 0],
@@ -55,6 +53,8 @@ describe("assembly", () => {
               [0, 0, 0],
             ],
           ],
+        },
+        {
           outputStateHash: "563012732457004937300219974948322150019032550112199487599075704750360529532",
           resourceOutput: [0, 0],
         }
@@ -84,8 +84,6 @@ describe("assembly", () => {
           ],
           stateHash: "9300161517131298423169189188493243916136645938164971588530079193701860533735",
           resourceInput: [0, 0],
-        },
-        {
           resourceOutputState: [
             [
               [0, 0, 0],
@@ -98,6 +96,8 @@ describe("assembly", () => {
               [0, 0, 0],
             ],
           ],
+        },
+        {
           outputStateHash: "11416959632478696117663342021836357138051734868242263599280011231008452483710",
           resourceOutput: [0, 0],
         }

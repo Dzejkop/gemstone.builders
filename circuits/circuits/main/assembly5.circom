@@ -3,4 +3,4 @@ pragma circom 2.1.2;
 
 include "../assembly.circom";
 
-component main = Assembly(5);
+component main {public[boardHash, stateHash, resourceInput]} = Assembly(5);

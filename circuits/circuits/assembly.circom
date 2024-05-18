@@ -14,16 +14,25 @@ function yx2i(y, x, B) {
 template Assembly(B) {
   var S = B * B;
 
+  // Buildings on the board
   signal input board[B][B];
+  // Hash of the board
   signal input boardHash;
 
+  // State of resources on board
   signal input resourceState[N()][B][B];
+  // Hash of this state
   signal input stateHash;
 
+  // Resources imported by the factory
   signal input resourceInput[N()];
 
-  signal output resourceOutputState[N()][B][B];
+  // State of the resources after the factory step
+  signal input resourceOutputState[N()][B][B];
+  // Hash of the output state
   signal output outputStateHash;
+
+  // Resources exported by the factory
   signal output resourceOutput[N()];
 
   // Calculate the board
@@ -32,7 +41,7 @@ template Assembly(B) {
   factory.resourceState <== resourceState;
   factory.resourceInput <== resourceInput;
 
-  resourceOutputState <== factory.resourceOutputState;
+  resourceOutputState === factory.resourceOutputState;
   resourceOutput <== factory.resourceOutput;
 
   // Hash the board

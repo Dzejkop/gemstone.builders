@@ -19,6 +19,11 @@
   "assembly5": {
     "file": "assembly",
     "template": "Assembly",
-    "params": [5]
+    "params": [5],
+    "pubs": [
+      "boardHash",
+      "stateHash",
+      "resourceInput"
+    ]
   }
 }
