@@ -69,6 +69,7 @@ async fn stop_game(State(app): State<Arc<App>>) {
 }
 
 #[derive(Debug, Clone, Parser)]
+#[clap(version)]
 struct Args {
     #[clap(short, long, default_value = "0.0.0.0:3123")]
     pub addr: SocketAddr,
