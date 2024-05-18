@@ -7,14 +7,15 @@ use alloy::network::EthereumSigner;
 use alloy::providers::ProviderBuilder;
 use alloy::signers::wallet::Wallet;
 
+use crate::app::App;
 use crate::calldata::CalldataRaw;
-use crate::App;
 
 const INPUT_FILE: &str = "input.json";
 const WITNESS_FILE: &str = "witness.wtns";
 const PROOF_FILE: &str = "proof.json";
 const PUBLIC_FILE: &str = "public.json";
 
+#[allow(unused)]
 const BASE_DIR: &str = ".cache";
 
 pub async fn main_loop(app: Arc<App>) -> anyhow::Result<()> {
@@ -26,14 +27,27 @@ pub async fn main_loop(app: Arc<App>) -> anyhow::Result<()> {
             continue;
         }
 
-        let mut game = app.game.lock().await;
+        if !app.validate_state().await? {
+            tracing::warn!("Local state is invalid, resetting");
+            app.reset_state().await?;
+        }
 
-        // let temp_working_dir = tempfile::tempdir()?;
-        // let working_dir = temp_working_dir.path();
+        app.step().await?;
+        app.cache_state().await?;
+    }
+}
 
-        let f = format!("pass_{}", rand::random::<u64>());
-        let working_dir = PathBuf::from(BASE_DIR).join(f);
-        tokio::fs::create_dir_all(&working_dir).await?;
+impl App {
+    #[tracing::instrument(skip(self))]
+    async fn step(&self) -> anyhow::Result<()> {
+        let mut game = self.game.lock().await;
+
+        let temp_working_dir = tempfile::tempdir()?;
+        let working_dir = temp_working_dir.path();
+
+        // let f = format!("pass_{}", rand::random::<u64>());
+        // let working_dir = PathBuf::from(BASE_DIR).join(f);
+        // tokio::fs::create_dir_all(&working_dir).await?;
 
         tracing::info!(?working_dir, "Performing step");
 
@@ -45,8 +59,8 @@ pub async fn main_loop(app: Arc<App>) -> anyhow::Result<()> {
 
         let input_file_path = working_dir.join(INPUT_FILE);
 
-        let circuit_wasm_path = app.args.circuit_wasm.canonicalize()?;
-        let zkey_path = app.args.zkey.canonicalize()?;
+        let circuit_wasm_path = self.args.circuit_wasm.canonicalize()?;
+        let zkey_path = self.args.zkey.canonicalize()?;
 
         tracing::info!("Writing prover input");
         tokio::fs::write(
@@ -118,15 +132,7 @@ pub async fn main_loop(app: Arc<App>) -> anyhow::Result<()> {
 
         tracing::info!("Submitting step");
         let step_call = calldata.to_step_call()?;
-
-        let wallet = Wallet::from_str(&app.args.private_key)?;
-        let signer: EthereumSigner = wallet.into();
-        let provider = ProviderBuilder::new()
-            .with_recommended_fillers()
-            .signer(signer)
-            .on_http(app.args.rpc_url.parse()?);
-
-        let contract = crate::abi::Factory::new(app.args.factory_address.parse()?, provider);
+        let contract = crate::app::init_contract!(self);
 
         let tx_builder = contract
             .step(
@@ -138,14 +144,19 @@ pub async fn main_loop(app: Arc<App>) -> anyhow::Result<()> {
             .gas(1_000_000);
 
         let pending_tx = tx_builder.send().await?;
-        let tx_hash = pending_tx.watch().await?;
+        let receipt = pending_tx.get_receipt().await?;
 
-        tracing::info!(?tx_hash, "Successfull state transition");
+        if !receipt.status() {
+            anyhow::bail!("Failed to advance game state");
+        }
+
+        let tx_hash = receipt.transaction_hash;
+
+        tracing::info!(?tx_hash, "Successful state transition");
 
         tracing::info!("Advancing game");
         *game = game.clone().advance();
 
-        drop(game); // NEED TO DROP THE LOCK
-        app.cache_state().await?;
+        Ok(())
     }
 }

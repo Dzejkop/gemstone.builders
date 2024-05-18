@@ -12,32 +12,16 @@ use tokio::sync::Mutex;
 use tower_http::cors::CorsLayer;
 use tower_http::trace::TraceLayer;
 
+use crate::app::App;
+
+mod abi;
+mod app;
+mod calldata;
 mod game;
 mod hashing;
 mod tasks;
-mod calldata;
-mod abi;
 
 pub const STATE_FILE: &str = "game.json";
-
-struct App {
-    pub args: Args,
-    pub is_running: AtomicBool,
-    pub game: Mutex<game::GameState>,
-}
-
-impl App {
-    async fn cache_state(&self) -> anyhow::Result<()> {
-        let state_file = self.args.state_dir.join(STATE_FILE);
-
-        let game = self.game.lock().await;
-        let state = serde_json::to_string_pretty(&*game)?;
-
-        tokio::fs::write(&state_file, state).await?;
-
-        Ok(())
-    }
-}
 
 #[tracing::instrument]
 async fn simulate(Json(game): Json<GameState>) -> Json<GameState> {
@@ -100,10 +84,20 @@ struct Args {
     pub zkey: PathBuf,
 
     // Default value is first default anvil key
-    #[clap(short, long, env, default_value = "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80")]
+    #[clap(
+        short,
+        long,
+        env,
+        default_value = "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"
+    )]
     pub private_key: String,
 
-    #[clap(short, long, env, default_value = "0x5FbDB2315678afecb367f032d93F642f64180aa3")]
+    #[clap(
+        short,
+        long,
+        env,
+        default_value = "0x5FbDB2315678afecb367f032d93F642f64180aa3"
+    )]
     pub factory_address: String,
 }
 
