@@ -155,7 +155,7 @@ impl App {
         tracing::info!(?tx_hash, "Successful state transition");
 
         tracing::info!("Advancing game");
-        *game = game.clone().advance();
+        *game = game.clone().advance().new_state;
 
         Ok(())
     }

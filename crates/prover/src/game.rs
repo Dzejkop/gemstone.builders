@@ -30,6 +30,14 @@ pub struct GameState {
     pub resource_state: ResourceState,
 }
 
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct SimulateOutput {
+    pub new_state: GameState,
+    pub resource_input: [i32; NUM_RESOURCES],
+    pub resource_output: [i32; NUM_RESOURCES],
+}
+
 impl GameState {
     pub fn empty() -> Self {
         Self {
@@ -38,7 +46,10 @@ impl GameState {
         }
     }
 
-    pub fn advance(self) -> Self {
+    pub fn advance(self) -> SimulateOutput {
+        let resource_input = [0; NUM_RESOURCES];
+        let mut resource_output = [0; NUM_RESOURCES];
+
         let mut new_resource_state = self.resource_state.clone();
 
         for y in 0..BOARD_SIZE {
@@ -58,6 +69,7 @@ impl GameState {
                     EXPORTER => {
                         for r in 0..NUM_RESOURCES {
                             new_resource_state[r][y][x] -= self.resource_state[r][y][x];
+                            resource_output[r] += self.resource_state[r][y][x];
                         }
                     }
                     _ => {}
@@ -65,9 +77,13 @@ impl GameState {
             }
         }
 
-        Self {
-            board: self.board,
-            resource_state: new_resource_state,
+        SimulateOutput {
+            new_state: Self {
+                board: self.board,
+                resource_state: new_resource_state,
+            },
+            resource_input,
+            resource_output,
         }
     }
 
@@ -95,7 +111,7 @@ impl GameState {
             resource_state: self.resource_state,
             state_hash,
             resource_input: [0; NUM_RESOURCES],
-            resource_output_state: new_state.resource_state,
+            resource_output_state: new_state.new_state.resource_state,
         })
     }
 }
@@ -199,7 +215,7 @@ mod tests {
         let mut state = initial.clone();
 
         for _ in 0..5 {
-            state = state.advance();
+            state = state.advance().new_state;
         }
 
         let expected: ResourceState = serde_json::from_str(EXPECTED).unwrap();

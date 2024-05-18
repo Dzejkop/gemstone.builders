@@ -7,7 +7,7 @@ use axum::extract::State;
 use axum::routing::{get, post};
 use axum::{Json, Router};
 use clap::Parser;
-use game::{Board, GameState};
+use game::{Board, GameState, SimulateOutput};
 use tokio::sync::Mutex;
 use tower_http::cors::CorsLayer;
 use tower_http::trace::TraceLayer;
@@ -24,7 +24,7 @@ mod tasks;
 pub const STATE_FILE: &str = "game.json";
 
 #[tracing::instrument]
-async fn simulate(Json(game): Json<GameState>) -> Json<GameState> {
+async fn simulate(Json(game): Json<GameState>) -> Json<SimulateOutput> {
     Json(game.advance())
 }
 
