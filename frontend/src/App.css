@@ -2,6 +2,21 @@
   image-rendering: pixelated;
 }
 
+.zk {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+}
+
+.zk img {
+  width: 50px;
+  height: 45px;
+}
+
+.zk div {
+  line-height: 3rem;
+}
+
 .App-header {
   background-color: #282c34;
   min-height: 100vh;

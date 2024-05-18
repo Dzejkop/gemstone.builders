@@ -22,36 +22,36 @@ It was created as a project for ZK Hack Kraków 2024.
 1. Start anvil
 
 ```
-> anvil
+anvil
 ```
 
 2. Deploy & setup the contracts
 
 ```
-> cd contracts
-> source deployLocal.sh
-> # THE COMMAND BELOW NEEDS TO BE RERUN TO CLEANUP THE STATE
-> # MUST BE RUN IN THE SAME SESSION AS deployLocal.sh
-> # AS IT DEPENDS ON THE EXPORTED ENV VARS
-> bash registerFactory.sh
+cd contracts
+source deployLocal.sh
+# THE COMMAND BELOW NEEDS TO BE RERUN TO CLEANUP THE STATE
+# MUST BE RUN IN THE SAME SESSION AS deployLocal.sh
+# AS IT DEPENDS ON THE EXPORTED ENV VARS
+bash registerFactory.sh
 ```
 
 3. Start prover
 
 ```
-> cargo run --release -p prover
+cargo run --release -p prover
 ```
 
 4. Start browser client
 
 ```
-> cd frontend
-> npm start
+cd frontend
+npm start
 ```
 
 ### Need to clean the state?
 
 ```
-> rm -rf state
-> cargo run --release -p prover
+rm -rf state
+cargo run --release -p prover
 ```
