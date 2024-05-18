@@ -1,19 +1,35 @@
 import React from 'react';
 import { Belt, Factory, Mine, Exporter, Coal, Diamond, Empty } from "./Element";
+import consts from "../consts";
 
-const Grid = () => {
+const Grid = ({items, type}) => {
   const handleClick = (row, col) => {
     console.log(`Row: ${row}, Column: ${col}`);
   };
 
   const elements = [Belt, Factory, Mine, Exporter, Coal, Diamond, Empty ];
+  const buildings = {
+    [consts.EMPTY]: Empty,
+    [consts.MINE]: Mine,
+    [consts.BELT_DOWN]: Belt,
+    [consts.EXPORTER]: Exporter,
+  }
+
+  const resources = {
+    [consts.EMPTY]: Empty,
+    [consts.CARBON]: Coal,
+    [consts.DIAMOND]: Diamond,
+  }
 
   const renderGrid = () => {
+    const elements = type == "buildings" ? buildings : resources;
+
     const grid = [];
     for (let row = 0; row < 5; row++) {
       for (let col = 0; col < 5; col++) {
-        const randomIndex = Math.floor(Math.random() * elements.length);
-        const ComponentToRender = elements[randomIndex];
+        const index = items[row][col];
+        const ComponentToRender = elements[index];
+
         grid.push(
           <div
             key={`${col}-${row}`}
