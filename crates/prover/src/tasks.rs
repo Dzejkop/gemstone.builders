@@ -3,8 +3,7 @@ use std::sync::atomic::Ordering;
 use std::sync::Arc;
 use std::time::Duration;
 
-use rand::Rng;
-
+use crate::calldata::CalldataRaw;
 use crate::App;
 
 const INPUT_FILE: &str = "input.json";
@@ -37,6 +36,8 @@ pub async fn main_loop(app: Arc<App>) -> anyhow::Result<()> {
         // 1. Construct proof input
         tracing::info!("Constructing prover input");
         let prover_input = game.construct_prover_input()?;
+
+        tracing::info!(board_hash = prover_input.board_hash, "Input ready");
 
         let input_file_path = working_dir.join(INPUT_FILE);
         let witness_file_path = working_dir.join(WITNESS_FILE);
@@ -108,6 +109,9 @@ pub async fn main_loop(app: Arc<App>) -> anyhow::Result<()> {
 
         let calldata = String::from_utf8_lossy(&zkesc_output.stdout);
         tracing::info!(%calldata, "Calldata");
+
+        let calldata_in_brackets = format!("[{}]", calldata);
+        let calldata: CalldataRaw = serde_json::from_str(&calldata_in_brackets)?;
 
         tracing::info!("Submitting step");
         tokio::time::sleep(Duration::from_secs_f32(0.0)).await;

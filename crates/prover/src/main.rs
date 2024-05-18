@@ -3,8 +3,6 @@ use std::path::PathBuf;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
 
-use alloy_rpc_client::RpcClient;
-use alloy_transport_http::Http;
 use axum::extract::State;
 use axum::routing::{get, post};
 use axum::{Json, Router};
@@ -17,6 +15,8 @@ use tower_http::trace::TraceLayer;
 mod game;
 mod hashing;
 mod tasks;
+mod calldata;
+mod abi;
 
 pub const STATE_FILE: &str = "game.json";
 
@@ -109,8 +109,8 @@ async fn main() -> anyhow::Result<()> {
     let working_dir = std::env::current_dir();
     tracing::info!(?working_dir, "Prover starting");
 
-    let client = Http::new(args.rpc_url.parse()?);
-    let _client: RpcClient<Http<reqwest::Client>> = RpcClient::new(client, false);
+    // let client = Http::new(args.rpc_url.parse()?);
+    // let _client: RpcClient<Http<reqwest::Client>> = RpcClient::new(client, false);
 
     tokio::fs::create_dir_all(&args.state_dir).await?;
 

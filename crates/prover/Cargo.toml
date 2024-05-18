@@ -22,10 +22,20 @@ tower-http = { workspace = true }
 anyhow = { workspace = true }
 
 indoc = "*"
-alloy = { git = "https://github.com/alloy-rs/alloy", version = "0.1.0" }
-alloy-transport = { git = "https://github.com/alloy-rs/alloy", version = "0.1.0" }
-alloy-rpc-client = { git = "https://github.com/alloy-rs/alloy", version = "0.1.0" }
-alloy-transport-http = { git = "https://github.com/alloy-rs/alloy", version = "0.1.0" }
+alloy = { git = "https://github.com/alloy-rs/alloy", rev = "e22d9be", features = [
+    "contract",
+    "network",
+    "providers",
+    "provider-http",
+    "rpc-client",
+    "rpc-types-eth",
+    "rpc-types-trace",
+    "signers",
+    "signer-wallet",
+] }
+# Explicit import needed for sol! macro to work
+alloy-contract = { git = "https://github.com/alloy-rs/alloy", rev = "e22d9be" }
+alloy-sol-types = "0.7"
 reqwest = "0.12.4"
 num-bigint = "0.4.5"
 num-traits = "0.2.19"
