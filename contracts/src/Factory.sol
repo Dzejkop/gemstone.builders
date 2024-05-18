@@ -59,6 +59,10 @@ contract Factory is Ownable {
         resourceTokens[1].transfer(msg.sender, amounts[1]);
     }
 
+    function userBalance() external view returns (uint256[2] memory) {
+        return balances[msg.sender];
+    }
+
     function step(
         uint256 factoryHash,
         uint256 factoryState,
