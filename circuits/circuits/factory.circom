@@ -1,7 +1,8 @@
 pragma circom 2.0.0;
 
 include "circomlib/circuits/bitify.circom";
-include "circomlib/circuits/mux2.circom";
+include "circomlib/circuits/mux1.circom";
+include "circomlib/circuits/mux4.circom";
 include "circomlib/circuits/comparators.circom";
 
 // Number of resources
@@ -47,101 +48,162 @@ template Cell() {
   // The export output
   signal output exports[N()];
 
-  component rc[N()];
-
-  for (var r = 0; r < N(); r++) {
-    rc[r] = ResourceCell();
-    rc[r].resource <== r;
-    rc[r].building <== building;
-    rc[r].state <== state[r];
-    rc[r].neighbours[0] <== neighbours[r][0];
-    rc[r].neighbours[1] <== neighbours[r][1];
-    rc[r].neighbours[2] <== neighbours[r][2];
-    rc[r].neighbours[3] <== neighbours[r][3];
-
-    out[r] <== rc[r].out;
-    neighboursOutput[r][0] <== rc[r].neighboursOutput[0];
-    neighboursOutput[r][1] <== rc[r].neighboursOutput[1];
-    neighboursOutput[r][2] <== rc[r].neighboursOutput[2];
-    neighboursOutput[r][3] <== rc[r].neighboursOutput[3];
-
-    exports[r] <== rc[r].export;
-  }
-}
-
-template ResourceCell() {
-  signal input building;
-  signal input state;
-  signal input resource;
-  signal input neighbours[4];
-
-  signal output out;
-  signal output neighboursOutput[4];
-  signal output export;
-
   var EMPTY = 0;
   var CARBON_MINE = 1;
   var DOWN_BELT = 2;
   var EXPORTER = 3;
+  var COMPRESSOR = 4;
+  var FIRST_UNDEFINED = 5;
+  var UD05 = 5;
+  var UD06 = 6;
+  var UD07 = 7;
+  var UD08 = 8;
+  var UD09 = 9;
+  var UD10 = 10;
+  var UD11 = 11;
+  var UD12 = 12;
+  var UD13 = 13;
+  var UD14 = 14;
+  var UD15 = 15;
+  var NUM_BUILDINGS = 16;
 
-  component n2b = Num2Bits(2);
+  component n2b = Num2Bits(4);
   n2b.in <== building;
 
-  component isCarbon = IsEqual();
-  isCarbon.in[0] <== resource;
-  isCarbon.in[1] <== 0;
+  // ### Conditions ###
+  component atLeastTwoCarbonPresent = GreaterEqThan(32);
+  atLeastTwoCarbonPresent.in[0] <== state[0];
+  atLeastTwoCarbonPresent.in[1] <== 2;
 
-  component mux = Mux2();
-  mux.s <== n2b.out;
-  mux.c[EMPTY] <== state; // persist state
-  mux.c[CARBON_MINE] <== 0;
-  mux.c[DOWN_BELT] <== 0;
-  mux.c[EXPORTER] <== 0;
+  component compressorCarbonState = Mux1();
+  compressorCarbonState.s <== atLeastTwoCarbonPresent.out;
+  compressorCarbonState.c[0] <== state[0]; // Not enough carbon
+  compressorCarbonState.c[1] <== state[0] - 2; // Enough carbon
 
-  component nMux[4];
-  for (var n = 0; n < 4; n++) {
-    nMux[n] = Mux2();
-    nMux[n].s <== n2b.out;
+  component compressorDiamondOutput = Mux1();
+  compressorDiamondOutput.s <== atLeastTwoCarbonPresent.out;
+  compressorDiamondOutput.c[0] <== 0; // Not enough carbon, nothing
+  compressorDiamondOutput.c[1] <== 1; // Enough carbon,
 
-    // Empty building
-    // Always zero
-    nMux[n].c[EMPTY] <== 0;
+  // ### State muxes ###
+  component mux[2];
+
+  mux[0] = Mux4();
+  mux[0].s <== n2b.out;
+  // Every building except empty and compressor destroys carbon
+  for (var b = 0; b < NUM_BUILDINGS; b++) {
+    if (b != EMPTY && b != COMPRESSOR) {
+      mux[0].c[b] <== 0;
+    }
+  }
+  mux[0].c[EMPTY] <== state[0]; // persist state
+  mux[0].c[COMPRESSOR] <== compressorCarbonState.out;
+
+  mux[1] = Mux4();
+  mux[1].s <== n2b.out;
+  // Every building except empty destroys diamonds
+  for (var b = 0; b < NUM_BUILDINGS; b++) {
+    if (b != EMPTY) {
+      mux[1].c[b] <== 0;
+    }
+  }
+  mux[1].c[EMPTY] <== state[1]; // persist state
+
+
+  // ### Neighbour muxes ###
+  component nMux[N()][4];
+  for (var r = 0; r < N(); r++) {
+    for (var n = 0; n < 4; n++) {
+      nMux[r][n] = Mux4();
+      nMux[r][n].s <== n2b.out;
+
+      // Empty building
+      // Always zero
+      nMux[r][n].c[EMPTY] <== 0;
+
+      // Undefined buildings
+      // Always zero
+      for (var b = FIRST_UNDEFINED; b < NUM_BUILDINGS; b++) {
+        nMux[r][n].c[b] <== 0;
+      }
+    }
   }
 
-  // Export mux
-  component eMux = Mux2();
-  eMux.s <== n2b.out;
+  // ### Export muxes ###
+  component eMux[N()];
+  for (var r = 0; r < N(); r++) {
+    eMux[r] = Mux4();
+    eMux[r].s <== n2b.out;
 
-  eMux.c[EMPTY] <== 0;
-  eMux.c[CARBON_MINE] <== 0;
-  eMux.c[DOWN_BELT] <== 0;
-  eMux.c[EXPORTER] <== state; // Export state
-
-  // Right
-  nMux[0].c[CARBON_MINE] <== 0;
-  nMux[0].c[DOWN_BELT] <== 0;
-  nMux[0].c[EXPORTER] <== 0;
-
-  // Down
-  nMux[1].c[CARBON_MINE] <== isCarbon.out; // mine (1) produces carbon below (1)
-  nMux[1].c[DOWN_BELT] <== state; // down belt (2) moves down (1)
-  nMux[1].c[EXPORTER] <== 0;
-
-  // Left
-  nMux[2].c[CARBON_MINE] <== 0;
-  nMux[2].c[DOWN_BELT] <== 0;
-  nMux[2].c[EXPORTER] <== 0;
-
-  // Up
-  nMux[3].c[CARBON_MINE] <== 0;
-  nMux[3].c[DOWN_BELT] <== 0;
-  nMux[3].c[EXPORTER] <== 0;
-
-  out <== mux.out;
-  for (var n = 0; n < 4; n++) {
-    neighboursOutput[n] <== nMux[n].out;
+    // Only EXPORTER exports anything
+    for (var b = 0; b < NUM_BUILDINGS; b++) {
+      if (b == EXPORTER) {
+        eMux[r].c[b] <== state[r];
+      } else {
+        eMux[r].c[b] <== 0;
+      }
+    }
   }
-  export <== eMux.out;
+
+  // ### Logic ###
+  // Right - Carbon
+  nMux[0][0].c[CARBON_MINE] <== 0;
+  nMux[0][0].c[DOWN_BELT] <== 0;
+  nMux[0][0].c[EXPORTER] <== 0;
+  nMux[0][0].c[COMPRESSOR] <== 0;
+
+  // Right - Diamond
+  nMux[1][0].c[CARBON_MINE] <== 0;
+  nMux[1][0].c[DOWN_BELT] <== 0;
+  nMux[1][0].c[EXPORTER] <== 0;
+  nMux[1][0].c[COMPRESSOR] <== compressorDiamondOutput.out;
+
+  // Down - Carbon
+  nMux[0][1].c[CARBON_MINE] <== 1; // mine (1) produces carbon below (1)
+  nMux[0][1].c[DOWN_BELT] <== state[0]; // down belt (2) moves down (1)
+  nMux[0][1].c[EXPORTER] <== 0;
+  nMux[0][1].c[COMPRESSOR] <== 0;
+
+  // Down - Diamond
+  nMux[1][1].c[CARBON_MINE] <== 0;
+  nMux[1][1].c[DOWN_BELT] <== state[1]; // down belt (2) moves down (1)
+  nMux[1][1].c[EXPORTER] <== 0;
+  nMux[1][1].c[COMPRESSOR] <== 0;
+
+  // Left - Carbon
+  nMux[0][2].c[CARBON_MINE] <== 0;
+  nMux[0][2].c[DOWN_BELT] <== 0;
+  nMux[0][2].c[EXPORTER] <== 0;
+  nMux[0][2].c[COMPRESSOR] <== 0;
+
+  // Left - Diamond
+  nMux[1][2].c[CARBON_MINE] <== 0;
+  nMux[1][2].c[DOWN_BELT] <== 0;
+  nMux[1][2].c[EXPORTER] <== 0;
+  nMux[1][2].c[COMPRESSOR] <== 0;
+
+  // Up - Carbon
+  nMux[0][3].c[CARBON_MINE] <== 0;
+  nMux[0][3].c[DOWN_BELT] <== 0;
+  nMux[0][3].c[EXPORTER] <== 0;
+  nMux[0][3].c[COMPRESSOR] <== 0;
+
+  // Up - Carbon
+  nMux[1][3].c[CARBON_MINE] <== 0;
+  nMux[1][3].c[DOWN_BELT] <== 0;
+  nMux[1][3].c[EXPORTER] <== 0;
+  nMux[1][3].c[COMPRESSOR] <== 0;
+
+  for (var r = 0; r < N(); r++) {
+    out[r] <== mux[r].out;
+
+    neighboursOutput[r][0] <== nMux[r][0].out;
+    neighboursOutput[r][1] <== nMux[r][1].out;
+    neighboursOutput[r][2] <== nMux[r][2].out;
+    neighboursOutput[r][3] <== nMux[r][3].out;
+
+    exports[r] <== eMux[r].out;
+  }
 }
 
 // Reduces the state from the cell and neighbours
