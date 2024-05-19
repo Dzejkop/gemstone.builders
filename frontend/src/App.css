@@ -55,7 +55,7 @@ body, html {
 .App {
   text-align: center;
   color: white;
-  min-height: 100vh;
+  min-height: auto;
   display: flex;
   flex-direction: column;
 }
@@ -82,7 +82,7 @@ body, html {
 
 .main-container {
   display: flex;
-  height: 100vh;
+  height: auto;
 }
 
 .column {
