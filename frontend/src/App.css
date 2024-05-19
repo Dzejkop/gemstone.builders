@@ -187,11 +187,8 @@ body, html {
 
 .control-panel {
   padding: 20px;
-  display: flex;
-  flex-direction: row;
-  flex-basis: 100%;
-  flex: 1;
-  gap: 10px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr))
 }
 
 .control-panel > .element-container.selected {
