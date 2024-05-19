@@ -175,7 +175,7 @@ body, html {
 
 .element-container {
   position: relative;
-  width: auto;
+  width: 92px;
   height: auto;
   justify-content: center;
   align-items: center;
@@ -268,20 +268,19 @@ body, html {
 
 .tooltip .tooltiptext {
   visibility: hidden;
-  width: 120px;
+  min-width: 200px;
   background-color: black;
   color: #fff;
   text-align: center;
   border-radius: 6px;
-  padding: 5px;
+  padding: 10px;
   top: 90px;
-  left: 0px;
-
-  /* Position the tooltip */
+  width: auto;
+  left: -50%;
   position: absolute;
   z-index: 1;
-
-  font-size: 0.5rem;
+  font-size: 1rem;
+  font-family: "Arial";
 }
 
 .tooltip:hover .tooltiptext {
