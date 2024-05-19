@@ -259,3 +259,31 @@ body, html {
 .no-border > .image-element {
   border: none;
 }
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+  border-bottom: 1px dotted black;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 120px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px;
+  top: 90px;
+  left: 0px;
+
+  /* Position the tooltip */
+  position: absolute;
+  z-index: 1;
+
+  font-size: 0.5rem;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+}

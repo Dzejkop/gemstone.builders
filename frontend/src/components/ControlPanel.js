@@ -7,7 +7,7 @@ const ControlPanel = ({selectedBuilding, selectBuilding}) => {
       const classes = selectedBuilding === index ? "selected" : "";
 
       const Building = consts.BUILDINGS[index];
-      return <Building key={index} displayName={true} onClick={() => selectBuilding(index)} classes={classes} />;
+      return <Building key={index} displayName={true} onClick={() => selectBuilding(index)} classes={classes} tooltip/>;
     });
   };
 
