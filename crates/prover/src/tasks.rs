@@ -1,4 +1,3 @@
-use std::path::PathBuf;
 use std::str::FromStr;
 use std::sync::atomic::Ordering;
 use std::sync::Arc;
@@ -155,7 +154,8 @@ impl App {
         tracing::info!(?tx_hash, "Successful state transition");
 
         tracing::info!("Advancing game");
-        *self.game.lock().await = game.clone().advance().new_state;
+        let mut game = self.game.lock().await;
+        game.resource_state = game.clone().advance().new_state.resource_state;
 
         Ok(())
     }

@@ -33,7 +33,7 @@ In order to be able to play this game you need to run our client locally. We rec
 > # Update if necessary
 > docker pull ghcr.io/dzejkop/gemstone.builders:latest
 
-> docker run -e PRIVATE_KEY=<YOUR_PRIVATE_KEY> -p 3123:3123 ghcr.io/dzejkop/gemstone.builders:latest
+> docker run -v ./factory/:/app/state/ -e PRIVATE_KEY=<YOUR_PRIVATE_KEY> -p 3123:3123 ghcr.io/dzejkop/gemstone.builders:latest
 ```
 
 You'll notice that you only need to provide your private key. The ZK artifacts are already included in the image and the program uses the public Sepolia RPC by default.
