@@ -117,7 +117,7 @@ async fn main() -> anyhow::Result<()> {
     let args = Args::parse();
 
     let working_dir = std::env::current_dir();
-    tracing::info!(?working_dir, "Prover starting");
+    tracing::info!(?args, ?working_dir, "Prover starting");
 
     tokio::fs::create_dir_all(&args.state_dir).await?;
 
