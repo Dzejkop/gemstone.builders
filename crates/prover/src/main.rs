@@ -76,12 +76,13 @@ struct Args {
     #[clap(
         short,
         long,
-        // default_value = "https://ethereum-sepolia.blockpi.network/v1/rpc/public"
-        default_value = "http://localhost:8545"
+        env,
+        default_value = "https://ethereum-sepolia.blockpi.network/v1/rpc/public"
+        // default_value = "http://localhost:8545"
     )]
-    pub rpc_url: String,
+    pub eth_rpc_url: String,
 
-    #[clap(short, long, default_value = "./state")]
+    #[clap(short, long, env, default_value = "./state")]
     pub state_dir: PathBuf,
 
     #[clap(short, long, env, default_value = "./circuit.wasm")]
@@ -103,7 +104,7 @@ struct Args {
         short,
         long,
         env,
-        default_value = "0x5FbDB2315678afecb367f032d93F642f64180aa3"
+        default_value = "0x73a7dc5345A6603c3f88cbb850366Cb841512847"
     )]
     pub factory_address: String,
 }

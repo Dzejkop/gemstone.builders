@@ -122,7 +122,7 @@ macro_rules! init_contract {
         let provider = ProviderBuilder::new()
             .with_recommended_fillers()
             .signer(signer)
-            .on_http($app.args.rpc_url.parse()?);
+            .on_http($app.args.eth_rpc_url.parse()?);
 
         let contract = crate::abi::Factory::new($app.args.factory_address.parse()?, provider);
 

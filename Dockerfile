@@ -78,4 +78,14 @@ ARG BIN=prover
 # Copy the binary
 COPY --from=build-env /src/target/release/$BIN /usr/local/bin/app
 
+# Copy artifacts
+COPY --from=build-env /src/circuit_artifacts/key.zkey /app/key.zkey
+COPY --from=build-env /src/circuit_artifacts/assembly5.wasm /app/assembly5.wasm
+
+ENV ZKEY="/app/key.zkey"
+ENV CIRCUIT_WASM="/app/assembly5.wasm"
+ENV STATE_DIR=/app/state
+
+VOLUME /app/state
+
 ENTRYPOINT [ "/usr/local/bin/app" ]
