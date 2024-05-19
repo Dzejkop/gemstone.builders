@@ -39,7 +39,7 @@ const State = ({upload, setMode, setSimulationResources, balance, simulate, fetc
         <div className="state-container">
             <div className="title">State</div>
             <div className="state-item resources">
-                Mode: {simulationRunning ? "Building" : "Production"}
+                <div className="row-title">Mode: {simulationRunning ? "Building" : "Production"}</div>
                 <ModeSwitch simulation={simulationRunning} startSimulation={startSimulation} stopSimulation={stopSimulation} />
             </div>
             <div className="state-item resources">

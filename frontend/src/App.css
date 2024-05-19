@@ -170,6 +170,7 @@ body, html {
   display: flex;
   flex-direction: row;
   width: 600px;
+  margin-left: 85px;
 }
 
 .element-container {
