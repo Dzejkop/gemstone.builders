@@ -40,7 +40,7 @@ pub async fn main_loop(app: Arc<App>) -> anyhow::Result<()> {
 impl App {
     #[tracing::instrument(skip(self))]
     async fn step(&self) -> anyhow::Result<()> {
-        let mut game = self.game.lock().await;
+        let game = self.game.lock().await.clone();
 
         let temp_working_dir = tempfile::tempdir()?;
         let working_dir = temp_working_dir.path();
@@ -155,7 +155,7 @@ impl App {
         tracing::info!(?tx_hash, "Successful state transition");
 
         tracing::info!("Advancing game");
-        *game = game.clone().advance().new_state;
+        *self.game.lock().await = game.clone().advance().new_state;
 
         Ok(())
     }
