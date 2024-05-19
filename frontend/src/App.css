@@ -55,7 +55,8 @@ body, html {
 .App {
   text-align: center;
   color: white;
-  min-height: auto;
+  min-height: 100vh;
+  height: auto;
   display: flex;
   flex-direction: column;
 }
@@ -83,6 +84,7 @@ body, html {
 .main-container {
   display: flex;
   height: auto;
+  min-height: 100vh;
 }
 
 .column {
@@ -247,4 +249,12 @@ body, html {
 .disabled {
   opacity: 0.5;
   pointer-events: none;
+}
+
+.loader {
+  padding: 3rem;
+}
+
+.no-border > .image-element {
+  border: none;
 }

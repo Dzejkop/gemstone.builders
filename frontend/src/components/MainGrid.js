@@ -104,8 +104,8 @@ const MainGrid = ({mode, setMode}) => {
     <div className="main-container">
       <div className="column">
         Factory
-
-        {state === null && <Loader />}
+        <div className="loader"><Loader classes="no-border" /></div>
+        {state === null && <div className="loader"><Loader /></div>}
         {state !== null && (
           <div className="board">
             <BuildingGrid className="fields" items={state.board} type="buildings" />

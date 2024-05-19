@@ -1,11 +1,11 @@
 import React from 'react';
 import { Diamond } from './Element';
 
-const Loader = () => {
+const Loader = ({classes}) => {
   return (
     <div className="rotating-image-container">
         <div className="rotating-image">
-            <Diamond />
+            <Diamond classes={classes} />
         </div>
     </div>
   );
