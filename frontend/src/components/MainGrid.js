@@ -9,7 +9,7 @@ import { Coal, Diamond } from "./Element";
 
 import API from "../api";
 
-const MainGrid = ({mode, setMode}) => {
+const MainGrid = ({ isSimulation, setSimulationState }) => {
   const [state, setState] = useState(null);
   const [selectedBuilding, setSelectedBuilding] = useState(null);
   const [newBoard, setNewBoard] = useState(null);
@@ -17,16 +17,19 @@ const MainGrid = ({mode, setMode}) => {
   const [simulationResources, setSimulationResources] = useState([]);
   const [intervalCall, setIntervalCall] = useState(null);
 
-  const isSimulation = mode === "simulation";
+  const toggleSimulation = () => {
+    setSimulationState(!isSimulation);
+    fetchAndUpdate();
+  };
 
   const selectBuilding = (index) => {
     if (index === selectedBuilding) {
-      setSelectedBuilding(null)
+      setSelectedBuilding(null);
     } else {
-      setSelectedBuilding(index)
+      setSelectedBuilding(index);
     }
   };
-  
+
   const build = (row, col) => {
     if (selectedBuilding === null) {
       return;
@@ -36,30 +39,27 @@ const MainGrid = ({mode, setMode}) => {
     update[row][col] = parseInt(selectedBuilding);
 
     setNewBoard(update);
-  }
-
-  const updateData = (state, balance) => {
-    console.log("lllll", state);
-    setState(state);
-    setNewBoard(state.board);
-    if (intervalCall === null) { setBalance(balance) };
-  }
+  };
 
   const fetchAndUpdate = async () => {
     const state = await API.getBoard();
     const balance = await API.getBalance();
-    updateData(state, balance);
-  }
+    setState(state);
+    setNewBoard(state.board);
+    if (intervalCall === null) {
+      setBalance(balance);
+    }
+  };
 
   const simulate = async () => {
     const newState = await API.simulate(newGameState);
     setSimulationResources(newState.newState.resourceState);
     const newBalance = newState.resourceOutput.map((item, index) => {
-        return balance[index] + item;
+      return balance[index] + item;
     });
 
-    setBalance(newBalance)
-};
+    setBalance(newBalance);
+  };
 
   useEffect(() => {
     if (isSimulation) {
@@ -71,54 +71,87 @@ const MainGrid = ({mode, setMode}) => {
         fetchAndUpdate();
       }, 2000);
 
-      setIntervalCall(intervalID)
+      setIntervalCall(intervalID);
 
       return () => {
         clearInterval(intervalID);
       };
-  }
-}, [isSimulation]);
-
+    }
+  }, [isSimulation]);
 
   const renderResources = () => {
-    const data = mode === "chain" ? state.resourceState : simulationResources;
+    const data = !isSimulation ? state.resourceState : simulationResources;
     return data.map((resourceGrid, index) => {
       const component = index === 0 ? Coal : Diamond;
-      return <ResourceGrid className="resources" items={resourceGrid} component={component} />
+      return (
+        <ResourceGrid
+          className="resources"
+          items={resourceGrid}
+          component={component}
+        />
+      );
     });
-  ;}
+  };
 
-  console.log("state", state);
-  const newResources = isSimulation && simulationResources.length > 0 ? simulationResources : (state !== null ? state.resourceState : {});
+  const newResources =
+    isSimulation && simulationResources.length > 0
+      ? simulationResources
+      : state !== null
+      ? state.resourceState
+      : {};
 
-  const newGameState = state === null ? null : {
-    board: newBoard,
-    resourceState: newResources,
-  }
+  const newGameState =
+    state === null
+      ? null
+      : {
+          board: newBoard,
+          resourceState: newResources,
+        };
 
   const upload = () => {
     API.submitBoard(newBoard);
-  }
+  };
 
   return (
     <div className="main-container">
       <div className="column">
         Factory
-        {state === null && <div className="loader"><Loader classes="no-border" /></div>}
+        {state === null && (
+          <div className="loader">
+            <Loader classes="no-border" />
+          </div>
+        )}
         {state !== null && (
           <div className="board">
-            <BuildingGrid className="fields" items={state.board} type="buildings" />
+            <BuildingGrid
+              className="fields"
+              items={state.board}
+              type="buildings"
+            />
             {renderResources()}
             <ClickableGrid build={build} />
           </div>
         )}
-        {isSimulation && <ControlPanel selectedBuilding={selectedBuilding} selectBuilding={selectBuilding}/>}
+        {isSimulation && (
+          <ControlPanel
+            selectedBuilding={selectedBuilding}
+            selectBuilding={selectBuilding}
+          />
+        )}
       </div>
       <div className="column">
-        <State setMode={setMode} setSimulationResources={setSimulationResources} balance={balance} simulate={simulate} fetchAndUpdate={fetchAndUpdate} upload={upload} />
+        <State
+          toggleSimulation={toggleSimulation}
+          isSimulation={isSimulation}
+          setSimulationResources={setSimulationResources}
+          balance={balance}
+          simulate={simulate}
+          fetchAndUpdate={fetchAndUpdate}
+          upload={upload}
+        />
       </div>
     </div>
-    );  
-}
+  );
+};
 
 export default MainGrid;

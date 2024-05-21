@@ -1,8 +1,5 @@
-import React, { useState } from "react";
-import {
-  useAccount,
-  useSDK,
-} from "@metamask/sdk-react-ui";
+import React, { useState, createContext } from "react";
+import { useAccount, useSDK } from "@metamask/sdk-react-ui";
 import "./App.css";
 import NotConnected from "./components/NotConnected";
 import Header from "./components/Header";
@@ -10,26 +7,34 @@ import MainGrid from "./components/MainGrid";
 import Footer from "./components/Footer";
 import { UserContext } from "./UserContext";
 
+const SimulationContext = createContext(false);
+
 function AppReady() {
   const { isConnected, address } = useAccount();
-  const [ mode, setMode ] = useState("chain");
+  const [isSimulation, setSimulationState] = useState(false);
 
   let classes = "App";
-  if (mode === "simulation") {
+  if (isSimulation) {
     classes = `${classes} simulation`;
   }
 
   return (
     <UserContext.Provider value={{ userAddress: address }}>
-      <div className={classes}>
-        {!isConnected && <NotConnected />
-        }
-        {isConnected && (<>
-          <Header/>
-          <MainGrid mode={mode} setMode={setMode}/>
-          <Footer/>
-        </>)}
-      </div>
+      <SimulationContext.Provider value={isSimulation}>
+        <div className={classes}>
+          {!isConnected && <NotConnected />}
+          {isConnected && (
+            <>
+              <Header />
+              <MainGrid
+                isSimulation={isSimulation}
+                setSimulationState={setSimulationState}
+              />
+              <Footer />
+            </>
+          )}
+        </div>
+      </SimulationContext.Provider>
     </UserContext.Provider>
   );
 }
