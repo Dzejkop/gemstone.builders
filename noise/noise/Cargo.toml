@@ -1,0 +1,8 @@
+[package]
+name = "noise"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+fixed = { version = "1.27.0", features = ["serde-str"] }
+rand = "0.8.5"

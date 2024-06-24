@@ -1,0 +1,8 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://xemgcrctatvv"]
+
+[ext_resource type="Shader" path="res://shaders/noise.gdshader" id="1_wuk5t"]
+
+[resource]
+shader = ExtResource("1_wuk5t")
+shader_parameter/scale = 10.0
+shader_parameter/g = 8.0

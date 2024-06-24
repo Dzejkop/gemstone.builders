@@ -1,8 +1,0 @@
-[package]
-name = "poseidon-helper"
-version = "0.1.0"
-edition = "2021"
-
-[dependencies]
-ff_ce = { workspace = true }
-poseidon-rs = { workspace = true }

@@ -1,0 +1,11 @@
+[[octaves]]
+scale = "1e18"
+z_layer = "0.5"
+
+[[octaves]]
+scale = "5e16"
+z_layer = "0.1"
+
+[[octaves]]
+scale = "1.2e18"
+z_layer = "0.75"

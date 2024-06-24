@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3 uid="uid://bwroi133qiwq0"]
+
+[ext_resource type="Material" uid="uid://xemgcrctatvv" path="res://shaders/noiseMatShader.tres" id="1_ma14p"]
+[ext_resource type="Texture2D" uid="uid://ckp3lr47wu7ck" path="res://assets/white.png" id="2_y6omj"]
+
+[node name="NoiseExperiments" type="Node2D"]
+
+[node name="White" type="Sprite2D" parent="."]
+material = ExtResource("1_ma14p")
+position = Vector2(3, 1)
+scale = Vector2(2, 2)
+texture = ExtResource("2_y6omj")
+centered = false
