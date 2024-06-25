@@ -1,27 +1,33 @@
 ---
 // src/pages/docs/index.astro
-import { getCollection } from 'astro:content';
-import DocsLayout from '../../layouts/DocsLayout.astro';
+import { getCollection } from "astro:content";
+import DocsLayout from "../../layouts/DocsLayout.astro";
 
-const docs = await getCollection('docs');
+const docs = await getCollection("docs");
 ---
 
 <DocsLayout title="Gemstone Builders Documentation">
   <h1 class="text-3xl font-bold mb-8">Gemstone Builders Documentation</h1>
   <p class="text-xl text-gray-700 mb-8">
-    Welcome to our documentation. Here you'll find guides and information to help you get started with Gemstone Builders.
+    Welcome to our documentation. Here you'll find guides and information to
+    help you get started with Gemstone Builders.
   </p>
 
   <div class="space-y-6">
-    {docs.map((doc) => (
-      <article class="bg-white p-6 rounded-lg shadow-md">
-        <h2 class="text-2xl font-semibold mb-2">
-          <a href={`/docs/${doc.slug}`} class="text-emerald-700 hover:text-emerald-500">
-            {doc.data.title}
-          </a>
-        </h2>
-        <p class="text-gray-600">{doc.data.summary}</p>
-      </article>
-    ))}
+    {
+      docs.map((doc) => (
+        <article class="bg-white p-6 rounded-lg shadow-md">
+          <h2 class="text-2xl font-semibold mb-2">
+            <a
+              href={`/docs/${doc.slug}`}
+              class="text-emerald-700 hover:text-emerald-500"
+            >
+              {doc.data.title}
+            </a>
+          </h2>
+          <p class="text-gray-600">{doc.data.summary}</p>
+        </article>
+      ))
+    }
   </div>
 </DocsLayout>

@@ -1,25 +1,29 @@
 ---
-import BlogLayout from '../../layouts/BlogLayout.astro';
+import { getCollection } from "astro:content";
 
-// You can fetch blog posts here in the future
-const posts = [
-  { title: 'Our First Project', date: '2024-01-15', slug: 'our-first-project' },
-  { title: 'Sustainable Building Practices', date: '2024-02-01', slug: 'sustainable-building-practices' },
-  { title: 'Innovative Design Trends', date: '2024-02-15', slug: 'innovative-design-trends' },
-];
+import BlogLayout from "../../layouts/BlogLayout.astro";
+
+const posts = await getCollection("blog");
 ---
 
 <BlogLayout title="Gemstone Builders Blog">
   <div class="space-y-6">
-    {posts.map((post) => (
-      <article class="mb-8">
-        <h2 class="text-2xl font-semibold mb-2">
-          <a href={`/blog/${post.slug}`} class="text-emerald-700 hover:text-emerald-500">
-            {post.title}
-          </a>
-        </h2>
-        <p class="text-gray-600">{new Date(post.date).toLocaleDateString()}</p>
-      </article>
-    ))}
+    {
+      posts.map((post) => (
+        <article class="mb-8">
+          <h2 class="text-2xl font-semibold mb-2">
+            <a
+              href={`/blog/${post.slug}`}
+              class="text-emerald-700 hover:text-emerald-500"
+            >
+              {post.data.title}
+            </a>
+          </h2>
+          <p class="text-gray-600">
+            {new Date(post.data.pubDate).toLocaleDateString()}
+          </p>
+        </article>
+      ))
+    }
   </div>
 </BlogLayout>

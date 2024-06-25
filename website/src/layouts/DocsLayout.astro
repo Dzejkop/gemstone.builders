@@ -1,8 +1,8 @@
 ---
 // src/layouts/DocsLayout.astro
-import type { MarkdownHeading } from 'astro';
-import BaseLayout from './BaseLayout.astro';
-import { getCollection } from 'astro:content';
+import type { MarkdownHeading } from "astro";
+import BaseLayout from "./BaseLayout.astro";
+import { getCollection } from "astro:content";
 
 type Props = {
   title: string;
@@ -10,13 +10,15 @@ type Props = {
 };
 
 const { title, headers = [] } = Astro.props;
-const allDocs = await getCollection('docs');
+const allDocs = await getCollection("docs");
 
 // Sort docs by title (you might want to add a custom sorting field in the future)
-const sortedDocs = allDocs.sort((a, b) => a.data.title.localeCompare(b.data.title));
+const sortedDocs = allDocs.sort((a, b) =>
+  a.data.title.localeCompare(b.data.title),
+);
 
 // Function to create a slug from a header
-const slugify = (text: string) => text.toLowerCase().replace(/[^\w]+/g, '-');
+const slugify = (text: string) => text.toLowerCase().replace(/[^\w]+/g, "-");
 
 // Function to get indent class based on header depth
 const getIndentClass = (depth: number) => {
@@ -27,9 +29,12 @@ const getIndentClass = (depth: number) => {
 // Function to get text size class based on header depth
 const getTextSizeClass = (depth: number) => {
   switch (depth) {
-    case 1: return 'text-base';
-    case 2: return 'text-sm';
-    default: return 'text-xs';
+    case 1:
+      return "text-base";
+    case 2:
+      return "text-sm";
+    default:
+      return "text-xs";
   }
 };
 ---
@@ -40,29 +45,41 @@ const getTextSizeClass = (depth: number) => {
       <nav>
         <h2 class="text-xl font-semibold mb-4">Documentation</h2>
         <ul class="space-y-2">
-          {sortedDocs.map((doc) => (
-            <li>
-              <a href={`/docs/${doc.slug}`} class="text-emerald-600 hover:text-emerald-800">
-                {doc.data.title}
-              </a>
-            </li>
-          ))}
-        </ul>
-      </nav>
-      {headers.length > 0 && (
-        <nav class="mt-8">
-          <h3 class="text-lg font-semibold mb-2">On this page</h3>
-          <ul class="space-y-1">
-            {headers.map((header) => (
-              <li class={`${getIndentClass(header.depth)} ${getTextSizeClass(header.depth)}`}>
-                <a href={`#${slugify(header.text)}`} class="text-emerald-600 hover:text-emerald-800">
-                  {header.text}
+          {
+            sortedDocs.map((doc) => (
+              <li>
+                <a
+                  href={`/docs/${doc.slug}`}
+                  class="text-emerald-600 hover:text-emerald-800"
+                >
+                  {doc.data.title}
                 </a>
               </li>
-            ))}
-          </ul>
-        </nav>
-      )}
+            ))
+          }
+        </ul>
+      </nav>
+      {
+        headers.length > 0 && (
+          <nav class="mt-8">
+            <h3 class="text-lg font-semibold mb-2">On this page</h3>
+            <ul class="space-y-1">
+              {headers.map((header) => (
+                <li
+                  class={`${getIndentClass(header.depth)} ${getTextSizeClass(header.depth)}`}
+                >
+                  <a
+                    href={`#${slugify(header.text)}`}
+                    class="text-emerald-600 hover:text-emerald-800"
+                  >
+                    {header.text}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        )
+      }
     </aside>
     <main class="flex-1">
       <div class="bg-white p-8 rounded-lg shadow-md">
