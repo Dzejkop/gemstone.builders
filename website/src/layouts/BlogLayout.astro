@@ -1,0 +1,15 @@
+---
+// src/layouts/BlogLayout.astro
+import BaseLayout from "./BaseLayout.astro";
+
+const { title } = Astro.props;
+---
+
+<BaseLayout title={title}>
+  <div class="max-w-4xl mx-auto">
+    <h1 class="text-3xl font-bold mb-8">Gemstone Builders Blog</h1>
+    <div class="bg-white p-8 rounded-lg shadow-md">
+      <slot />
+    </div>
+  </div>
+</BaseLayout>

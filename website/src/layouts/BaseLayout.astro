@@ -1,0 +1,113 @@
+---
+import "../styles/global.css";
+
+const { title } = Astro.props;
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+  </head>
+  <body class="flex flex-col min-h-screen bg-gray-100">
+    <header class="bg-emerald-700 text-white shadow-md">
+      <nav class="container mx-auto px-4 py-4">
+        <div class="flex justify-between items-center">
+          <a href="/" class="text-2xl font-bold flex items-center">
+            <svg
+              class="w-8 h-8 mr-2"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+            </svg>
+            Gemstone Builders
+          </a>
+          <ul class="flex items-center space-x-4">
+            <li><a href="/" class="hover:text-emerald-200">Home</a></li>
+            <li><a href="/blog" class="hover:text-emerald-200">Blog</a></li>
+            <li><a href="/docs" class="hover:text-emerald-200">Docs</a></li>
+            <li>
+              <a
+                href="https://map.gemstone.builders"
+                class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 px-4 rounded transition duration-300 flex items-center"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-5 w-5 mr-2"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"
+                  ></path>
+                </svg>
+                Map
+              </a>
+            </li>
+            <li>
+              <a
+                href="https://app.gemstone.builders"
+                class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 px-4 rounded transition duration-300 flex items-center"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-5 w-5 mr-2"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"
+                  ></path>
+                </svg>
+                App
+              </a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container mx-auto px-4 py-8 flex-grow">
+      <slot />
+    </main>
+
+    <footer class="bg-gray-800 text-white py-6">
+      <div class="container mx-auto px-4">
+        <div class="flex flex-wrap justify-between items-center">
+          <div class="w-full md:w-1/3 text-center md:text-left mb-4 md:mb-0">
+            <h3 class="text-lg font-semibold mb-2">Gemstone Builders</h3>
+            <p class="text-sm">Quality construction services since 2024</p>
+          </div>
+          <div class="w-full md:w-1/3 text-center mb-4 md:mb-0">
+            <a
+              href="mailto:info@gemstone.builders"
+              class="text-emerald-300 hover:text-emerald-100"
+              >info@gemstone.builders</a
+            >
+          </div>
+          <div class="w-full md:w-1/3 text-center md:text-right">
+            <p>&copy; 2024 Gemstone Builders. All rights reserved.</p>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
