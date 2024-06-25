@@ -1,5 +1,9 @@
 # Gemstone Builders
-<!-- TODO: Description -->
+A Factorio inspired fully decentralized and permisionless logistics game.
+
+WIP obviously.
+
+If you're looking for the hackathon version checkout the [legacy branch](https://github.com/Dzejkop/gemstone.builders/tree/legacy).
 
 ## Project structure
 
