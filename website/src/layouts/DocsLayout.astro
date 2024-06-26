@@ -43,14 +43,14 @@ const getTextSizeClass = (depth: number) => {
   <div class="flex">
     <aside class="w-64 pr-8 overflow-y-auto h-screen sticky top-0">
       <nav>
-        <h2 class="text-xl font-semibold mb-4">Documentation</h2>
+        <h2 class="text-xl font-semibold mb-4">Pages</h2>
         <ul class="space-y-2">
           {
             sortedDocs.map((doc) => (
               <li>
                 <a
                   href={`/docs/${doc.slug}`}
-                  class="text-emerald-600 hover:text-emerald-800"
+                  class="text-sky-600 hover:text-sky-800"
                 >
                   {doc.data.title}
                 </a>
@@ -70,7 +70,7 @@ const getTextSizeClass = (depth: number) => {
                 >
                   <a
                     href={`#${slugify(header.text)}`}
-                    class="text-emerald-600 hover:text-emerald-800"
+                    class="text-sky-600 hover:text-sky-800"
                   >
                     {header.text}
                   </a>

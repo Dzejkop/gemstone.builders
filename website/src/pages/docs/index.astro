@@ -7,11 +7,7 @@ const docs = await getCollection("docs");
 ---
 
 <DocsLayout title="Gemstone Builders Documentation">
-  <h1 class="text-3xl font-bold mb-8">Gemstone Builders Documentation</h1>
-  <p class="text-xl text-gray-700 mb-8">
-    Welcome to our documentation. Here you'll find guides and information to
-    help you get started with Gemstone Builders.
-  </p>
+  <h1 class="text-3xl font-bold mb-8">Documentation</h1>
 
   <div class="space-y-6">
     {
@@ -20,7 +16,7 @@ const docs = await getCollection("docs");
           <h2 class="text-2xl font-semibold mb-2">
             <a
               href={`/docs/${doc.slug}`}
-              class="text-emerald-700 hover:text-emerald-500"
+              class="text-sky-700 hover:text-sky-500"
             >
               {doc.data.title}
             </a>
