@@ -19,6 +19,7 @@
     "typescript": "^5.5.2"
   },
   "devDependencies": {
+    "@flydotio/dockerfile": "^0.5.7",
     "prettier": "^3.3.2",
     "prettier-plugin-astro": "^0.14.0"
   }
