@@ -1,0 +1,79 @@
+---
+// src/pages/index.astro
+---
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Map Explorer</title>
+    <style>
+        body { margin: 0; overflow: hidden; font-family: Arial, sans-serif; }
+        canvas { display: block; }
+        #uiOverlay {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        #controls {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        button, select {
+            margin: 5px;
+            padding: 5px 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        button:hover, select:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="mapCanvas"></canvas>
+    <div id="uiOverlay">
+        <div id="zoomLevel">Zoom: 1.00x</div>
+        <div id="viewportPosition">Position: (0, 0)</div>
+    </div>
+    <div id="controls">
+        <button id="toggleGrid">Toggle Grid</button>
+        <select id="layerSelect">
+            <option value="world">World</option>
+        </select>
+        <button id="toggleInteractive">Toggle Interactive</button>
+    </div>
+
+    <script>
+        import { MapExplorer } from '../../lib/MapExplorer';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const canvas = document.getElementById('mapCanvas') as HTMLCanvasElement;
+            const mapExplorer = new MapExplorer(canvas);
+
+            const toggleGridBtn = document.getElementById('toggleGrid') as HTMLButtonElement;
+            toggleGridBtn.addEventListener('click', () => mapExplorer.toggleGrid());
+
+            const layerSelect = document.getElementById('layerSelect') as HTMLSelectElement;
+            layerSelect.addEventListener('change', (e) => mapExplorer.setLayer((e.target as HTMLSelectElement).value));
+
+            const toggleInteractiveBtn = document.getElementById('toggleInteractive') as HTMLButtonElement;
+            toggleInteractiveBtn.addEventListener('click', () => mapExplorer.toggleInteractive());
+        });
+    </script>
+</body>
+</html>
