@@ -1,0 +1,96 @@
+[gd_scene load_steps=4 format=3 uid="uid://cj62o0pev1um3"]
+
+[ext_resource type="Script" path="res://scripts/root.gd" id="1_foqev"]
+[ext_resource type="PackedScene" uid="uid://dmglv70m76iur" path="res://scenes/diamond.tscn" id="2_iyvya"]
+[ext_resource type="TileSet" uid="uid://e36i5wa5dv1f" path="res://tileset.tres" id="3_bd2a1"]
+
+[node name="Root" type="Node2D"]
+script = ExtResource("1_foqev")
+toolbar_path = NodePath("ToolbarGrid")
+game_grid_path = NodePath("GameRoot/GameGrid")
+game_root_path = NodePath("GameRoot")
+diamond = ExtResource("2_iyvya")
+
+[node name="GameRoot" type="Node2D" parent="."]
+texture_filter = 1
+scale = Vector2(6.25, 6.25)
+
+[node name="GameGrid" type="TileMap" parent="GameRoot"]
+tile_set = ExtResource("3_bd2a1")
+format = 2
+layer_0/name = "Ground"
+layer_0/tile_data = PackedInt32Array(0, 786432, 3, 1, 786432, 3, 2, 786432, 3, 4, 917504, 2, 5, 983040, 2, 6, 983040, 2, 7, 983040, 2, 65543, 983040, 2, 131079, 983040, 2, 196615, 983040, 2, 262151, 1048576, 4, 327687, 786432, 3, 393223, 786432, 3, 458759, 786432, 3, 458758, 786432, 3, 458757, 1114112, 4, 458756, 1048576, 4, 458755, 1048576, 4, 458754, 1048576, 4, 458753, 1048576, 4, 458752, 917504, 4, 393216, 917504, 3, 327680, 917504, 3, 262144, 917504, 1, 196608, 786432, 3, 131072, 786432, 3, 65536, 786432, 3, 65537, 786432, 2, 131073, 786432, 2, 196609, 786432, 3, 262145, 983040, 1, 327681, 1048576, 2, 327682, 1048576, 2, 393218, 1048576, 2, 393219, 1048576, 2, 393220, 1048576, 2, 393221, 1114112, 3, 393222, 786432, 2, 327686, 786432, 3, 262150, 917504, 4, 196614, 1441792, 2, 131078, 1048576, 2, 65542, 1048576, 2, 65541, 1048576, 2, 65540, 1441792, 4, 65539, 917504, 1, 65538, 786432, 3, 131074, 786432, 3, 196610, 851968, 3, 262146, 983040, 1, 393217, 1048576, 2, 327683, 1048576, 2, 262148, 1114112, 1, 196613, 983040, 4, 131077, 1048576, 2, 131076, 1048576, 2, 196611, 917504, 4, 262147, 983040, 1, 327684, 1310720, 4, 196612, 983040, 4, 131075, 917504, 3, 327685, 1114112, 1, 262149, 786432, 3, 3, 786432, 3)
+layer_1/name = "Resources"
+layer_1/tile_data = PackedInt32Array(65541, 720896, 8, 65538, 720896, 8)
+layer_2/name = "Buildings"
+layer_2/tile_data = PackedInt32Array()
+layer_3/name = "Items"
+layer_3/tile_data = PackedInt32Array()
+layer_4/name = "Ghosts"
+layer_4/modulate = Color(0, 1, 0.941176, 0.470588)
+layer_4/tile_data = PackedInt32Array()
+
+[node name="ToolbarGrid" type="TileMap" parent="."]
+texture_filter = 1
+position = Vector2(815, 11)
+scale = Vector2(3.5, 3.5)
+tile_set = ExtResource("3_bd2a1")
+format = 2
+layer_0/name = "Generic"
+layer_0/tile_data = PackedInt32Array(0, 393216, 4, 1, 458752, 5, 65537, 393216, 6, 65536, 327680, 5, 3, 196608, 2, 65539, 589824, 0, 327685, 1310720, 4, 327686, 1376256, 4, 327687, 1441792, 4, 196609, 262144, 2, 5, 917504, 1, 65541, 917504, 3, 131077, 917504, 4, 196613, 1310720, 2, 262149, 1310720, 3, 6, 1048576, 1, 65542, 983040, 2, 131078, 983040, 4, 196614, 1376256, 2, 262150, 1376256, 3, 7, 1114112, 1, 65543, 1114112, 3, 131079, 1114112, 4, 196615, 1441792, 2, 262151, 1441792, 3)
+layer_1/name = "Selection"
+layer_1/modulate = Color(1, 1, 1, 0.196078)
+layer_1/tile_data = PackedInt32Array()
+
+[node name="Camera" type="Camera2D" parent="."]
+anchor_mode = 0
+
+[node name="Ui" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+
+[node name="ResetButton" type="Button" parent="Ui"]
+layout_mode = 2
+offset_left = 822.0
+offset_top = 720.0
+offset_right = 964.0
+offset_bottom = 784.0
+size_flags_horizontal = 3
+text = "RESET"
+
+[node name="StepButton" type="Button" parent="Ui"]
+layout_mode = 2
+offset_left = 968.0
+offset_top = 720.0
+offset_right = 1110.0
+offset_bottom = 784.0
+size_flags_horizontal = 3
+text = "Step"
+
+[node name="PlayButton" type="Button" parent="Ui"]
+layout_mode = 2
+offset_left = 1114.0
+offset_top = 720.0
+offset_right = 1256.0
+offset_bottom = 784.0
+size_flags_horizontal = 3
+text = "Play/Stop"
+
+[node name="ClearButton" type="Button" parent="Ui"]
+layout_mode = 0
+offset_left = 1113.0
+offset_top = 548.0
+offset_right = 1255.0
+offset_bottom = 612.0
+size_flags_horizontal = 3
+text = "CLEAR
+"
+
+[node name="HSlider" type="HSlider" parent="Ui"]
+layout_mode = 0
+offset_left = 827.0
+offset_top = 689.0
+offset_right = 1250.0
+offset_bottom = 705.0
+
+[connection signal="pressed" from="Ui/StepButton" to="." method="tick"]
