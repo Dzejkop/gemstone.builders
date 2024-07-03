@@ -58,6 +58,43 @@ canvas.height = window.innerHeight;
 let destX = 0;
 let destY = 0;
 
+// TODO: Add types
+const floatingInfoWindow: any = document.getElementById("floatingInfoWindow");
+const infoTitle: any = document.getElementById("infoTitle");
+const infoDescription: any = document.getElementById("infoDescription");
+
+// TODO: Add types
+function showFloatingInfo(x: any, y: any, title: any, description: any) {
+  infoTitle.textContent = title;
+  infoDescription.textContent = description;
+
+  // Position the window
+  const windowWidth = floatingInfoWindow.offsetWidth;
+  const windowHeight = floatingInfoWindow.offsetHeight;
+  const canvasRect = canvas?.getBoundingClientRect()!;
+
+  // Ensure the window doesn't go off-screen
+  let posX = x + canvasRect.left;
+  let posY = y + canvasRect.top;
+
+  if (posX + windowWidth > window.innerWidth) {
+    posX = window.innerWidth - windowWidth - 10;
+  }
+  if (posY + windowHeight > window.innerHeight) {
+    posY = window.innerHeight - windowHeight - 10;
+  }
+
+  floatingInfoWindow.style.left = `${posX}px`;
+  floatingInfoWindow.style.top = `${posY}px`;
+
+  // Show the window
+  floatingInfoWindow.style.display = "block";
+}
+
+function hideFloatingInfo() {
+  floatingInfoWindow.style.display = "none";
+}
+
 const render = () => {
   destX = mouse.pos.x - 16 / 2;
   destY = mouse.pos.y - 16 / 2;
@@ -142,6 +179,18 @@ const render = () => {
     tileSize,
     tileSize
   );
+
+  // TEMP: Just for testing
+  if (mouse.btnDown[BTN.LEFT]) {
+    showFloatingInfo(
+      (mouseTileX + 1.5) * tileSize,
+      mouseTileY * tileSize,
+      "Tile",
+      "Description"
+    );
+  } else {
+    hideFloatingInfo();
+  }
 
   // Reset the click state
   mouse.btnClick = [false, false, false];
