@@ -107,13 +107,13 @@
     <!-- Timeline Controls -->
     <div id="timelineControls" class="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-gray-800 rounded-lg p-4 flex items-center space-x-4 z-10">
         <button id="stepBackward" class="text-white hover:text-blue-500 focus:outline-none">
-            <i data-lucide="skip-back"></i>
+            <i id="i" data-lucide="skip-back"></i>
         </button>
         <button id="playPause" class="text-white hover:text-blue-500 focus:outline-none">
-            <i data-lucide="play"></i>
+            <i id="i" data-lucide="play"></i>
         </button>
         <button id="stepForward" class="text-white hover:text-blue-500 focus:outline-none">
-            <i data-lucide="skip-forward"></i>
+            <i id="i" data-lucide="skip-forward"></i>
         </button>
         <input type="range" id="timelineSlider" class="w-64 accent-blue-500" min="0" max="100" value="0">
     </div>
@@ -170,7 +170,7 @@
 
         playPauseBtn.addEventListener('click', () => {
             isPlaying = !isPlaying;
-            playPauseBtn.querySelector('i').setAttribute('data-lucide', isPlaying ? 'pause' : 'play');
+            playPauseBtn.querySelector('#i').setAttribute('data-lucide', isPlaying ? 'pause' : 'play');
             lucide.createIcons();
             console.log(isPlaying ? 'Playing' : 'Paused');
         });
