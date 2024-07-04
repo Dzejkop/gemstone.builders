@@ -6,7 +6,9 @@ export class Renderer {
     public tileSize = 90;
     private tilesetTileSize = 16;
 
-    constructor(public readonly ctx: CanvasRenderingContext2D, public readonly tileset: HTMLImageElement) { }
+    constructor(public readonly ctx: CanvasRenderingContext2D, public readonly tileset: HTMLImageElement) {
+      ctx.imageSmoothingEnabled = false;
+    }
 
     public render(gameState: Game): void {
       this.innerRender(gameState);
