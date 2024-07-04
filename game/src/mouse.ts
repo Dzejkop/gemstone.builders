@@ -10,5 +10,8 @@ export class Mouse {
   public pos: Vec2 = Vec2.ZERO;
   public btnDown: boolean[] = [false, false, false];
   public btnClick: boolean[] = [false, false, false];
-}
 
+  public reset() {
+    this.btnClick = [false, false, false];
+  }
+}

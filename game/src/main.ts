@@ -55,11 +55,6 @@ canvas.height = 720; // TODO: move tileSize to a config or calculate dynamically
 
 const tileset = new Image();
 tileset.src = "/tileset.png";
-tileset.style.imageRendering = "pixelated";
-
-tileset.onload = function () {
-  canvas.addEventListener("click", handleCanvasClick);
-};
 
 // Game setup
 const game = new Game(8, 8);
@@ -69,24 +64,24 @@ game.build(Building.Factory, 2, 0);
 
 const renderer = new Renderer(ctx, tileset);
 
-function render() {
+function mainLoop() {
   renderer.render(game);
-  // TODO: for build mode don't set any delay between renders
-  // TODO: for simulate mode add 1s delay
-  // TODO: for execution mode, delay is the time it takes for the local prover to return the result
-  requestAnimationFrame(render);
+
+  if (mouse.btnClick[BTN.LEFT]) {
+    const x = mouse.pos.x;
+    const y = mouse.pos.y;
+
+    const col = Math.floor(x / renderer.tileSize);
+    const row = Math.floor(y / renderer.tileSize);
+
+    game.build(Building.Mine, row, col); // TODO: build selected building
+  }
+
+  mouse.reset();
+
+  // TODO: Limit FPS?
+  requestAnimationFrame(mainLoop);
 }
 
 // Initial render
-requestAnimationFrame(render);
-
-function handleCanvasClick(event: { clientX: number; clientY: number; }) {
-  const rect = canvas.getBoundingClientRect();
-  const x = event.clientX - rect.left;
-  const y = event.clientY - rect.top;
-
-  const col = Math.floor(x / renderer.tileSize);
-  const row = Math.floor(y / renderer.tileSize);
-
-  game.build(Building.Mine, row, col); // TODO: build selected building
-}
+requestAnimationFrame(mainLoop);
