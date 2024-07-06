@@ -1,77 +1,66 @@
-import { BuildingType, RobotArm } from './building';
-import { Game } from './game';
-import { Vec2 } from './math';
-
-const arm = new RobotArm(new Vec2(0, 0));
+import { Vec2 } from "./math";
 
 export class Renderer {
-    public tileSize = 90;
-    private tilesetTileSize = 16;
+  public tileSize = 90;
+  public readonly tilesetTileSize = 16;
 
-    constructor(public readonly ctx: CanvasRenderingContext2D, public readonly tileset: HTMLImageElement) {
+  constructor(
+    public readonly ctx: CanvasRenderingContext2D,
+    public readonly tileset: HTMLImageElement
+  ) {}
+
+  public clear() {
+    this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+    this.ctx.imageSmoothingEnabled = false;
+  }
+
+  public drawGrid(gridSize: number): void {
+    // Draw grid lines
+    for (let row = 0; row < gridSize; row++) {
+      this.ctx.beginPath();
+      this.ctx.moveTo(0, row * this.tileSize);
+      this.ctx.lineTo(this.tileSize * gridSize, row * this.tileSize);
+      this.ctx.stroke();
     }
 
-    public render(gameState: Game): void {
-      this.ctx.imageSmoothingEnabled = false;
-
-      this.drawGrid(gameState);
-      this.drawBuildings(gameState);
-      this.testDraw();
+    for (let col = 0; col < gridSize; col++) {
+      this.ctx.beginPath();
+      this.ctx.moveTo(col * this.tileSize, 0);
+      this.ctx.lineTo(col * this.tileSize, this.tileSize * gridSize);
+      this.ctx.stroke();
     }
+  }
 
-    private testDraw(): void {
-    }
-
-    private drawGrid(gameState: Game): void {
-      for (let row = 0; row < gameState.rows; row++) {
-        for (let col = 0; col < gameState.cols; col++) {
-          const x = col * this.tileSize;
-          const y = row * this.tileSize;
-          this.ctx.strokeStyle = "black";
-          this.ctx.lineWidth = 1;
-          this.ctx.strokeRect(x, y, this.tileSize, this.tileSize);
-        }
-      }
-    }
-
-    private drawBuildings(gameState: Game): void {
-      const buildings = gameState.getBuildings();
-
-      for (let row = 0; row < gameState.rows; row++) {
-        for (let col = 0; col < gameState.cols; col++) {
-          const building = buildings[row * gameState.cols + col];
-          if (building !== BuildingType.Empty) {
-            this.drawBuilding(building, row, col);
-          }
-        }
-      }
-    }
-
-    private drawBuilding(building: BuildingType, row: number, col: number): void {
-      const x = col * this.tileSize;
-      const y = row * this.tileSize;
-      const coords = this.buildingTileCoordinates(building);
-      this.ctx.drawImage(
-        this.tileset,
-        coords.y,
-        coords.x,
-        this.tilesetTileSize,
-        this.tilesetTileSize,
-        x,
-        y,
-        this.tileSize,
-        this.tileSize
-      );
-    }
-
-    private buildingTileCoordinates(building: BuildingType): Vec2 {
-      const buildings = {
-        [BuildingType.Empty]: new Vec2(6 * this.tilesetTileSize, 10 * this.tilesetTileSize),
-        [BuildingType.Mine]: new Vec2(0, 0),
-        [BuildingType.Factory]: new Vec2(1 * this.tilesetTileSize, 2 * this.tilesetTileSize),
-        [BuildingType.BeltDown]: new Vec2(3 * this.tilesetTileSize, 1 * this.tilesetTileSize),
-      }
-      return buildings[building];
-    }
-
+  public drawSprite(
+    // pixel position
+    pos: Vec2,
+    // sprite coordinates in the tileset (in tiles)
+    spriteCoords: Vec2,
+    // Sprite size (in tiles)
+    spriteSize: Vec2 = new Vec2(1, 1),
+    rotation: number = 0.0,
+    // The anchor along which rotation happens
+    // In relative values
+    // By default it's the middle of a 16x16 tile
+    anchor: Vec2 = new Vec2(0.5, 0.5)
+  ) {
+    this.ctx.save();
+    this.ctx.translate(
+      pos.x + anchor.x * this.tileSize,
+      pos.y + anchor.y * this.tileSize
+    );
+    this.ctx.rotate(rotation);
+    this.ctx.drawImage(
+      this.tileset,
+      spriteCoords.x * this.tilesetTileSize,
+      spriteCoords.y * this.tilesetTileSize,
+      spriteSize.x * this.tilesetTileSize,
+      spriteSize.y * this.tilesetTileSize,
+      -anchor.x * this.tileSize,
+      -anchor.y * this.tileSize,
+      spriteSize.x * this.tileSize,
+      spriteSize.y * this.tileSize
+    );
+    this.ctx.restore();
+  }
 }

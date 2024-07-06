@@ -1,25 +1,26 @@
-import { BuildingType } from './building';
+import { Building, BuildingType } from "./building";
+import { MAP_SIZE } from "./consts";
+import { Vec2 } from "./math";
 
 export class Game {
-    private buildings: Array<BuildingType>;
+  public buildings: Building[] = [];
+  public selectedBuilding: BuildingType | null = null;
 
-    constructor(public readonly rows: number, public readonly cols: number) {
-        this.buildings = new Array<BuildingType>(rows * cols).fill(BuildingType.Empty);
+  constructor() {}
+
+  public isValidPosition(pos: Vec2): boolean {
+    const onGrid = pos.x >= 0 && pos.x < MAP_SIZE && pos.y >= 0 && pos.y < MAP_SIZE;
+    if (!onGrid) {
+        return false;
     }
 
-    public getBuildings(): Array<BuildingType> {
-        return this.buildings;
-    }
-
-    public build(building: BuildingType, row: number, col: number): void {
-        if (this.isValidPosition(row, col)) {
-            this.buildings[row * this.cols + col] = building;
-        } else {
-            throw new Error("Invalid position");
+    for (const building of this.buildings) {
+        const buildingPos = building.gridPos();
+        if (buildingPos.x === pos.x && buildingPos.y === pos.y) {
+            return false;
         }
     }
 
-    private isValidPosition(row: number, col: number): boolean {
-        return row >= 0 && row < this.rows && col >= 0 && col < this.cols;
-    }
+    return true;
+  }
 }

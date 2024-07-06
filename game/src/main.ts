@@ -2,9 +2,10 @@ import "./style.css";
 
 import { Vec2 } from "./math";
 import { BTN, Mouse } from "./mouse";
-import { BuildingType } from "./building";
+import { BuildingType, Rotation, allBuildings } from "./building";
 import { Game } from "./game";
 import { Renderer } from "./renderer";
+import { RobotArm } from "./building/arm";
 
 // Context setup
 const canvas = document.getElementById("gameCanvas") as HTMLCanvasElement;
@@ -52,42 +53,60 @@ tileset.src = "/tileset.png";
 const renderer = new Renderer(ctx, tileset);
 
 const resizeCanvas = () => {
-  const maxSize = Math.min(window.innerWidth, window.innerHeight);
+  const smallestDimension = Math.min(window.innerWidth, window.innerHeight);
 
-  const size = maxSize * 0.8;
+  // TODO: Smarter?
+  //       we need to figure the space needed for other UI elements and resize according to that
+  const size = smallestDimension * 0.7;
   const closestMultileOf8 = Math.floor(size / 8) * 8;
 
   canvas.width = closestMultileOf8;
   canvas.height = closestMultileOf8;
   renderer.tileSize = canvas.width / 8;
-}
+};
 
 window.addEventListener("resize", (_ev) => {
-  console.log("resize");
   resizeCanvas();
 });
 
 resizeCanvas();
 
+const game = new Game();
 
-// Game setup
-const game = new Game(8, 8);
-game.build(BuildingType.Mine, 0, 0);
-game.build(BuildingType.BeltDown, 1, 0);
-game.build(BuildingType.Factory, 2, 0);
+game.buildings.push(new RobotArm());
 
+// TODO: Temporary, we should a nullable object/enum in the future
+let isBuilding = true;
 
 function mainLoop() {
-  renderer.render(game);
+  // TODO: Measure FPS
+  renderer.clear();
 
-  if (mouse.btnClick[BTN.LEFT]) {
-    const x = mouse.pos.x;
-    const y = mouse.pos.y;
+  renderer.drawGrid(8);
 
-    const col = Math.floor(x / renderer.tileSize);
-    const row = Math.floor(y / renderer.tileSize);
+  for (const building of game.buildings) {
+    building.drawReal(renderer);
+  }
 
-    game.build(BuildingType.Mine, row, col); // TODO: build selected building
+  if (isBuilding) {
+    const tilePos = mouse.pos.div(renderer.tileSize).floor();
+
+    const realPos = tilePos.mul(renderer.tileSize);
+
+    if (game.isValidPosition(tilePos)) {
+      // TODO: Tint with transparency somehow
+      allBuildings[BuildingType.RobotArm].drawGhost(renderer, tilePos, {
+        armFlipped: false,
+        rotation: Rotation.Up,
+      });
+
+      if (mouse.btnClick[BTN.LEFT]) {
+        game.buildings.push(new RobotArm(tilePos));
+      }
+    } else {
+      // TODO: Better highlight
+      renderer.drawSprite(realPos, Vec2.ONE);
+    }
   }
 
   mouse.reset();

@@ -1,20 +1,38 @@
+import { RobotArm } from "./building/arm";
+import { ZkId } from "./building/zkIds";
 import { Vec2 } from "./math";
+import { Renderer } from "./renderer";
 
 export enum BuildingType {
-    Empty = "Empty",
-    Mine = "Mine",
-    Factory = "Factory",
-    BeltDown = "BeltDown",
+  Empty = "Empty",
+  Mine = "Mine",
+  Factory = "Factory",
+  BeltDown = "BeltDown",
+  RobotArm = "RobotArm",
 }
 
-export class RobotArm {
-    constructor(public readonly pos: Vec2) {}
-
-    /// Draws the real image of the robot arm
-    public drawReal() {
-
-    }
+export enum Rotation {
+  Up = 0,
+  Right = 1,
+  Down = 2,
+  Left = 3,
 }
 
-// TODO: Add buildings metadata
-// { inputs: [{ resource: Resource, amount: number }], outputs: [{ resource: Resource, amount: number }], terrain: [Terrain] }
+// TODO: Maybe there's a better way
+export type AllBuildingParams = {
+  armFlipped?: boolean;
+  rotation?: Rotation;
+}
+
+export interface Building {
+  update(s: number): void;
+  gridPos(): Vec2;
+  drawReal(renderer: Renderer): void;
+  drawGhost(renderer: Renderer, pos: Vec2, params: AllBuildingParams): void;
+  zkId(): ZkId;
+}
+
+// Used to draw ghosts & stuff like that
+export const allBuildings = {
+  RobotArm: new RobotArm(),
+};
