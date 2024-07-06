@@ -85,12 +85,7 @@ const startTime = Date.now();
 let lastTime = Date.now();
 
 function mainLoop() {
-  // TODO: Measure FPS
-
   const currentTime = Date.now();
-  // let dt = currentTime - lastTime;
-  // // delta in seconds
-  // let dts = dt / 1000.0;
 
   lastTime = currentTime;
   let t = currentTime - startTime;
