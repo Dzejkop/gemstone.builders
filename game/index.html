@@ -6,13 +6,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-      #gameCanvas {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-      }
       .drawer-handle {
         writing-mode: vertical-rl;
         text-orientation: mixed;
@@ -29,9 +22,7 @@
     </style>
   </head>
   <body class="bg-gray-600 text-white font-sans overflow-hidden flex justify-center items-center h-screen">
-    <div class="relative w-[720px] h-[720px] border-2 border-black">
-      <canvas id="gameCanvas" class="absolute top-0 left-0 right-0 bottom-0 m-auto block"></canvas>
-    </div>
+    <canvas id="gameCanvas" class="block border-2 border-black"></canvas>
 
     <!-- Mode Selector -->
     <div

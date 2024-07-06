@@ -2,7 +2,7 @@ import "./style.css";
 
 import { Vec2 } from "./math";
 import { BTN, Mouse } from "./mouse";
-import { Building } from "./building";
+import { BuildingType } from "./building";
 import { Game } from "./game";
 import { Renderer } from "./renderer";
 
@@ -45,24 +45,37 @@ canvas.addEventListener("mouseup", (event) => {
 canvas.addEventListener("click", (event) => {
   mouse.btnClick[event.button] = true;
 });
-window.addEventListener("resize", (_ev) => {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-});
-
-canvas.width = 720; // 8 * renderer.tileSize;
-canvas.height = 720; // TODO: move tileSize to a config or calculate dynamically based on device size
 
 const tileset = new Image();
 tileset.src = "/tileset.png";
 
+const renderer = new Renderer(ctx, tileset);
+
+const resizeCanvas = () => {
+  const maxSize = Math.min(window.innerWidth, window.innerHeight);
+
+  const size = maxSize * 0.8;
+  const closestMultileOf8 = Math.floor(size / 8) * 8;
+
+  canvas.width = closestMultileOf8;
+  canvas.height = closestMultileOf8;
+  renderer.tileSize = canvas.width / 8;
+}
+
+window.addEventListener("resize", (_ev) => {
+  console.log("resize");
+  resizeCanvas();
+});
+
+resizeCanvas();
+
+
 // Game setup
 const game = new Game(8, 8);
-game.build(Building.Mine, 0, 0);
-game.build(Building.BeltDown, 1, 0);
-game.build(Building.Factory, 2, 0);
+game.build(BuildingType.Mine, 0, 0);
+game.build(BuildingType.BeltDown, 1, 0);
+game.build(BuildingType.Factory, 2, 0);
 
-const renderer = new Renderer(ctx, tileset);
 
 function mainLoop() {
   renderer.render(game);
@@ -74,7 +87,7 @@ function mainLoop() {
     const col = Math.floor(x / renderer.tileSize);
     const row = Math.floor(y / renderer.tileSize);
 
-    game.build(Building.Mine, row, col); // TODO: build selected building
+    game.build(BuildingType.Mine, row, col); // TODO: build selected building
   }
 
   mouse.reset();

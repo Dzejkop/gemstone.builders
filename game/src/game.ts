@@ -1,17 +1,17 @@
-import { Building } from './building';
+import { BuildingType } from './building';
 
 export class Game {
-    private buildings: Array<Building>;
+    private buildings: Array<BuildingType>;
 
     constructor(public readonly rows: number, public readonly cols: number) {
-        this.buildings = new Array<Building>(rows * cols).fill(Building.Empty);
+        this.buildings = new Array<BuildingType>(rows * cols).fill(BuildingType.Empty);
     }
 
-    public getBuildings(): Array<Building> {
+    public getBuildings(): Array<BuildingType> {
         return this.buildings;
     }
 
-    public build(building: Building, row: number, col: number): void {
+    public build(building: BuildingType, row: number, col: number): void {
         if (this.isValidPosition(row, col)) {
             this.buildings[row * this.cols + col] = building;
         } else {

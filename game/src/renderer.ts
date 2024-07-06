@@ -1,23 +1,25 @@
-import { Building } from './building';
+import { BuildingType, RobotArm } from './building';
 import { Game } from './game';
 import { Vec2 } from './math';
+
+const arm = new RobotArm(new Vec2(0, 0));
 
 export class Renderer {
     public tileSize = 90;
     private tilesetTileSize = 16;
 
     constructor(public readonly ctx: CanvasRenderingContext2D, public readonly tileset: HTMLImageElement) {
-      ctx.imageSmoothingEnabled = false;
     }
 
     public render(gameState: Game): void {
-      this.innerRender(gameState);
-    }
+      this.ctx.imageSmoothingEnabled = false;
 
-    private innerRender(gameState: Game): void {
-      console.log("Rendering...");
       this.drawGrid(gameState);
       this.drawBuildings(gameState);
+      this.testDraw();
+    }
+
+    private testDraw(): void {
     }
 
     private drawGrid(gameState: Game): void {
@@ -38,14 +40,14 @@ export class Renderer {
       for (let row = 0; row < gameState.rows; row++) {
         for (let col = 0; col < gameState.cols; col++) {
           const building = buildings[row * gameState.cols + col];
-          if (building !== Building.Empty) {
+          if (building !== BuildingType.Empty) {
             this.drawBuilding(building, row, col);
           }
         }
       }
     }
 
-    private drawBuilding(building: Building, row: number, col: number): void {
+    private drawBuilding(building: BuildingType, row: number, col: number): void {
       const x = col * this.tileSize;
       const y = row * this.tileSize;
       const coords = this.buildingTileCoordinates(building);
@@ -62,12 +64,12 @@ export class Renderer {
       );
     }
 
-    private buildingTileCoordinates(building: Building): Vec2 {
+    private buildingTileCoordinates(building: BuildingType): Vec2 {
       const buildings = {
-        [Building.Empty]: new Vec2(6 * this.tilesetTileSize, 10 * this.tilesetTileSize),
-        [Building.Mine]: new Vec2(0, 0),
-        [Building.Factory]: new Vec2(1 * this.tilesetTileSize, 2 * this.tilesetTileSize),
-        [Building.BeltDown]: new Vec2(3 * this.tilesetTileSize, 1 * this.tilesetTileSize),
+        [BuildingType.Empty]: new Vec2(6 * this.tilesetTileSize, 10 * this.tilesetTileSize),
+        [BuildingType.Mine]: new Vec2(0, 0),
+        [BuildingType.Factory]: new Vec2(1 * this.tilesetTileSize, 2 * this.tilesetTileSize),
+        [BuildingType.BeltDown]: new Vec2(3 * this.tilesetTileSize, 1 * this.tilesetTileSize),
       }
       return buildings[building];
     }
