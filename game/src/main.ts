@@ -4,8 +4,9 @@ import { Vec2 } from "./math";
 import { BTN, Mouse } from "./mouse";
 import { BuildingType, Rotation, allBuildings } from "./building";
 import { Game } from "./game";
-import { Renderer } from "./renderer";
+import { Renderer } from "./rendering/renderer";
 import { RobotArm } from "./building/arm";
+import { Item } from "./item";
 
 // Context setup
 const canvas = document.getElementById("gameCanvas") as HTMLCanvasElement;
@@ -73,19 +74,37 @@ resizeCanvas();
 
 const game = new Game();
 
-game.buildings.push(new RobotArm());
+let initialRobotArm = new RobotArm();
+initialRobotArm.heldItem = new Item();
+game.buildings.push(initialRobotArm);
 
 // TODO: Temporary, we should a nullable object/enum in the future
 let isBuilding = true;
 
+const startTime = Date.now();
+let lastTime = Date.now();
+
 function mainLoop() {
   // TODO: Measure FPS
+
+  const currentTime = Date.now();
+  // let dt = currentTime - lastTime;
+  // // delta in seconds
+  // let dts = dt / 1000.0;
+
+  lastTime = currentTime;
+  let t = currentTime - startTime;
+  let ts = t / 1000.0;
+
   renderer.clear();
 
   renderer.drawGrid(8);
 
+  // TEMP: Animation state
+  let animState = Math.sin(ts) * 0.5 + 0.5;
+
   for (const building of game.buildings) {
-    building.drawReal(renderer);
+    building.drawReal(renderer, animState);
   }
 
   if (isBuilding) {

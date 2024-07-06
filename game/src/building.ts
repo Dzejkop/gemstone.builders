@@ -1,7 +1,7 @@
 import { RobotArm } from "./building/arm";
 import { ZkId } from "./building/zkIds";
 import { Vec2 } from "./math";
-import { Renderer } from "./renderer";
+import { Renderer } from "./rendering/renderer";
 
 export enum BuildingType {
   Empty = "Empty",
@@ -25,9 +25,9 @@ export type AllBuildingParams = {
 }
 
 export interface Building {
-  update(s: number): void;
+  // update(s: number): void;
   gridPos(): Vec2;
-  drawReal(renderer: Renderer): void;
+  drawReal(renderer: Renderer, s: number): void;
   drawGhost(renderer: Renderer, pos: Vec2, params: AllBuildingParams): void;
   zkId(): ZkId;
 }

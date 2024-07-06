@@ -23,4 +23,10 @@ export class Vec2 {
   public floor(): Vec2 {
     return new Vec2(Math.floor(this.x), Math.floor(this.y));
   }
+
+  public rotate(angle: number): Vec2 {
+    const cos = Math.cos(angle);
+    const sin = Math.sin(angle);
+    return new Vec2(this.x * cos - this.y * sin, this.x * sin + this.y * cos);
+  }
 }
