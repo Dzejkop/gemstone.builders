@@ -1,4 +1,5 @@
 import "./style.css";
+import "./doc";
 
 import { Vec2 } from "./math";
 import { BTN, Mouse } from "./mouse";

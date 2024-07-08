@@ -3,8 +3,6 @@
   <head>
     <meta charset="UTF-8" />
     <title>game.gemstone.builders</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
       .drawer-handle {
         writing-mode: vertical-rl;
@@ -21,7 +19,9 @@
       }
     </style>
   </head>
-  <body class="bg-gray-600 text-white font-sans overflow-hidden flex justify-center items-center h-screen">
+  <body
+    class="bg-gray-600 text-white font-sans overflow-hidden flex justify-center items-center h-screen"
+  >
     <canvas id="gameCanvas" class="block border-2 border-black"></canvas>
 
     <!-- Mode Selector -->
@@ -197,105 +197,6 @@
       <p id="infoDescription" class="text-sm"></p>
     </div>
 
-    <script>
-      // Drawer functionality
-      function setupDrawer(containerId, handleId) {
-        const container = document.getElementById(containerId);
-        const handle = document.getElementById(handleId);
-        let isOpen = false;
-
-        handle.addEventListener("click", () => {
-          isOpen = !isOpen;
-          container.style.transform = isOpen
-            ? "translateX(0)"
-            : containerId === "buildDrawerContainer"
-            ? "translateX(100%)"
-            : "translateX(-100%)";
-        });
-      }
-
-      setupDrawer("buildDrawerContainer", "buildDrawerHandle");
-      setupDrawer("propertiesDrawerContainer", "propertiesDrawerHandle");
-
-      // Mode selector functionality
-      const modeButtons = document.querySelectorAll(".mode-btn");
-      const timelineControls = document.getElementById("timelineControls");
-      let currentMode = "simulate";
-
-      function setActiveMode(mode) {
-        modeButtons.forEach((btn) => {
-          if (btn.dataset.mode === mode) {
-            btn.classList.add("bg-blue-600", "text-white");
-            btn.classList.remove("text-gray-300");
-          } else {
-            btn.classList.remove("bg-blue-600", "text-white");
-            btn.classList.add("text-gray-300");
-          }
-        });
-        currentMode = mode;
-        timelineControls.style.display = mode === "simulate" ? "flex" : "none";
-        console.log("Current mode:", mode);
-      }
-
-      modeButtons.forEach((btn) => {
-        btn.addEventListener("click", () => setActiveMode(btn.dataset.mode));
-      });
-
-      // Set initial active mode
-      setActiveMode(currentMode);
-
-      // Timeline control functionality
-      const playPauseBtn = document.getElementById("playPause");
-      const stepBackwardBtn = document.getElementById("stepBackward");
-      const stepForwardBtn = document.getElementById("stepForward");
-      const timelineSlider = document.getElementById("timelineSlider");
-      let isPlaying = false;
-
-      playPauseBtn.addEventListener("click", () => {
-        isPlaying = !isPlaying;
-        playPauseBtn
-          .querySelector("#i")
-          .setAttribute("data-lucide", isPlaying ? "pause" : "play");
-        lucide.createIcons();
-        console.log(isPlaying ? "Playing" : "Paused");
-      });
-
-      stepBackwardBtn.addEventListener("click", () => {
-        console.log("Step backward");
-        timelineSlider.value = Math.max(0, parseInt(timelineSlider.value) - 1);
-      });
-
-      stepForwardBtn.addEventListener("click", () => {
-        console.log("Step forward");
-        timelineSlider.value = Math.min(
-          100,
-          parseInt(timelineSlider.value) + 1
-        );
-      });
-
-      timelineSlider.addEventListener("input", () => {
-        console.log("Timeline position:", timelineSlider.value);
-      });
-
-      // BigInt input validation
-      function validateBigIntInput(input) {
-        input.addEventListener("input", function () {
-          try {
-            BigInt(this.value);
-            this.classList.remove("border-red-500");
-          } catch (error) {
-            this.classList.add("border-red-500");
-          }
-        });
-      }
-
-      validateBigIntInput(document.getElementById("xCoord"));
-      validateBigIntInput(document.getElementById("yCoord"));
-    </script>
     <script type="module" src="src/main.ts"></script>
-    <script>
-      // Initialize Lucide icons
-      lucide.createIcons();
-    </script>
   </body>
 </html>
