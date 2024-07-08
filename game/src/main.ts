@@ -10,6 +10,7 @@ import { RobotArm } from "./building/arm";
 import { Item } from "./item";
 import { querySelector } from "./utils";
 import { MAP_SIZE } from "./consts";
+import { Time } from "./time";
 
 // Context setup
 const canvas = querySelector<HTMLCanvasElement>("#gameCanvas");
@@ -22,6 +23,8 @@ if (!ctx) {
 
 let mouse = new Mouse();
 mouse.installTrackers(canvas);
+
+const time = new Time();
 
 const tileset = new Image();
 tileset.src = "/tileset.png";
@@ -50,25 +53,22 @@ resizeCanvas();
 const game = new Game();
 
 let initialRobotArm = new RobotArm();
-initialRobotArm.heldItem = new Item();
 game.buildings.push(initialRobotArm);
+
+game.items.push(new Item())
 
 // TODO: Temporary, we should a nullable object/enum in the future
 let isBuilding = true;
 
-const startTime = Date.now();
-
 function mainLoop() {
-  const currentTime = Date.now();
-  let t = currentTime - startTime;
-  let ts = t / 1000.0;
+  time.update();
 
   renderer.clear();
 
   renderer.drawGrid(MAP_SIZE);
 
   // TEMP: Animation state
-  let animState = Math.sin(ts) * 0.5 + 0.5;
+  let animState = Math.sin(time.ts) * 0.5 + 0.5;
 
   for (const building of game.buildings) {
     building.drawReal(renderer, animState);
