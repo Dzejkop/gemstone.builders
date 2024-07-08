@@ -5,4 +5,7 @@ edition = "2021"
 
 [dependencies]
 fixed = { version = "1.27.0", features = ["serde-str"] }
-rand = "0.8.5"
+rand = { version = "0.8.5", optional = true, features = [ "small_rng" ] }
+
+[features]
+default = ["rand"]

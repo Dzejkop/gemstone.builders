@@ -2,6 +2,7 @@ use std::path::PathBuf;
 
 use clap::Parser;
 use image::RgbImage;
+use noise::simplex::simplex;
 use noise::{perm, N};
 use noise_config::load_config;
 use rand::SeedableRng;
@@ -33,7 +34,7 @@ fn main() -> anyhow::Result<()> {
     let mut img = RgbImage::new(args.image_size, args.image_size);
 
     let mut rng = rand::rngs::SmallRng::seed_from_u64(42);
-    let perm = perm(&mut rng);
+    let perm = perm::generate(&mut rng);
 
     println!("perm = {perm:?}");
 
@@ -59,7 +60,7 @@ fn main() -> anyhow::Result<()> {
             let sx = x * octave.scale;
             let sy = y * octave.scale;
             let sz = octave.z_layer;
-            let v = noise::simplex(&perm, sx, sy, sz);
+            let v = simplex(&perm, sx, sy, sz);
 
             n += v * d;
         }
