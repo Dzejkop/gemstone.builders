@@ -20,10 +20,7 @@ if (!ctx) {
   throw new Error("Cannot get 2d context");
 }
 
-ctx.imageSmoothingEnabled = false;
-
 let mouse = new Mouse();
-
 mouse.installTrackers(canvas);
 
 const tileset = new Image();
