@@ -24,30 +24,6 @@
   >
     <canvas id="gameCanvas" class="block border-2 border-black"></canvas>
 
-    <!-- Mode Selector -->
-    <div
-      class="fixed top-4 left-1/2 transform -translate-x-1/2 bg-gray-800 rounded-full p-1 flex space-x-1 z-10"
-    >
-      <button
-        class="mode-btn px-4 py-2 rounded-full text-sm font-medium focus:outline-none"
-        data-mode="simulate"
-      >
-        Simulate
-      </button>
-      <button
-        class="mode-btn px-4 py-2 rounded-full text-sm font-medium focus:outline-none"
-        data-mode="build"
-      >
-        Build
-      </button>
-      <button
-        class="mode-btn px-4 py-2 rounded-full text-sm font-medium focus:outline-none"
-        data-mode="program"
-      >
-        Program
-      </button>
-    </div>
-
     <!-- Right Drawer (Build) -->
     <div
       id="buildDrawerContainer"
@@ -75,117 +51,78 @@
       </div>
     </div>
 
-    <!-- Left Drawer (Properties) -->
+    <!-- Left Drawer (Simulation controls) -->
     <div
-      id="propertiesDrawerContainer"
+      id="leftDrawerContainer"
       class="fixed top-0 left-0 h-full flex transition-transform duration-300 ease-in-out transform -translate-x-full z-20"
     >
       <div
-        id="propertiesDrawerHandle"
+        id="leftDrawerHandle"
         class="absolute left-full top-1/2 -translate-y-1/2 bg-green-600 hover:bg-green-700 cursor-pointer p-2 rounded-r-md left-drawer-handle"
       >
-        <span class="text-sm font-bold">Properties</span>
+        <span class="text-sm font-bold">Simulation</span>
       </div>
-      <div
-        id="propertiesDrawer"
-        class="bg-gray-800 h-full w-64 p-4 overflow-y-auto"
-      >
-        <h2 class="text-xl font-bold mb-4">Properties</h2>
-
-        <!-- BigInt Inputs -->
-        <div class="mb-4">
-          <label for="xCoord" class="block text-sm font-medium mb-1"
-            >X Coordinate:</label
-          >
-          <input
-            type="text"
-            id="xCoord"
-            class="w-full bg-gray-700 rounded p-2 text-white"
-            value="0"
-            placeholder="Enter BigInt value"
-          />
-        </div>
-        <div class="mb-4">
-          <label for="yCoord" class="block text-sm font-medium mb-1"
-            >Y Coordinate:</label
-          >
-          <input
-            type="text"
-            id="yCoord"
-            class="w-full bg-gray-700 rounded p-2 text-white"
-            value="0"
-            placeholder="Enter BigInt value"
-          />
-        </div>
-
-        <!-- Placeholder Select -->
-        <div class="mb-4">
-          <label for="placeholderSelect" class="block text-sm font-medium mb-1"
-            >Select Option:</label
-          >
-          <select
-            id="placeholderSelect"
-            class="w-full bg-gray-700 rounded p-2 text-white"
-          >
-            <option value="">Choose an option</option>
-            <option value="option1">Option 1</option>
-            <option value="option2">Option 2</option>
-            <option value="option3">Option 3</option>
-          </select>
-        </div>
-
-        <!-- Checkboxes -->
-        <div class="mb-4">
-          <label class="block text-sm font-medium mb-2">Options:</label>
-          <div class="space-y-2">
-            <label class="flex items-center">
-              <input type="checkbox" class="form-checkbox text-blue-600" />
-              <span class="ml-2">Option A</span>
-            </label>
-            <label class="flex items-center">
-              <input type="checkbox" class="form-checkbox text-blue-600" />
-              <span class="ml-2">Option B</span>
-            </label>
-            <label class="flex items-center">
-              <input type="checkbox" class="form-checkbox text-blue-600" />
-              <span class="ml-2">Option C</span>
-            </label>
+      <div id="leftDrawer" class="bg-gray-800 w-96 h-full p-4 overflow-y-auto">
+        <!-- Timeline Controls -->
+        <div id="timelineControls" class="left-1/2 flex z-10">
+          <div class="w-1/4 flex flex-row">
+            <!-- TODO: Add padding here -->
+            <button
+              id="stepBackward"
+              class="text-white hover:text-blue-500 focus:outline-none"
+            >
+              <i id="i" data-lucide="skip-back"></i>
+            </button>
+            <button
+              id="playPause"
+              class="text-white hover:text-blue-500 focus:outline-none"
+            >
+              <i id="i" data-lucide="play"></i>
+            </button>
+            <button
+              id="stepForward"
+              class="text-white hover:text-blue-500 focus:outline-none"
+            >
+              <i id="i" data-lucide="skip-forward"></i>
+            </button>
           </div>
+          <input
+            type="range"
+            id="timelineSlider"
+            class="accent-blue-500"
+            min="0"
+            max="100"
+            value="0"
+          />
         </div>
       </div>
     </div>
 
-    <!-- Timeline Controls -->
+    <!-- Misc utils (e.g. coordinates) -->
     <div
-      id="timelineControls"
       class="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-gray-800 rounded-lg p-4 flex items-center space-x-4 z-10"
     >
-      <button
-        id="stepBackward"
-        class="text-white hover:text-blue-500 focus:outline-none"
-      >
-        <i id="i" data-lucide="skip-back"></i>
-      </button>
-      <button
-        id="playPause"
-        class="text-white hover:text-blue-500 focus:outline-none"
-      >
-        <i id="i" data-lucide="play"></i>
-      </button>
-      <button
-        id="stepForward"
-        class="text-white hover:text-blue-500 focus:outline-none"
-      >
-        <i id="i" data-lucide="skip-forward"></i>
-      </button>
-      <input
-        type="range"
-        id="timelineSlider"
-        class="w-64 accent-blue-500"
-        min="0"
-        max="100"
-        value="0"
-      />
+      <!-- Coordinate control -->
+      <div class="">
+        <label for="xCoord" class="text-sm font-medium">X:</label>
+        <input
+          type="text"
+          id="xCoord"
+          class="bg-gray-700 rounded p-2 text-white"
+          value="0"
+          placeholder="Enter BigInt value"
+        />
+      </div>
+      <div class="">
+        <label for="yCoord" class="text-sm font-medium">Y:</label>
+        <input
+          type="text"
+          id="yCoord"
+          class="bg-gray-700 rounded p-2 text-white"
+          value="0"
+          placeholder="Enter BigInt value"
+        />
+      </div>
     </div>
 
     <!-- Floating Info Window -->
