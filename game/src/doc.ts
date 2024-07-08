@@ -8,6 +8,8 @@ import {
   Circle,
   CircleDot,
 } from "lucide";
+import { BuildingType } from "./building";
+import { game } from "./main";
 
 createIcons({
   icons: {
@@ -146,3 +148,39 @@ const validateCoordInputs = () => {
 validateCoordInputs();
 xCoordElem.addEventListener("input", () => validateCoordInputs());
 yCoordElem.addEventListener("input", () => validateCoordInputs());
+
+// Build menu
+
+let buildingsList = querySelector("#buildDrawer div") as HTMLElement;
+function renderBuildingList() {
+  for (const buildingName of Object.values(BuildingType)) {
+    let building = createBuildingMenuItem(buildingName);
+    buildingsList.appendChild(building);
+  }
+}
+
+function createBuildingMenuItem(buildingName: string): HTMLElement {
+  let building = document.createElement('div');
+    building.className = "flex items-center justify-center bg-gray-700 aspect-square rounded-md";
+    building.textContent = buildingName;
+    building.addEventListener('click', () => {
+      const selected = buildingName as BuildingType;
+      deselectAllBuildings();
+      if (game.selectedBuilding == selected) {
+        game.selectedBuilding = null;
+      } else {
+        building.classList.add('bg-red-500');
+        game.selectedBuilding = selected;
+      }
+    });
+
+    return building;
+}
+
+function deselectAllBuildings() {
+  for (const child of buildingsList.children) {
+    child.classList.remove('bg-red-500');
+  }
+}
+
+renderBuildingList();

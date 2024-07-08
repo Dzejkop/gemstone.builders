@@ -121,3 +121,5 @@ function mainLoop() {
 
 // Initial render
 requestAnimationFrame(mainLoop);
+
+export { game };
