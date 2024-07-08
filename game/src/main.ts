@@ -7,17 +7,11 @@ import { Game } from "./game";
 import { Renderer } from "./rendering/renderer";
 import { RobotArm } from "./building/arm";
 import { Item } from "./item";
+import { querySelector } from "./utils";
+import { MAP_SIZE } from "./consts";
 
 // Context setup
-const canvas = document.getElementById("gameCanvas") as HTMLCanvasElement;
-
-if (!canvas) {
-  throw new Error("Cannot find canvas element");
-}
-
-if (!(canvas instanceof HTMLCanvasElement)) {
-  throw new Error("Element is not a canvas");
-}
+const canvas = querySelector<HTMLCanvasElement>("#gameCanvas");
 
 const ctx = canvas.getContext("2d");
 
@@ -82,18 +76,15 @@ game.buildings.push(initialRobotArm);
 let isBuilding = true;
 
 const startTime = Date.now();
-let lastTime = Date.now();
 
 function mainLoop() {
   const currentTime = Date.now();
-
-  lastTime = currentTime;
   let t = currentTime - startTime;
   let ts = t / 1000.0;
 
   renderer.clear();
 
-  renderer.drawGrid(8);
+  renderer.drawGrid(MAP_SIZE);
 
   // TEMP: Animation state
   let animState = Math.sin(ts) * 0.5 + 0.5;
