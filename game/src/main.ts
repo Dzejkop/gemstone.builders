@@ -23,24 +23,7 @@ ctx.imageSmoothingEnabled = false;
 
 let mouse = new Mouse();
 
-canvas.addEventListener("mousemove", (event) => {
-  const rect = canvas.getBoundingClientRect();
-  const mouseX = event.clientX - rect.left;
-  const mouseY = event.clientY - rect.top;
-
-  mouse.pos = new Vec2(mouseX, mouseY);
-});
-
-// Mouse button state
-canvas.addEventListener("mousedown", (event) => {
-  mouse.btnDown[event.button] = true;
-});
-canvas.addEventListener("mouseup", (event) => {
-  mouse.btnDown[event.button] = false;
-});
-canvas.addEventListener("click", (event) => {
-  mouse.btnClick[event.button] = true;
-});
+mouse.installTrackers(canvas);
 
 const tileset = new Image();
 tileset.src = "/tileset.png";

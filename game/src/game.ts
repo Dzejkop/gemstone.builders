@@ -1,9 +1,11 @@
 import { Building, BuildingType } from "./building";
 import { MAP_SIZE } from "./consts";
+import { Item } from "./item";
 import { Vec2 } from "./math";
 
 export class Game {
   public buildings: Building[] = [];
+  public items: Item[] = [];
   public selectedBuilding: BuildingType | null = null;
 
   constructor() {}
