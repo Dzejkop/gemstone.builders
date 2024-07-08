@@ -24,55 +24,33 @@ function setupDrawer(
   handle: HTMLElement,
   left: boolean = false
 ) {
-  let isOpen = false;
+  let isOpen = true;
+
+  const openTranslation = "translateX(0)";
+  const closedTranslation = left ? "translateX(-100%)" : "translateX(100%)";
+
+  const update = () => {
+    container.style.transform = isOpen ? openTranslation : closedTranslation;
+  };
+
+  update();
 
   handle.addEventListener("click", () => {
     isOpen = !isOpen;
-
-    const openTranslation = "translateX(0)";
-    const closedTranslation = left ? "translateX(-100%)" : "translateX(100%)";
-
-    container.style.transform = isOpen ? openTranslation : closedTranslation;
+    update();
   });
 }
 
 let buildDrawerContainer: HTMLElement = querySelector("#buildDrawerContainer");
-let propertiesDrawerContainer: HTMLElement = querySelector(
-  "#propertiesDrawerContainer"
-);
+let leftDrawerContainer: HTMLElement = querySelector("#leftDrawerContainer");
 let buildDrawerHandle: HTMLElement = querySelector("#buildDrawerHandle");
-let propertiesDrawerHandle: HTMLElement = querySelector(
-  "#propertiesDrawerHandle"
-);
+let leftDrawerHandle: HTMLElement = querySelector("#leftDrawerHandle");
 
 setupDrawer(buildDrawerContainer, buildDrawerHandle);
-setupDrawer(propertiesDrawerContainer, propertiesDrawerHandle, true);
+setupDrawer(leftDrawerContainer, leftDrawerHandle, true);
 
 // Mode selector functionality
-const modeButtons: HTMLElement[] = querySelectorAll(".mode-btn");
 const timelineControls: HTMLElement = querySelector("#timelineControls");
-
-function setActiveMode(mode: Mode) {
-  modeButtons.forEach((btn) => {
-    if (btn.dataset.mode === mode) {
-      btn.classList.add("bg-blue-600", "text-white");
-      btn.classList.remove("text-gray-300");
-    } else {
-      btn.classList.remove("bg-blue-600", "text-white");
-      btn.classList.add("text-gray-300");
-    }
-  });
-  currentMode = mode;
-  timelineControls.style.display = mode === "simulate" ? "flex" : "none";
-  console.log("Current mode:", mode);
-}
-
-modeButtons.forEach((btn) => {
-  btn.addEventListener("click", () => setActiveMode(btn.dataset.mode as Mode));
-});
-
-// Set initial active mode
-setActiveMode(currentMode);
 
 // Timeline control functionality
 const playPauseBtn: HTMLButtonElement = querySelector("#playPause");
