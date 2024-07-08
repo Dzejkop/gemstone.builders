@@ -11,6 +11,16 @@ import { Item } from "./item";
 import { querySelector } from "./utils";
 import { MAP_SIZE } from "./consts";
 import { Time } from "./time";
+import init from "gb-noise";
+
+export let isGbLoaded = false;
+async function initGbNoise() {
+  await init();
+
+  isGbLoaded = true;
+}
+
+initGbNoise();
 
 // Context setup
 const canvas = querySelector<HTMLCanvasElement>("#gameCanvas");
@@ -55,7 +65,7 @@ const game = new Game();
 let initialRobotArm = new RobotArm();
 game.buildings.push(initialRobotArm);
 
-game.items.push(new Item())
+game.items.push(new Item());
 
 // TODO: Temporary, we should a nullable object/enum in the future
 let isBuilding = true;
@@ -66,6 +76,14 @@ function mainLoop() {
   renderer.clear();
 
   renderer.drawGrid(MAP_SIZE);
+
+  if (isGbLoaded) {
+    for (let x = 0; x < MAP_SIZE; x++) {
+      for (let y = 0; y < MAP_SIZE; y++) {
+        renderer.drawTile(new Vec2(x, y));
+      }
+    }
+  }
 
   // TEMP: Animation state
   let animState = Math.sin(time.ts) * 0.5 + 0.5;

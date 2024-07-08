@@ -1,4 +1,7 @@
+import { MAP_SIZE } from "../consts";
+import { xCoord, yCoord } from "../doc";
 import { Vec2 } from "../math";
+import { tile } from "gb-noise";
 
 export class Renderer {
   public tileSize = 90;
@@ -29,6 +32,30 @@ export class Renderer {
       this.ctx.lineTo(col * this.tileSize, this.tileSize * gridSize);
       this.ctx.stroke();
     }
+  }
+
+  public drawTile(
+    // tile position
+    pos: Vec2
+  ) {
+    const xOffset = xCoord * BigInt(MAP_SIZE);
+    const yOffset = yCoord * BigInt(MAP_SIZE);
+
+    let v = tile(xOffset + BigInt(pos.x), yOffset + BigInt(pos.y));
+    v = (v + 1.0) / 2.0; // map from [-1, 1] to [0, 1]
+
+    if (v > 0.5) {
+      this.ctx.fillStyle = `rgb(60, 0, 0)`;
+    } else {
+      this.ctx.fillStyle = `rgb(0, 60, 0)`;
+    }
+
+    this.ctx.fillRect(
+      pos.x * this.tileSize,
+      pos.y * this.tileSize,
+      this.tileSize,
+      this.tileSize
+    );
   }
 
   public drawSprite(

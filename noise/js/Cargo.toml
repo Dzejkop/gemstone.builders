@@ -1,6 +1,6 @@
 [package]
 name = "gb-noise"
-version = "0.2.0"
+version = "0.2.2"
 authors = ["Dzejkop <jakubtrad@gmail.com>"]
 edition = "2018"
 description = "Gemstone Builders noise"

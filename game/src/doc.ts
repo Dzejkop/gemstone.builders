@@ -1,4 +1,4 @@
-import { querySelector, querySelectorAll } from "./utils";
+import { querySelector } from "./utils";
 import {
   createIcons,
   SkipBack,
@@ -60,7 +60,7 @@ setupDrawer(buildDrawerContainer, buildDrawerHandle);
 setupDrawer(leftDrawerContainer, leftDrawerHandle, true);
 
 // Mode selector functionality
-const timelineControls: HTMLElement = querySelector("#timelineControls");
+// const timelineControls: HTMLElement = querySelector("#timelineControls");
 
 // Timeline control functionality
 const playPauseBtn: HTMLButtonElement = querySelector("#playPause");
@@ -122,17 +122,27 @@ timelineSlider.addEventListener("input", () => {
   console.log("Timeline position:", timelineSlider.value);
 });
 
-// BigInt input validation
-function validateBigIntInput(input: HTMLInputElement) {
-  input.addEventListener("input", function () {
-    try {
-      BigInt(this.value);
-      this.classList.remove("border-red-500");
-    } catch (error) {
-      this.classList.add("border-red-500");
-    }
-  });
-}
+const xCoordElem: HTMLInputElement = querySelector("#xCoord");
+const yCoordElem: HTMLInputElement = querySelector("#yCoord");
+export let xCoord = BigInt(0);
+export let yCoord = BigInt(0);
 
-validateBigIntInput(querySelector("#xCoord"));
-validateBigIntInput(querySelector("#yCoord"));
+// BigInt input validation
+const validateCoordInputs = () => {
+  try {
+    xCoord = BigInt(xCoordElem.value);
+    xCoordElem.classList.remove("border-red-500");
+  } catch (error) {
+    xCoordElem.classList.add("border-red-500");
+  }
+  try {
+    yCoord = BigInt(yCoordElem.value);
+    yCoordElem.classList.remove("border-red-500");
+  } catch (error) {
+    yCoordElem.classList.add("border-red-500");
+  }
+};
+
+validateCoordInputs();
+xCoordElem.addEventListener("input", () => validateCoordInputs());
+yCoordElem.addEventListener("input", () => validateCoordInputs());

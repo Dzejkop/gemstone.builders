@@ -44,14 +44,15 @@ pub fn init_panic_hook() {
 pub fn tile(x: BigInt, y: BigInt) -> f64 {
     let z = N::from_num(123923) / 1000;
 
+    let biome_scale = N::from_num(1_000_000);
     let max = N::from_num(i64::MAX);
 
     let x = i64::try_from(x).expect("x is not an i64");
     let y = i64::try_from(y).expect("y is not an i64");
 
     // Convert & scale
-    let x = N::from_num(x) / max;
-    let y = N::from_num(y) / max;
+    let x = biome_scale * (N::from_num(x) / max);
+    let y = biome_scale * (N::from_num(y) / max);
 
     simplex(&PERM, x, y, z).to_num()
 }
