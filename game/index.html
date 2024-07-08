@@ -64,36 +64,118 @@
       </div>
       <div id="leftDrawer" class="bg-gray-800 w-96 h-full p-4 overflow-y-auto">
         <!-- Timeline Controls -->
-        <div id="timelineControls" class="left-1/2 flex z-10">
-          <div class="w-1/4 flex flex-row">
-            <!-- TODO: Add padding here -->
-            <button
-              id="stepBackward"
-              class="text-white hover:text-blue-500 focus:outline-none"
-            >
-              <i id="i" data-lucide="skip-back"></i>
-            </button>
-            <button
-              id="playPause"
-              class="text-white hover:text-blue-500 focus:outline-none"
-            >
-              <i id="i" data-lucide="play"></i>
-            </button>
-            <button
-              id="stepForward"
-              class="text-white hover:text-blue-500 focus:outline-none"
-            >
-              <i id="i" data-lucide="skip-forward"></i>
+        <div id="timelineControls" class="mb-4 relative">
+          <div class="flex items-center justify-between mb-2">
+            <div class="flex space-x-2">
+              <button id="stepBackward" class="p-1 rounded hover:bg-gray-700">
+                <i data-lucide="skip-back" class="w-5 h-5"></i>
+              </button>
+              <button id="playPause" class="p-1 rounded hover:bg-gray-700">
+                <i id="start" data-lucide="play" class="w-5 h-5"></i>
+                <i id="stop" data-lucide="pause" class="w-5 h-5 hidden"></i>
+              </button>
+              <button id="stepForward" class="p-1 rounded hover:bg-gray-700">
+                <i data-lucide="skip-forward" class="w-5 h-5"></i>
+              </button>
+            </div>
+            <button id="record" class="p-1 rounded hover:bg-gray-700">
+              <i
+                id="start"
+                data-lucide="circle"
+                class="w-5 h-5 text-red-500"
+              ></i>
+              <i
+                id="stop"
+                data-lucide="circle-dot"
+                class="w-5 h-5 text-red-500 hidden"
+              ></i>
             </button>
           </div>
-          <input
-            type="range"
-            id="timelineSlider"
-            class="accent-blue-500"
-            min="0"
-            max="100"
-            value="0"
-          />
+          <div class="relative">
+            <input
+              type="range"
+              id="timelineSlider"
+              class="w-full"
+              min="0"
+              max="5"
+              value="0"
+            />
+          </div>
+        </div>
+
+        <!-- Timeline Tracks -->
+        <div id="timelineTracks" class="space-y-2 relative">
+          <!-- Track 1 -->
+          <div class="bg-gray-700 p-2 rounded">
+            <div class="flex justify-between items-center mb-1">
+              <span class="font-semibold">Track 1</span>
+            </div>
+            <div class="flex space-x-1 relative">
+              <div
+                class="w-4 h-4 bg-gray-600 hover:bg-gray-500 cursor-pointer rounded"
+              ></div>
+              <div
+                class="w-4 h-4 bg-gray-600 hover:bg-gray-500 cursor-pointer rounded"
+              ></div>
+              <div
+                class="w-4 h-4 bg-gray-600 hover:bg-gray-500 cursor-pointer rounded"
+              ></div>
+              <div
+                class="w-4 h-4 bg-gray-600 hover:bg-gray-500 cursor-pointer rounded"
+              ></div>
+              <div
+                class="w-4 h-4 bg-gray-600 hover:bg-gray-500 cursor-pointer rounded"
+              ></div>
+            </div>
+          </div>
+
+          <!-- Track 2 -->
+          <div class="bg-gray-700 p-2 rounded">
+            <div class="flex justify-between items-center mb-1">
+              <span class="font-semibold">Track 2</span>
+            </div>
+            <div class="flex space-x-1 relative">
+              <div
+                class="w-4 h-4 bg-gray-600 hover:bg-gray-500 cursor-pointer rounded"
+              ></div>
+              <div
+                class="w-4 h-4 bg-gray-600 hover:bg-gray-500 cursor-pointer rounded"
+              ></div>
+              <div
+                class="w-4 h-4 bg-gray-600 hover:bg-gray-500 cursor-pointer rounded"
+              ></div>
+              <div
+                class="w-4 h-4 bg-gray-600 hover:bg-gray-500 cursor-pointer rounded"
+              ></div>
+              <div
+                class="w-4 h-4 bg-gray-600 hover:bg-gray-500 cursor-pointer rounded"
+              ></div>
+            </div>
+          </div>
+
+          <!-- Track 3 -->
+          <div class="bg-gray-700 p-2 rounded">
+            <div class="flex justify-between items-center mb-1">
+              <span class="font-semibold">Track 3</span>
+            </div>
+            <div class="flex space-x-1 relative">
+              <div
+                class="w-4 h-4 bg-gray-600 hover:bg-gray-500 cursor-pointer rounded"
+              ></div>
+              <div
+                class="w-4 h-4 bg-gray-600 hover:bg-gray-500 cursor-pointer rounded"
+              ></div>
+              <div
+                class="w-4 h-4 bg-gray-600 hover:bg-gray-500 cursor-pointer rounded"
+              ></div>
+              <div
+                class="w-4 h-4 bg-gray-600 hover:bg-gray-500 cursor-pointer rounded"
+              ></div>
+              <div
+                class="w-4 h-4 bg-gray-600 hover:bg-gray-500 cursor-pointer rounded"
+              ></div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

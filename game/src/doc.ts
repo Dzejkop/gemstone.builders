@@ -1,5 +1,13 @@
 import { querySelector, querySelectorAll } from "./utils";
-import { createIcons, SkipBack, SkipForward, Play, Pause } from "lucide";
+import {
+  createIcons,
+  SkipBack,
+  SkipForward,
+  Play,
+  Pause,
+  Circle,
+  CircleDot,
+} from "lucide";
 
 createIcons({
   icons: {
@@ -7,6 +15,8 @@ createIcons({
     SkipForward,
     Play,
     Pause,
+    Circle,
+    CircleDot,
   },
 });
 
@@ -56,16 +66,40 @@ const timelineControls: HTMLElement = querySelector("#timelineControls");
 const playPauseBtn: HTMLButtonElement = querySelector("#playPause");
 const stepBackwardBtn: HTMLButtonElement = querySelector("#stepBackward");
 const stepForwardBtn: HTMLButtonElement = querySelector("#stepForward");
+const recordBtn: HTMLButtonElement = querySelector("#record");
 const timelineSlider: HTMLInputElement = querySelector("#timelineSlider");
 
-let isPlaying = false;
+const playPausePlayIcon: HTMLElement = querySelector("#playPause > #start");
+const playPausePauseIcon: HTMLElement = querySelector("#playPause > #stop");
+
+const recordStartIcon: HTMLElement = querySelector("#record > #start");
+const recordStopIcon: HTMLElement = querySelector("#record > #stop");
+
+export let isPlaying = false;
+export let isRecording = false;
 
 playPauseBtn.addEventListener("click", () => {
   isPlaying = !isPlaying;
-  playPauseBtn
-    .querySelector("#i")! // TODO: Type safe?
-    .setAttribute("data-lucide", isPlaying ? "pause" : "play");
-  console.log(isPlaying ? "Playing" : "Paused");
+
+  if (isPlaying) {
+    playPausePlayIcon.classList.add("hidden");
+    playPausePauseIcon.classList.remove("hidden");
+  } else {
+    playPausePlayIcon.classList.remove("hidden");
+    playPausePauseIcon.classList.add("hidden");
+  }
+});
+
+recordBtn.addEventListener("click", () => {
+  isRecording = !isRecording;
+
+  if (isRecording) {
+    recordStartIcon.classList.add("hidden");
+    recordStopIcon.classList.remove("hidden");
+  } else {
+    recordStartIcon.classList.remove("hidden");
+    recordStopIcon.classList.add("hidden");
+  }
 });
 
 stepBackwardBtn.addEventListener("click", () => {
