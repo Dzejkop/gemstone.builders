@@ -1,4 +1,5 @@
 import { RobotArm } from "./building/arm";
+import { Empty } from "./building/empty";
 import { Factory } from "./building/factory";
 import { Mine } from "./building/mine";
 import { ZkId } from "./building/zkIds";
@@ -35,7 +36,7 @@ export interface Building {
 }
 
 export const buildingToClass = {
-  [BuildingType.Empty]: Mine,
+  [BuildingType.Empty]: Empty,
   [BuildingType.BeltDown]: Mine,
   [BuildingType.Mine]: Mine,
   [BuildingType.Factory]: Factory,
@@ -44,7 +45,7 @@ export const buildingToClass = {
 
 // Used to draw ghosts & stuff like that
 export const allBuildings = {
-  Empty: new Mine(),
+  Empty: new Empty(),
   BeltDown: new Mine(),
   Mine: new Mine(),
   Factory: new Factory(),

@@ -43,8 +43,11 @@ export class Game {
       return;
     }
     this.clearPosition(tilePos);
-    const buildingClass = buildingToClass[this.selectedBuilding];
-    this.buildings.push(new buildingClass(tilePos))
+
+    if (this.selectedBuilding !== BuildingType.Empty) {
+      const buildingClass = buildingToClass[this.selectedBuilding];
+      this.buildings.push(new buildingClass(tilePos))
+    }
   }
 
   private clearPosition(pos: Vec2): void {

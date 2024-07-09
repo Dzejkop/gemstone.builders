@@ -98,8 +98,6 @@ function mainLoop() {
 
   const game = getGameInstance();
 
-  console.log(game.buildings);
-
   for (const building of game.buildings) {
     building.drawReal(renderer, animState);
   }

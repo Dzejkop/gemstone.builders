@@ -1,4 +1,5 @@
 export enum ZkId {
+    Empty = 0,
     Mine = 1,
     Factory = 2,
     BeltDown = 3,
