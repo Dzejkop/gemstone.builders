@@ -1,4 +1,6 @@
 import { RobotArm } from "./building/arm";
+import { Factory } from "./building/factory";
+import { Mine } from "./building/mine";
 import { ZkId } from "./building/zkIds";
 import { Vec2 } from "./math";
 import { Renderer } from "./rendering/renderer";
@@ -32,7 +34,19 @@ export interface Building {
   zkId(): ZkId;
 }
 
+export const buildingToClass = {
+  [BuildingType.Empty]: Mine,
+  [BuildingType.BeltDown]: Mine,
+  [BuildingType.Mine]: Mine,
+  [BuildingType.Factory]: Factory,
+  [BuildingType.RobotArm]: RobotArm,
+};
+
 // Used to draw ghosts & stuff like that
 export const allBuildings = {
+  Empty: new Mine(),
+  BeltDown: new Mine(),
+  Mine: new Mine(),
+  Factory: new Factory(),
   RobotArm: new RobotArm(),
 };

@@ -3,7 +3,7 @@ import "./doc";
 
 import { Vec2 } from "./math";
 import { BTN, Mouse } from "./mouse";
-import { BuildingType, Rotation, allBuildings } from "./building";
+import { Rotation, allBuildings, buildingToClass } from "./building";
 import { Game } from "./game";
 import { Renderer } from "./rendering/renderer";
 import { RobotArm } from "./building/arm";
@@ -64,7 +64,6 @@ const game = new Game();
 
 let initialRobotArm = new RobotArm();
 game.buildings.push(initialRobotArm);
-
 game.items.push(new Item());
 
 // TODO: Temporary, we should a nullable object/enum in the future
@@ -97,15 +96,18 @@ function mainLoop() {
 
     const realPos = tilePos.mul(renderer.tileSize);
 
-    if (game.isValidPosition(tilePos)) {
+    if (game.isValidPosition(tilePos) && game.selectedBuilding !== null) {
       // TODO: Tint with transparency somehow
-      allBuildings[BuildingType.RobotArm].drawGhost(renderer, tilePos, {
+
+      allBuildings[game.selectedBuilding].drawGhost(renderer, tilePos, {
         armFlipped: false,
         rotation: Rotation.Up,
       });
 
       if (mouse.btnClick[BTN.LEFT]) {
-        game.buildings.push(new RobotArm(tilePos));
+        const buildingClass = buildingToClass[game.selectedBuilding];
+ 
+        game.buildings.push(new buildingClass(tilePos));
       }
     } else {
       // TODO: Better highlight
