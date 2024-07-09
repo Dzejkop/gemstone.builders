@@ -98,6 +98,8 @@ function mainLoop() {
 
   const game = getGameInstance();
 
+  console.log(game.buildings);
+
   for (const building of game.buildings) {
     building.drawReal(renderer, animState);
   }
@@ -106,8 +108,6 @@ function mainLoop() {
     const tilePos = mouse.pos.div(renderer.tileSize).floor();
 
     const realPos = tilePos.mul(renderer.tileSize);
-
-    // console.log(game.id);
 
     if (game.isValidPosition(tilePos) && game.selectedBuilding !== null) {
       // TODO: Tint with transparency somehow
@@ -118,9 +118,7 @@ function mainLoop() {
       });
 
       if (mouse.btnClick[BTN.LEFT]) {
-        const buildingClass = buildingToClass[game.selectedBuilding];
- 
-        game.buildings.push(new buildingClass(tilePos));
+        game.build(tilePos);
       }
     } else {
       // TODO: Better highlight

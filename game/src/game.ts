@@ -1,4 +1,4 @@
-import { Building, BuildingType } from "./building";
+import { Building, buildingToClass, BuildingType } from "./building";
 import { MAP_SIZE } from "./consts";
 import { Item } from "./item";
 import { Vec2 } from "./math";
@@ -19,13 +19,38 @@ export class Game {
         return false;
     }
 
-    for (const building of this.buildings) {
-        const buildingPos = building.gridPos();
-        if (buildingPos.x === pos.x && buildingPos.y === pos.y) {
-            return false;
-        }
+    if (this.selectedBuilding !== BuildingType.Empty) {
+      for (const building of this.buildings) {
+          const buildingPos = building.gridPos();
+          if (buildingPos.x === pos.x && buildingPos.y === pos.y) {
+              return false;
+          }
+      }
     }
 
     return true;
+  }
+  
+  public selectBuilding(building: BuildingType | null): void {
+    this.selectedBuilding = building;
+  }
+
+  public build(tilePos: Vec2): void {
+    if (!this.isValidPosition(tilePos)) {
+      throw new Error("Invalid position");
+    }
+    if (!this.selectedBuilding) {
+      return;
+    }
+    this.clearPosition(tilePos);
+    const buildingClass = buildingToClass[this.selectedBuilding];
+    this.buildings.push(new buildingClass(tilePos))
+  }
+
+  private clearPosition(pos: Vec2): void {
+    this.buildings = this.buildings.filter((building) => {
+      const buildingPos = building.gridPos();
+      return buildingPos.x !== pos.x || buildingPos.y !== pos.y;
+    });
   }
 }

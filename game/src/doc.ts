@@ -168,10 +168,10 @@ function createBuildingMenuItem(buildingName: string): HTMLElement {
       deselectAllBuildings();
       const game = getGameInstance();
       if (game.selectedBuilding == selected) {
-        game.selectedBuilding = null;
+        game.selectBuilding(null);
       } else {
         building.classList.add('bg-red-500');
-        game.selectedBuilding = selected;
+        game.selectBuilding(selected);
       }
     });
 
