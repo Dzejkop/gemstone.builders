@@ -3,7 +3,7 @@ import "./doc";
 
 import { Vec2 } from "./math";
 import { BTN, Mouse } from "./mouse";
-import { Rotation, allBuildings, buildingToClass } from "./building";
+import { BuildingType, Rotation, allBuildings, buildingToClass } from "./building";
 import { Game } from "./game";
 import { Renderer } from "./rendering/renderer";
 import { RobotArm } from "./building/arm";
@@ -12,6 +12,15 @@ import { querySelector } from "./utils";
 import { MAP_SIZE } from "./consts";
 import { Time } from "./time";
 import init from "gb-noise";
+
+let gameInstance: Game | null = null;
+
+export function getGameInstance(): Game {
+  if (!gameInstance) {
+    gameInstance = new Game();
+  }
+  return gameInstance;
+}
 
 export let isGbLoaded = false;
 async function initGbNoise() {
@@ -60,11 +69,11 @@ window.addEventListener("resize", (_ev) => {
 
 resizeCanvas();
 
-const game = new Game();
-
 let initialRobotArm = new RobotArm();
-game.buildings.push(initialRobotArm);
-game.items.push(new Item());
+getGameInstance().buildings.push(initialRobotArm);
+getGameInstance().items.push(new Item());
+
+console.log(getGameInstance().id);
 
 // TODO: Temporary, we should a nullable object/enum in the future
 let isBuilding = true;
@@ -87,6 +96,8 @@ function mainLoop() {
   // TEMP: Animation state
   let animState = Math.sin(time.ts) * 0.5 + 0.5;
 
+  const game = getGameInstance();
+
   for (const building of game.buildings) {
     building.drawReal(renderer, animState);
   }
@@ -95,6 +106,8 @@ function mainLoop() {
     const tilePos = mouse.pos.div(renderer.tileSize).floor();
 
     const realPos = tilePos.mul(renderer.tileSize);
+
+    // console.log(game.id);
 
     if (game.isValidPosition(tilePos) && game.selectedBuilding !== null) {
       // TODO: Tint with transparency somehow
@@ -123,5 +136,3 @@ function mainLoop() {
 
 // Initial render
 requestAnimationFrame(mainLoop);
-
-export { game };

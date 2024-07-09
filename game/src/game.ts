@@ -7,8 +7,11 @@ export class Game {
   public buildings: Building[] = [];
   public items: Item[] = [];
   public selectedBuilding: BuildingType | null = null;
+  public id = 0;
 
-  constructor() {}
+  constructor() {
+    this.id = Math.floor(Math.random() * 100000);
+  }
 
   public isValidPosition(pos: Vec2): boolean {
     const onGrid = pos.x >= 0 && pos.x < MAP_SIZE && pos.y >= 0 && pos.y < MAP_SIZE;
