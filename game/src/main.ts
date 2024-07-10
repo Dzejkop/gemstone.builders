@@ -3,7 +3,12 @@ import "./doc";
 
 import { Vec2 } from "./math";
 import { BTN, Mouse } from "./mouse";
-import { BuildingType, Rotation, allBuildings, buildingToClass } from "./building";
+import {
+  BuildingType,
+  Rotation,
+  allBuildings,
+  buildingToClass,
+} from "./building";
 import { Game } from "./game";
 import { Renderer } from "./rendering/renderer";
 import { RobotArm } from "./building/arm";

@@ -14,23 +14,24 @@ export class Game {
   }
 
   public isValidPosition(pos: Vec2): boolean {
-    const onGrid = pos.x >= 0 && pos.x < MAP_SIZE && pos.y >= 0 && pos.y < MAP_SIZE;
+    const onGrid =
+      pos.x >= 0 && pos.x < MAP_SIZE && pos.y >= 0 && pos.y < MAP_SIZE;
     if (!onGrid) {
-        return false;
+      return false;
     }
 
     if (this.selectedBuilding !== BuildingType.Empty) {
       for (const building of this.buildings) {
-          const buildingPos = building.gridPos();
-          if (buildingPos.x === pos.x && buildingPos.y === pos.y) {
-              return false;
-          }
+        const buildingPos = building.gridPos();
+        if (buildingPos.x === pos.x && buildingPos.y === pos.y) {
+          return false;
+        }
       }
     }
 
     return true;
   }
-  
+
   public selectBuilding(building: BuildingType | null): void {
     this.selectedBuilding = building;
   }
@@ -46,7 +47,7 @@ export class Game {
 
     if (this.selectedBuilding !== BuildingType.Empty) {
       const buildingClass = buildingToClass[this.selectedBuilding];
-      this.buildings.push(new buildingClass(tilePos))
+      this.buildings.push(new buildingClass(tilePos));
     }
   }
 

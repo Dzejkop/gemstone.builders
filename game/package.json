@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "fmt": "prettier --write ."
   },
   "devDependencies": {
     "autoprefixer": "^10.4.19",
@@ -14,7 +15,8 @@
     "postcss": "^8.4.39",
     "tailwindcss": "^3.4.4",
     "typescript": "^5.2.2",
-    "vite": "^5.3.3"
+    "vite": "^5.3.3",
+    "prettier": "^3.3.2"
   },
   "dependencies": {
     "gb-noise": "^0.2.2",

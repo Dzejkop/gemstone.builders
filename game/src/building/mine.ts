@@ -8,7 +8,7 @@ export class Mine implements Building {
 
   constructor(
     public readonly pos: Vec2 = new Vec2(0, 0),
-    params: AllBuildingParams = {}
+    params: AllBuildingParams = {},
   ) {}
 
   gridPos(): Vec2 {

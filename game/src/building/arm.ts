@@ -16,7 +16,7 @@ export class RobotArm implements Building {
 
   constructor(
     public readonly pos: Vec2 = new Vec2(0, 0),
-    params: AllBuildingParams = {}
+    params: AllBuildingParams = {},
   ) {
     this.armFlipped = params.armFlipped || false;
     this.rotation = params.rotation || Rotation.Up;
@@ -32,7 +32,7 @@ export class RobotArm implements Building {
 
     let centerPixelPos = this.pos.mul(renderer.tileSize);
     let armPixelPos = centerPixelPos.add(
-      new Vec2(1.0, 0.0).mul(renderer.tileSize).rotate(armRotation)
+      new Vec2(1.0, 0.0).mul(renderer.tileSize).rotate(armRotation),
     );
 
     renderer.drawSprite(this.pos.mul(renderer.tileSize), RobotArm.armBaseTile);
@@ -46,7 +46,7 @@ export class RobotArm implements Building {
       this.pos.mul(renderer.tileSize),
       RobotArm.armTile,
       RobotArm.armTileSize,
-      armRotation
+      armRotation,
     );
   }
 
@@ -56,7 +56,7 @@ export class RobotArm implements Building {
       pos.mul(renderer.tileSize),
       RobotArm.armTile,
       RobotArm.armTileSize,
-      0
+      0,
     );
   }
 

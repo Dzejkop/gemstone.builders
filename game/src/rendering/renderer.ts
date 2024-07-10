@@ -9,7 +9,7 @@ export class Renderer {
 
   constructor(
     public readonly ctx: CanvasRenderingContext2D,
-    public readonly tileset: HTMLImageElement
+    public readonly tileset: HTMLImageElement,
   ) {}
 
   public clear() {
@@ -36,7 +36,7 @@ export class Renderer {
 
   public drawTile(
     // tile position
-    pos: Vec2
+    pos: Vec2,
   ) {
     const xOffset = xCoord * BigInt(MAP_SIZE);
     const yOffset = yCoord * BigInt(MAP_SIZE);
@@ -54,7 +54,7 @@ export class Renderer {
       pos.x * this.tileSize,
       pos.y * this.tileSize,
       this.tileSize,
-      this.tileSize
+      this.tileSize,
     );
   }
 
@@ -69,12 +69,12 @@ export class Renderer {
     // The anchor along which rotation happens
     // In relative values
     // By default it's the middle of a 16x16 tile
-    anchor: Vec2 = new Vec2(0.5, 0.5)
+    anchor: Vec2 = new Vec2(0.5, 0.5),
   ) {
     this.ctx.save();
     this.ctx.translate(
       pos.x + anchor.x * this.tileSize,
-      pos.y + anchor.y * this.tileSize
+      pos.y + anchor.y * this.tileSize,
     );
     this.ctx.rotate(rotation);
     this.ctx.drawImage(
@@ -86,7 +86,7 @@ export class Renderer {
       -anchor.x * this.tileSize,
       -anchor.y * this.tileSize,
       spriteSize.x * this.tileSize,
-      spriteSize.y * this.tileSize
+      spriteSize.y * this.tileSize,
     );
     this.ctx.restore();
   }

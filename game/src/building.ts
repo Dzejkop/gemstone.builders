@@ -25,7 +25,7 @@ export enum Rotation {
 export type AllBuildingParams = {
   armFlipped?: boolean;
   rotation?: Rotation;
-}
+};
 
 export interface Building {
   // update(s: number): void;

@@ -34,7 +34,7 @@ export let currentMode = Mode.Build;
 function setupDrawer(
   container: HTMLElement,
   handle: HTMLElement,
-  left: boolean = false
+  left: boolean = false,
 ) {
   let isOpen = true;
 
@@ -108,7 +108,7 @@ stepBackwardBtn.addEventListener("click", () => {
   console.log("Step backward");
   timelineSlider.value = Math.max(
     0,
-    parseInt(timelineSlider.value) - 1
+    parseInt(timelineSlider.value) - 1,
   ).toString();
 });
 
@@ -116,7 +116,7 @@ stepForwardBtn.addEventListener("click", () => {
   console.log("Step forward");
   timelineSlider.value = Math.min(
     100,
-    parseInt(timelineSlider.value) + 1
+    parseInt(timelineSlider.value) + 1,
   ).toString();
 });
 
@@ -160,27 +160,28 @@ function renderBuildingList() {
 }
 
 function createBuildingMenuItem(buildingName: string): HTMLElement {
-  let building = document.createElement('div');
-    building.className = "flex items-center justify-center bg-gray-700 aspect-square rounded-md";
-    building.textContent = buildingName;
-    building.addEventListener('click', () => {
-      const selected = buildingName as BuildingType;
-      deselectAllBuildings();
-      const game = getGameInstance();
-      if (game.selectedBuilding == selected) {
-        game.selectBuilding(null);
-      } else {
-        building.classList.add('bg-red-500');
-        game.selectBuilding(selected);
-      }
-    });
+  let building = document.createElement("div");
+  building.className =
+    "flex items-center justify-center bg-gray-700 aspect-square rounded-md";
+  building.textContent = buildingName;
+  building.addEventListener("click", () => {
+    const selected = buildingName as BuildingType;
+    deselectAllBuildings();
+    const game = getGameInstance();
+    if (game.selectedBuilding == selected) {
+      game.selectBuilding(null);
+    } else {
+      building.classList.add("bg-red-500");
+      game.selectBuilding(selected);
+    }
+  });
 
-    return building;
+  return building;
 }
 
 function deselectAllBuildings() {
   for (const child of buildingsList.children) {
-    child.classList.remove('bg-red-500');
+    child.classList.remove("bg-red-500");
   }
 }
 

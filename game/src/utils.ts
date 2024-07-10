@@ -1,6 +1,6 @@
 export function querySelector<T>(
   selector: string,
-  srcElement: HTMLElement | undefined = undefined
+  srcElement: HTMLElement | undefined = undefined,
 ): T {
   let src = srcElement || document;
 
@@ -16,7 +16,7 @@ export function querySelector<T>(
 
 export function querySelectorAll<T>(
   selector: string,
-  srcElement: HTMLElement | undefined = undefined
+  srcElement: HTMLElement | undefined = undefined,
 ): T[] {
   let src = srcElement || document;
 
