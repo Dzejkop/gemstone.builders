@@ -4,7 +4,7 @@ import { Renderer } from "../rendering/renderer";
 import { ZkId } from "./zkIds";
 
 export class Mine implements Building {
-  private static readonly baseTile = new Vec2(0, 0);
+  private static readonly baseTile = new Vec2(3, 2);
 
   constructor(
     public readonly pos: Vec2 = new Vec2(0, 0),
@@ -15,7 +15,6 @@ export class Mine implements Building {
     return this.pos;
   }
 
-  /// Draws the real image of the robot arm
   drawReal(renderer: Renderer, s: number) {
     renderer.drawSprite(this.pos.mul(renderer.tileSize), Mine.baseTile);
   }

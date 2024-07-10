@@ -94,20 +94,22 @@ function mainLoop() {
 
     const realPos = tilePos.mul(renderer.tileSize);
 
-    if (game.isValidPosition(tilePos) && game.selectedBuilding !== null) {
-      // TODO: Tint with transparency somehow
+    if (game.selectedBuilding !== null) {
+      if (game.isValidPosition(tilePos)) {
+        // TODO: Tint with transparency somehow
 
-      allBuildings[game.selectedBuilding].drawGhost(renderer, tilePos, {
-        armFlipped: false,
-        rotation: Rotation.Up,
-      });
+        allBuildings[game.selectedBuilding].drawGhost(renderer, tilePos, {
+          armFlipped: false,
+          rotation: Rotation.Up,
+        });
 
-      if (mouse.btnClick[BTN.LEFT]) {
-        game.build(tilePos);
+        if (mouse.btnClick[BTN.LEFT]) {
+          game.build(tilePos);
+        }
+      } else {
+        // TODO: Better highlight
+        renderer.drawSprite(realPos, Vec2.ONE);
       }
-    } else {
-      // TODO: Better highlight
-      renderer.drawSprite(realPos, Vec2.ONE);
     }
   }
 
