@@ -73,6 +73,7 @@ export class Renderer {
     this.ctx.stroke();
   }
 
+  // TODO: We're drawing a square but should be drawing a rectangle based on width and height
   public drawTerrain() {
     const offset = this.offset();
     const tileOffset = offset.div(this.tileSize).ceil();
