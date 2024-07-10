@@ -1,4 +1,5 @@
 import { Vec2 } from "./math";
+import { Renderer } from "./rendering/renderer";
 
 export const BTN = {
   LEFT: 0,
@@ -15,11 +16,16 @@ export class Mouse {
     this.btnClick = [false, false, false];
   }
 
-  public installTrackers(canvas: HTMLCanvasElement) {
+  public installTrackers(renderer: Renderer) {
+    const canvas = renderer.ctx.canvas;
+
     canvas.addEventListener("mousemove", (event) => {
       const rect = canvas.getBoundingClientRect();
-      const mouseX = event.clientX - rect.left;
-      const mouseY = event.clientY - rect.top;
+
+      let rendererOffset = renderer.offset();
+
+      const mouseX = event.clientX - rect.left - rendererOffset.x;
+      const mouseY = event.clientY - rect.top - rendererOffset.y;
 
       this.pos = new Vec2(mouseX, mouseY);
     });

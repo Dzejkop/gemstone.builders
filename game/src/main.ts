@@ -3,12 +3,7 @@ import "./doc";
 
 import { Vec2 } from "./math";
 import { BTN, Mouse } from "./mouse";
-import {
-  BuildingType,
-  Rotation,
-  allBuildings,
-  buildingToClass,
-} from "./building";
+import { Rotation, allBuildings } from "./building";
 import { Game } from "./game";
 import { Renderer } from "./rendering/renderer";
 import { RobotArm } from "./building/arm";
@@ -17,15 +12,6 @@ import { querySelector } from "./utils";
 import { MAP_SIZE } from "./consts";
 import { Time } from "./time";
 import init from "gb-noise";
-
-let gameInstance: Game | null = null;
-
-export function getGameInstance(): Game {
-  if (!gameInstance) {
-    gameInstance = new Game();
-  }
-  return gameInstance;
-}
 
 export let isGbLoaded = false;
 async function initGbNoise() {
@@ -45,9 +31,6 @@ if (!ctx) {
   throw new Error("Cannot get 2d context");
 }
 
-let mouse = new Mouse();
-mouse.installTrackers(canvas);
-
 const time = new Time();
 
 const tileset = new Image();
@@ -55,17 +38,16 @@ tileset.src = "/tileset.png";
 
 const renderer = new Renderer(ctx, tileset);
 
+let mouse = new Mouse();
+mouse.installTrackers(renderer);
+
 const resizeCanvas = () => {
   const smallestDimension = Math.min(window.innerWidth, window.innerHeight);
 
-  // TODO: Smarter?
-  //       we need to figure the space needed for other UI elements and resize according to that
-  const size = smallestDimension * 0.7;
-  const closestMultileOf8 = Math.floor(size / 8) * 8;
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
 
-  canvas.width = closestMultileOf8;
-  canvas.height = closestMultileOf8;
-  renderer.tileSize = canvas.width / 8;
+  renderer.tileSize = (smallestDimension * 0.75) / 8;
 };
 
 window.addEventListener("resize", (_ev) => {
@@ -75,10 +57,8 @@ window.addEventListener("resize", (_ev) => {
 resizeCanvas();
 
 let initialRobotArm = new RobotArm();
-getGameInstance().buildings.push(initialRobotArm);
-getGameInstance().items.push(new Item());
-
-console.log(getGameInstance().id);
+Game.instance().buildings.push(initialRobotArm);
+Game.instance().items.push(new Item());
 
 // TODO: Temporary, we should a nullable object/enum in the future
 let isBuilding = true;
@@ -88,20 +68,22 @@ function mainLoop() {
 
   renderer.clear();
 
-  renderer.drawGrid(MAP_SIZE);
-
   if (isGbLoaded) {
-    for (let x = 0; x < MAP_SIZE; x++) {
-      for (let y = 0; y < MAP_SIZE; y++) {
-        renderer.drawTile(new Vec2(x, y));
-      }
-    }
+    // for (let x = 0; x < MAP_SIZE; x++) {
+    //   for (let y = 0; y < MAP_SIZE; y++) {
+    //     renderer.drawTile(new Vec2(x, y));
+    //   }
+    // }
+
+    renderer.drawTerrain();
   }
+
+  renderer.drawGrid(MAP_SIZE);
 
   // TEMP: Animation state
   let animState = Math.sin(time.ts) * 0.5 + 0.5;
 
-  const game = getGameInstance();
+  const game = Game.instance();
 
   for (const building of game.buildings) {
     building.drawReal(renderer, animState);

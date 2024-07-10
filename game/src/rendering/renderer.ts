@@ -17,20 +17,80 @@ export class Renderer {
     this.ctx.imageSmoothingEnabled = false;
   }
 
+  // Offset that puts the center of the tile map in the middle of the screen
+  offset(): Vec2 {
+    let canvasOffset = new Vec2(
+      this.ctx.canvas.width / 2,
+      this.ctx.canvas.height / 2,
+    );
+    let mapOffset = new Vec2(
+      (MAP_SIZE * this.tileSize) / 2,
+      (MAP_SIZE * this.tileSize) / 2,
+    );
+
+    return canvasOffset.sub(mapOffset);
+  }
+
   public drawGrid(gridSize: number): void {
+    const offset = this.offset();
+
+    this.ctx.strokeStyle = "black";
+    this.ctx.lineWidth = 1;
+
     // Draw grid lines
     for (let row = 0; row < gridSize; row++) {
       this.ctx.beginPath();
-      this.ctx.moveTo(0, row * this.tileSize);
-      this.ctx.lineTo(this.tileSize * gridSize, row * this.tileSize);
+      this.ctx.moveTo(offset.x, row * this.tileSize + offset.y);
+      this.ctx.lineTo(
+        this.tileSize * gridSize + offset.x,
+        row * this.tileSize + offset.y,
+      );
       this.ctx.stroke();
     }
 
     for (let col = 0; col < gridSize; col++) {
       this.ctx.beginPath();
-      this.ctx.moveTo(col * this.tileSize, 0);
-      this.ctx.lineTo(col * this.tileSize, this.tileSize * gridSize);
+      this.ctx.moveTo(col * this.tileSize + offset.x, offset.y);
+      this.ctx.lineTo(
+        col * this.tileSize + offset.x,
+        this.tileSize * gridSize + offset.y,
+      );
       this.ctx.stroke();
+    }
+
+    // Draw border
+    this.ctx.beginPath();
+    this.ctx.strokeStyle = "black";
+    this.ctx.lineWidth = 4;
+    this.ctx.moveTo(offset.x, offset.y);
+    this.ctx.lineTo(this.tileSize * gridSize + offset.x, offset.y);
+    this.ctx.lineTo(
+      this.tileSize * gridSize + offset.x,
+      this.tileSize * gridSize + offset.y,
+    );
+    this.ctx.lineTo(offset.x, this.tileSize * gridSize + offset.y);
+    this.ctx.lineTo(offset.x, offset.y);
+    this.ctx.stroke();
+  }
+
+  public drawTerrain() {
+    const offset = this.offset();
+    const tileOffset = offset.div(this.tileSize).ceil();
+    const biggestDimension = Math.max(
+      this.ctx.canvas.width,
+      this.ctx.canvas.height,
+    );
+    const numTilesOnCanvas = biggestDimension / this.tileSize;
+
+    // let startTile = tileOffset.sub(new Vec2(numTilesOnCanvas / 2, numTilesOnCanvas / 2));
+    let startTile = tileOffset.neg();
+
+    let endTile = startTile.add(new Vec2(numTilesOnCanvas, numTilesOnCanvas));
+
+    for (let x = startTile.x; x < endTile.x; x++) {
+      for (let y = startTile.y; y < endTile.y; y++) {
+        this.drawTile(new Vec2(x, y));
+      }
     }
   }
 
@@ -66,10 +126,12 @@ export class Renderer {
     // By default it's the middle of a 16x16 tile
     anchor: Vec2 = new Vec2(0.5, 0.5),
   ) {
+    let offset = this.offset();
+
     this.ctx.save();
     this.ctx.translate(
-      pos.x + anchor.x * this.tileSize,
-      pos.y + anchor.y * this.tileSize,
+      offset.x + pos.x + anchor.x * this.tileSize,
+      offset.y + pos.y + anchor.y * this.tileSize,
     );
     this.ctx.rotate(rotation);
     this.ctx.drawImage(

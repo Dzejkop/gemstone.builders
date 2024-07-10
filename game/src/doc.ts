@@ -9,7 +9,7 @@ import {
   CircleDot,
 } from "lucide";
 import { BuildingType } from "./building";
-import { getGameInstance } from "./main";
+import { Game } from "./game";
 
 createIcons({
   icons: {
@@ -167,7 +167,7 @@ function createBuildingMenuItem(buildingName: string): HTMLElement {
   building.addEventListener("click", () => {
     const selected = buildingName as BuildingType;
     deselectAllBuildings();
-    const game = getGameInstance();
+    const game = Game.instance();
     if (game.selectedBuilding == selected) {
       game.selectBuilding(null);
     } else {

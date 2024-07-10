@@ -3,11 +3,20 @@ import { MAP_SIZE } from "./consts";
 import { Item } from "./item";
 import { Vec2 } from "./math";
 
+let singleton: Game | null = null;
+
 export class Game {
   public buildings: Building[] = [];
   public items: Item[] = [];
   public selectedBuilding: BuildingType | null = null;
   public id = 0;
+
+  static instance(): Game {
+    if (!singleton) {
+      singleton = new Game();
+    }
+    return singleton;
+  }
 
   constructor() {
     this.id = Math.floor(Math.random() * 100000);
