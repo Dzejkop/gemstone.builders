@@ -162,7 +162,7 @@ function renderBuildingList() {
 function createBuildingMenuItem(buildingName: string): HTMLElement {
   let building = document.createElement("div");
   building.className =
-    "flex items-center justify-center bg-gray-700 aspect-square rounded-md";
+    "flex items-center justify-center bg-gray-700 aspect-square rounded-md cursor-pointer";
   building.textContent = buildingName;
   building.addEventListener("click", () => {
     const selected = buildingName as BuildingType;
