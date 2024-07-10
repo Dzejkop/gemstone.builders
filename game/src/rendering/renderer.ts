@@ -85,7 +85,7 @@ export class Renderer {
     // let startTile = tileOffset.sub(new Vec2(numTilesOnCanvas / 2, numTilesOnCanvas / 2));
     let startTile = tileOffset.neg();
 
-    let endTile = startTile.add(new Vec2(numTilesOnCanvas, numTilesOnCanvas));
+    let endTile = startTile.add(new Vec2(numTilesOnCanvas, numTilesOnCanvas)).add(Vec2.ONE);
 
     for (let x = startTile.x; x < endTile.x; x++) {
       for (let y = startTile.y; y < endTile.y; y++) {
