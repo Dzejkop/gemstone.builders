@@ -44,18 +44,13 @@ export class Renderer {
     let v = tile(xOffset + BigInt(pos.x), yOffset + BigInt(pos.y));
     v = (v + 1.0) / 2.0; // map from [-1, 1] to [0, 1]
 
+    let grass = new Vec2(12, 2);
+    let dirt = new Vec2(16, 2);
     if (v > 0.5) {
-      this.ctx.fillStyle = `rgb(60, 0, 0)`;
+      this.drawSprite(pos.mul(this.tileSize), dirt);
     } else {
-      this.ctx.fillStyle = `rgb(0, 60, 0)`;
+      this.drawSprite(pos.mul(this.tileSize), grass);
     }
-
-    this.ctx.fillRect(
-      pos.x * this.tileSize,
-      pos.y * this.tileSize,
-      this.tileSize,
-      this.tileSize,
-    );
   }
 
   public drawSprite(
