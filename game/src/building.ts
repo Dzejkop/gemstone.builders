@@ -1,8 +1,5 @@
 import { RobotArm } from "./building/arm";
-import { ConveyorBeltDown } from "./building/beltDown";
-import { ConveyorBeltLeft } from "./building/beltLeft";
-import { ConveyorBeltRight } from "./building/beltRight";
-import { ConveyorBeltUp } from "./building/beltUp";
+import { ConveyorBelt } from "./building/belt";
 import { Empty } from "./building/empty";
 import { Factory } from "./building/factory";
 import { Mine } from "./building/mine";
@@ -44,10 +41,10 @@ export interface Building {
 
 export const buildingToClass = {
   [BuildingType.Empty]: Empty,
-  [BuildingType.BeltDown]: ConveyorBeltDown,
-  [BuildingType.BeltUp]: ConveyorBeltUp,
-  [BuildingType.BeltLeft]: ConveyorBeltLeft,
-  [BuildingType.BeltRight]: ConveyorBeltRight,
+  [BuildingType.BeltDown]: ConveyorBelt,
+  [BuildingType.BeltUp]: ConveyorBelt,
+  [BuildingType.BeltLeft]: ConveyorBelt,
+  [BuildingType.BeltRight]: ConveyorBelt,
   [BuildingType.Mine]: Mine,
   [BuildingType.Factory]: Factory,
   [BuildingType.RobotArm]: RobotArm,
@@ -56,10 +53,10 @@ export const buildingToClass = {
 // Used to draw ghosts & stuff like that
 export const allBuildings = {
   Empty: new Empty(),
-  BeltDown: new ConveyorBeltDown(),
-  BeltUp: new ConveyorBeltUp(),
-  BeltLeft: new ConveyorBeltLeft(),
-  BeltRight: new ConveyorBeltRight(),
+  BeltDown: new ConveyorBelt(new Vec2(0, 0), { rotation: Rotation.Down }),
+  BeltUp: new ConveyorBelt(new Vec2(0, 0), { rotation: Rotation.Up }),
+  BeltLeft: new ConveyorBelt(new Vec2(0, 0), { rotation: Rotation.Left }),
+  BeltRight: new ConveyorBelt(new Vec2(0, 0), { rotation: Rotation.Right }),
   Mine: new Mine(),
   Factory: new Factory(),
   RobotArm: new RobotArm(),
