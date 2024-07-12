@@ -7,5 +7,14 @@ edition = "2021"
 fixed = { version = "1.27.0", features = ["serde-str"] }
 rand = { version = "0.8.5", optional = true, features = [ "small_rng" ] }
 
+[dev-dependencies]
+image = "0.25.1"
+
 [features]
 default = ["rand"]
+
+[profile.dev]
+overflow-checks = false
+
+[profile.test]
+overflow-checks = false

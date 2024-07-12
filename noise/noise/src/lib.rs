@@ -4,3 +4,4 @@ pub type N = I64F64;
 
 pub mod simplex;
 pub mod perm;
+pub mod map;
