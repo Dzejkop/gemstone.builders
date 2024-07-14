@@ -1,4 +1,6 @@
-use fixed::traits::Fixed;
+use std::hash::{Hash, Hasher};
+
+use twox_hash::XxHash64;
 
 use crate::simplex::simplex;
 use crate::N;
@@ -38,6 +40,7 @@ pub struct TileNoise {
     pub high: f64,
     pub med: f64,
     pub low: f64,
+    pub very_low: f64,
     pub biome: f64,
     pub richness: f64,
     pub resources: f64,
@@ -49,18 +52,22 @@ pub struct TileResources {
     pub carbon_present: bool,
 }
 
+fn random_xxhash(x: i64, y: i64, seed: u64) -> f64 {
+    let mut hasher = XxHash64::default();
+    (x, y, seed).hash(&mut hasher);
+    let hash = hasher.finish();
+    (hash as f64) / (std::u64::MAX as f64)
+}
+
 pub fn tile_noise(x: i64, y: i64) -> TileNoise {
     let max = N::from_num(i64::MAX);
+
+    let very_high = random_xxhash(x, y, 42);
 
     // Coords scaled to [0, 1]
     let x = N::from_num(x) / max;
     let y = N::from_num(y) / max;
 
-    // i64::MAX
-    // 9_223_372_036_854_775_807_i64
-    // 1_000_000_000_000_000_000_i64
-
-    let very_high = ssrm(&PERM, x, y, N::ZERO, N::from_num(i64::MAX - 8));
     let high = ssrm(
         &PERM,
         x,
@@ -70,6 +77,7 @@ pub fn tile_noise(x: i64, y: i64) -> TileNoise {
     );
     let med = ssrm(&PERM, x, y, N::ZERO, N::from_num(1_000_000_i64));
     let low = ssrm(&PERM, x, y, N::ZERO, N::from_num(10));
+    let very_low = ssrm(&PERM, x, y, N::ZERO, N::from_num(2));
 
     let biome = ssrm(&PERM, x, y, N::lit("123.923"), N::from_num(7));
     let richness = ssrm(&PERM, x, y, N::lit("1.5"), N::from_num(16));
@@ -80,6 +88,7 @@ pub fn tile_noise(x: i64, y: i64) -> TileNoise {
         high,
         med,
         low,
+        very_low,
         biome,
         richness,
         resources,
@@ -136,7 +145,6 @@ mod tests {
 
     #[test]
     fn max_input() {
-        // TODO: Figure out how to deal with this overflow
         let noise = tile_noise(i64::MAX, i64::MAX);
         println!("{:?}", noise);
     }
@@ -156,15 +164,10 @@ mod tests {
 
     #[test]
     fn generate_noise_bitmaps() {
-        let size: u32 = env_parse("SIZE", 512);
+        let size: u32 = env_parse("NOISE_BITMAP_SIZE", 512);
         const OUTPUT_DIR: &str = "noise_bitmaps";
 
-        // let step = i64::MAX / SIZE as i64;
-        // let step = 587;
-        // let step = 1000_000_000_000;
-        // println!("step = {step}");
-        // let step = 1;
-        let step = env_parse("STEP", 1);
+        let step = i64::MAX / size as i64;
 
         // Create output directory if it doesn't exist
         fs::create_dir_all(OUTPUT_DIR).expect("Failed to create output directory");
@@ -174,6 +177,7 @@ mod tests {
             ("high", |n: &TileNoise| n.high),
             ("med", |n: &TileNoise| n.med),
             ("low", |n: &TileNoise| n.low),
+            ("very_low", |n: &TileNoise| n.very_low),
             ("biome", |n: &TileNoise| n.biome),
             ("richness", |n: &TileNoise| n.richness),
             ("resources", |n: &TileNoise| n.resources),
