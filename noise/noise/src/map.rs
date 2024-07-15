@@ -1,12 +1,11 @@
 use std::hash::{Hash, Hasher};
 
 use twox_hash::XxHash64;
+#[cfg(feature = "js")]
+use wasm_bindgen::prelude::*;
 
 use crate::simplex::simplex;
 use crate::N;
-
-#[cfg(feature = "js")]
-use wasm_bindgen::prelude::*;
 
 const PERM: [usize; 512] = [
     30, 156, 19, 254, 53, 253, 14, 101, 198, 0, 170, 105, 165, 26, 107, 58, 199, 202, 72, 2, 139,
@@ -50,10 +49,20 @@ pub struct TileNoise {
     pub resources: f64,
 }
 
+#[derive(Debug, Clone, Copy)]
+#[cfg_attr(feature = "js", wasm_bindgen)]
 pub struct TileMetadata {}
 
+#[derive(Debug, Clone, Copy)]
+#[cfg_attr(feature = "js", wasm_bindgen)]
 pub struct TileResources {
-    pub carbon_present: bool,
+    pub resource: Option<Resource>,
+}
+
+#[derive(Debug, Clone, Copy)]
+#[cfg_attr(feature = "js", wasm_bindgen)]
+pub enum Resource {
+    Carbon,
 }
 
 fn random_xxhash(x: i64, y: i64, seed: u64) -> f64 {
@@ -113,10 +122,12 @@ fn ssrm(perm: &[usize; 512], x: N, y: N, z: N, scale: N) -> f64 {
     noise
 }
 
+#[cfg_attr(feature = "js", wasm_bindgen)]
 pub fn tile_metadata(_noise: &TileNoise) -> TileMetadata {
     TileMetadata {}
 }
 
+#[cfg_attr(feature = "js", wasm_bindgen)]
 pub fn tile_resources(noise: &TileNoise) -> TileResources {
     let TileNoise {
         very_high,
@@ -131,7 +142,13 @@ pub fn tile_resources(noise: &TileNoise) -> TileResources {
     let carbon_distribution = offset_richness * very_high * high * med;
     let carbon_present = carbon_distribution > 0.3;
 
-    TileResources { carbon_present }
+    let resource = if carbon_present {
+        Some(Resource::Carbon)
+    } else {
+        None
+    };
+
+    TileResources { resource }
 }
 
 #[cfg(test)]

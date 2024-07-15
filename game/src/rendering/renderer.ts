@@ -1,7 +1,7 @@
 import { MAP_SIZE } from "../consts";
 import { xCoord, yCoord } from "../doc";
 import { Vec2 } from "../math";
-import { tile } from "gb-noise";
+import { tile_noise } from "gb-noise";
 
 export class Renderer {
   public tileSize = 90;
@@ -102,8 +102,8 @@ export class Renderer {
     const xOffset = xCoord * BigInt(MAP_SIZE);
     const yOffset = yCoord * BigInt(MAP_SIZE);
 
-    let v = tile(xOffset + BigInt(pos.x), yOffset + BigInt(pos.y));
-    v = (v + 1.0) / 2.0; // map from [-1, 1] to [0, 1]
+    let noise = tile_noise(xOffset + BigInt(pos.x), yOffset + BigInt(pos.y));
+    let v = noise.biome;
 
     let grass = new Vec2(12, 2);
     let dirt = new Vec2(16, 2);

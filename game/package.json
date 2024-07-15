@@ -19,7 +19,7 @@
     "prettier": "^3.3.2"
   },
   "dependencies": {
-    "gb-noise": "^0.2.2",
+    "gb-noise": "^0.5.0",
     "lucide": "^0.402.0"
   }
 }
