@@ -1,4 +1,4 @@
-use noise::{simplex, N};
+use gb_noise::{simplex, N};
 use risc0_zkvm::guest::env;
 
 const PERM: [usize; 512] = [

@@ -1,7 +1,7 @@
 import { MAP_SIZE } from "../consts";
 import { xCoord, yCoord } from "../doc";
 import { Vec2 } from "../math";
-import { tile_noise } from "gb-noise";
+import { Resource, tile_noise, tile_resources } from "gb-noise";
 
 export class Renderer {
   public tileSize = 90;
@@ -103,6 +103,7 @@ export class Renderer {
     const yOffset = yCoord * BigInt(MAP_SIZE);
 
     let noise = tile_noise(xOffset + BigInt(pos.x), yOffset + BigInt(pos.y));
+    let resources = tile_resources(noise);
     let v = noise.biome;
 
     let grass = new Vec2(12, 2);
@@ -111,6 +112,11 @@ export class Renderer {
       this.drawSprite(pos.mul(this.tileSize), dirt);
     } else {
       this.drawSprite(pos.mul(this.tileSize), grass);
+    }
+
+    let carbon = new Vec2(11, 8);
+    if (resources.resource === Resource.Carbon) {
+      this.drawSprite(pos.mul(this.tileSize), carbon);
     }
   }
 

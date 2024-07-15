@@ -19,7 +19,7 @@
     "prettier": "^3.3.2"
   },
   "dependencies": {
-    "gb-noise": "^0.5.0",
+    "gb-noise": "file:../noise/noise/pkg",
     "lucide": "^0.402.0"
   }
 }

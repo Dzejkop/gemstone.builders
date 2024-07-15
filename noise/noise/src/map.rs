@@ -59,7 +59,7 @@ pub struct TileResources {
     pub resource: Option<Resource>,
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 #[cfg_attr(feature = "js", wasm_bindgen)]
 pub enum Resource {
     Carbon,
@@ -137,10 +137,10 @@ pub fn tile_resources(noise: &TileNoise) -> TileResources {
         ..
     } = noise;
 
-    let offset_richness = richness * 0.7 + 0.2; // Carbon is present almost everywhere
+    let offset_richness = richness * 0.7 + 0.3; // Carbon is present almost everywhere
 
     let carbon_distribution = offset_richness * very_high * high * med;
-    let carbon_present = carbon_distribution > 0.3;
+    let carbon_present = carbon_distribution > 0.17;
 
     let resource = if carbon_present {
         Some(Resource::Carbon)
@@ -189,7 +189,8 @@ mod tests {
         let size: u32 = env_parse("NOISE_BITMAP_SIZE", 512);
         const OUTPUT_DIR: &str = "noise_bitmaps";
 
-        let step = i64::MAX / size as i64;
+        // let step = i64::MAX / size as i64;
+        let step = 1;
 
         // Create output directory if it doesn't exist
         fs::create_dir_all(OUTPUT_DIR).expect("Failed to create output directory");
@@ -215,10 +216,25 @@ mod tests {
                 *pixel = Rgb([color, color, color]);
             }
 
-            let filename = format!("{}/{}_noise.png", OUTPUT_DIR, layer_name);
+            let filename = format!("{OUTPUT_DIR}/{layer_name}_noise.png");
             img.save(&filename)
                 .expect(&format!("Failed to save {} bitmap", layer_name));
             println!("Saved {} noise bitmap to {}", layer_name, filename);
         }
+
+        let mut img = ImageBuffer::new(size, size);
+
+        for (x, y, pixel) in img.enumerate_pixels_mut() {
+            let noise = tile_noise(x as i64 * step, y as i64 * step);
+            let resources = tile_resources(&noise);
+
+            let is_carbon = resources.resource == Some(Resource::Carbon);
+
+            let color = ((is_carbon as i32) as f32 * 255.0) as u8;
+            *pixel = Rgb([color, color, color]);
+        }
+
+        img.save(&format!("{OUTPUT_DIR}/carbon.png"))
+            .expect("Failed to save carbon bitmap");
     }
 }
