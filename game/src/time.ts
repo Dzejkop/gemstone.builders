@@ -8,8 +8,18 @@ export class Time {
   // Seconds since start
   public ts: number = 0;
 
+  // Deltas
+  public dt: number = 0;
+  public dts: number = 0;
+
   public update() {
-    this.currentTime = Date.now();
+    const now = Date.now();
+
+    this.dt = now - this.currentTime;
+    this.dts = this.dt / 1000.0;
+
+    this.currentTime = now;
+
     this.t = this.currentTime - this.startTime;
     this.ts = this.t / 1000.0;
   }

@@ -22,12 +22,22 @@ export class ConveyorBelt implements Building {
 
   /// Draws the real image of the robot arm
   public drawReal(renderer: Renderer, s: number) {
-    renderer.drawSprite(this.pos.mul(renderer.tileSize), ConveyorBelt.baseTile, ConveyorBelt.tileSize, this.rotationAngle());
+    renderer.drawSprite(
+      this.pos.mul(renderer.tileSize),
+      ConveyorBelt.baseTile,
+      ConveyorBelt.tileSize,
+      this.rotationAngle(),
+    );
   }
 
   public drawGhost(renderer: Renderer, pos: Vec2, params: AllBuildingParams) {
     console.log("Drawing ghost", this.rotation);
-    renderer.drawSprite(pos.mul(renderer.tileSize), ConveyorBelt.baseTile, ConveyorBelt.tileSize, this.rotationAngle());
+    renderer.drawSprite(
+      pos.mul(renderer.tileSize),
+      ConveyorBelt.baseTile,
+      ConveyorBelt.tileSize,
+      this.rotationAngle(),
+    );
   }
 
   public zkId() {

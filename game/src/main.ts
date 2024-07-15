@@ -12,15 +12,9 @@ import { querySelector } from "./utils";
 import { MAP_SIZE } from "./consts";
 import { Time } from "./time";
 import init from "gb-noise";
-
-export let isGbLoaded = false;
-async function initGbNoise() {
-  await init();
-
-  isGbLoaded = true;
-}
-
-initGbNoise();
+import { TerrainRenderer } from "./terrain";
+import { Keyboard } from "./keyboard";
+import { Camera } from "lucide";
 
 // Context setup
 const canvas = querySelector<HTMLCanvasElement>("#gameCanvas");
@@ -37,9 +31,13 @@ const tileset = new Image();
 tileset.src = "/tileset.png";
 
 const renderer = new Renderer(ctx, tileset);
+const terrainRenderer = new TerrainRenderer();
 
 let mouse = new Mouse();
-mouse.installTrackers(renderer);
+mouse.installListeners(renderer);
+
+let keyboard = new Keyboard();
+keyboard.installListeners();
 
 const resizeCanvas = () => {
   const smallestDimension = Math.min(window.innerWidth, window.innerHeight);
@@ -48,6 +46,7 @@ const resizeCanvas = () => {
   canvas.height = window.innerHeight;
 
   renderer.tileSize = (smallestDimension * 0.75) / 8;
+  terrainRenderer.tileSize = (smallestDimension * 0.75) / 8;
 };
 
 window.addEventListener("resize", (_ev) => {
@@ -63,21 +62,19 @@ Game.instance().items.push(new Item());
 // TODO: Temporary, we should a nullable object/enum in the future
 let isBuilding = true;
 
+async function main() {
+  await init();
+
+  // Initial render
+  requestAnimationFrame(mainLoop);
+}
+
 function mainLoop() {
   time.update();
 
   renderer.clear();
 
-  if (isGbLoaded) {
-    // for (let x = 0; x < MAP_SIZE; x++) {
-    //   for (let y = 0; y < MAP_SIZE; y++) {
-    //     renderer.drawTile(new Vec2(x, y));
-    //   }
-    // }
-
-    renderer.drawTerrain();
-  }
-
+  terrainRenderer.render(renderer);
   renderer.drawGrid(MAP_SIZE);
 
   // TEMP: Animation state
@@ -87,6 +84,31 @@ function mainLoop() {
 
   for (const building of game.buildings) {
     building.drawReal(renderer, animState);
+  }
+
+  const translateSpeed = 1000.0;
+  if (keyboard.isKeyDown("d")) {
+    renderer.camera.pos = renderer.camera.pos.add(
+      Vec2.RIGHT.mul(time.dts * translateSpeed),
+    );
+  }
+
+  if (keyboard.isKeyDown("a")) {
+    renderer.camera.pos = renderer.camera.pos.add(
+      Vec2.LEFT.mul(time.dts * translateSpeed),
+    );
+  }
+
+  if (keyboard.isKeyDown("w")) {
+    renderer.camera.pos = renderer.camera.pos.add(
+      Vec2.UP.mul(time.dts * translateSpeed),
+    );
+  }
+
+  if (keyboard.isKeyDown("s")) {
+    renderer.camera.pos = renderer.camera.pos.add(
+      Vec2.DOWN.mul(time.dts * translateSpeed),
+    );
   }
 
   if (isBuilding) {
@@ -119,5 +141,4 @@ function mainLoop() {
   requestAnimationFrame(mainLoop);
 }
 
-// Initial render
-requestAnimationFrame(mainLoop);
+main();

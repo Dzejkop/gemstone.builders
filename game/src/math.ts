@@ -1,6 +1,10 @@
 export class Vec2 {
   static ZERO: Vec2 = new Vec2(0, 0);
   static ONE: Vec2 = new Vec2(1, 1);
+  static RIGHT: Vec2 = new Vec2(1, 0);
+  static UP: Vec2 = new Vec2(0, -1);
+  static LEFT: Vec2 = new Vec2(-1, 0);
+  static DOWN: Vec2 = new Vec2(0, 1);
 
   constructor(
     public readonly x: number,

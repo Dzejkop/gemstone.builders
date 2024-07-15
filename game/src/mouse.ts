@@ -16,13 +16,13 @@ export class Mouse {
     this.btnClick = [false, false, false];
   }
 
-  public installTrackers(renderer: Renderer) {
+  public installListeners(renderer: Renderer) {
     const canvas = renderer.ctx.canvas;
 
     canvas.addEventListener("mousemove", (event) => {
       const rect = canvas.getBoundingClientRect();
 
-      let rendererOffset = renderer.offset();
+      let rendererOffset = renderer.camera.pos;
 
       const mouseX = event.clientX - rect.left - rendererOffset.x;
       const mouseY = event.clientY - rect.top - rendererOffset.y;
