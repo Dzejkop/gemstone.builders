@@ -2,15 +2,30 @@
 name = "noise"
 version = "0.1.0"
 edition = "2021"
+authors = ["Dzejkop <jakubtrad@gmail.com>"]
+description = "Gemstone Builders noise"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
 
 [dependencies]
 fixed = { version = "1.27.0", features = ["serde-str"] }
-rand = { version = "0.8.5", optional = true, features = [ "small_rng" ] }
-siphasher = "1"
-twox-hash = "1"
+rand = { version = "0.8.5", optional = true, features = ["small_rng"] }
+twox-hash = { version = "1", default-features = false }
+
+# JS feature deps
+wasm-bindgen = { version = "0.2.84", optional = true }
+js-sys = { version = "0.3.69", optional = true }
+# The `console_error_panic_hook` crate provides better debugging of panics by
+# logging them with `console.error`. This is great for development, but requires
+# all the `std::fmt` and `std::panicking` infrastructure, so isn't great for
+# code size when deploying.
+console_error_panic_hook = { version = "0.1.7", optional = true }
 
 [dev-dependencies]
 image = "0.25.1"
+wasm-bindgen-test = "0.3.34"
 
 [features]
-default = ["rand"]
+default = ["rand", "js"]
+js = ["wasm-bindgen", "js-sys", "console_error_panic_hook"]

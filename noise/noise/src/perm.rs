@@ -1,4 +1,3 @@
-
 #[cfg(feature = "rand")]
 pub fn generate(rng: &mut impl rand::Rng) -> [usize; 512] {
     let mut perm = [0; 512];

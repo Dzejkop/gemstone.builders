@@ -11,7 +11,7 @@ pub fn load_config(path: impl AsRef<Path>) -> anyhow::Result<NoiseConfig> {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct NoiseConfig {
-    pub octaves: Vec<NoiseOctave>
+    pub octaves: Vec<NoiseOctave>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

@@ -5,6 +5,9 @@ use twox_hash::XxHash64;
 use crate::simplex::simplex;
 use crate::N;
 
+#[cfg(feature = "js")]
+use wasm_bindgen::prelude::*;
+
 const PERM: [usize; 512] = [
     30, 156, 19, 254, 53, 253, 14, 101, 198, 0, 170, 105, 165, 26, 107, 58, 199, 202, 72, 2, 139,
     74, 2, 155, 185, 238, 80, 95, 145, 66, 33, 115, 185, 34, 249, 190, 143, 196, 121, 88, 175, 150,
@@ -35,6 +38,7 @@ const PERM: [usize; 512] = [
 
 /// Base compoments for map data calculation
 #[derive(Debug, Clone, Copy)]
+#[cfg_attr(feature = "js", wasm_bindgen)]
 pub struct TileNoise {
     pub very_high: f64,
     pub high: f64,
@@ -59,6 +63,7 @@ fn random_xxhash(x: i64, y: i64, seed: u64) -> f64 {
     (hash as f64) / (std::u64::MAX as f64)
 }
 
+#[cfg_attr(feature = "js", wasm_bindgen)]
 pub fn tile_noise(x: i64, y: i64) -> TileNoise {
     let max = N::from_num(i64::MAX);
 
@@ -108,7 +113,7 @@ fn ssrm(perm: &[usize; 512], x: N, y: N, z: N, scale: N) -> f64 {
     noise
 }
 
-pub fn tile_metadata(noise: &TileNoise) -> TileMetadata {
+pub fn tile_metadata(_noise: &TileNoise) -> TileMetadata {
     TileMetadata {}
 }
 

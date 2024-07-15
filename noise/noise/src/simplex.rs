@@ -31,7 +31,6 @@ fn dot(g: &[N; 3], x: N, y: N, z: N) -> N {
     g[0] * x + g[1] * y + g[2] * z
 }
 
-
 pub fn simplex(perm: &[usize; 512], x: N, y: N, z: N) -> N {
     let s = (x + y + z) * f3();
     let i = (x + s).floor();
