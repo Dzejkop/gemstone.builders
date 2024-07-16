@@ -19,13 +19,18 @@ export class Mouse {
   public installListeners(renderer: Renderer) {
     const canvas = renderer.ctx.canvas;
 
+    canvas.addEventListener("wheel", (_event) => {
+      // TODO: Implement zoom logic
+      // console.log(event);
+    });
+
     canvas.addEventListener("mousemove", (event) => {
       const rect = canvas.getBoundingClientRect();
 
       let rendererOffset = renderer.camera.pos;
 
-      const mouseX = event.clientX - rect.left - rendererOffset.x;
-      const mouseY = event.clientY - rect.top - rendererOffset.y;
+      const mouseX = event.clientX - rect.left + rendererOffset.x;
+      const mouseY = event.clientY - rect.top + rendererOffset.y;
 
       this.pos = new Vec2(mouseX, mouseY);
     });
