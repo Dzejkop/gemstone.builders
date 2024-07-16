@@ -11,10 +11,7 @@ export enum BuildingType {
   Empty = "Empty",
   Mine = "Mine",
   Factory = "Factory",
-  BeltDown = "BeltDown",
-  BeltUp = "BeltUp",
-  BeltLeft = "BeltLeft",
-  BeltRight = "BeltRight",
+  Belt = "Belt",
   RobotArm = "RobotArm",
 }
 
@@ -37,14 +34,13 @@ export interface Building {
   drawReal(renderer: Renderer, s: number): void;
   drawGhost(renderer: Renderer, pos: Vec2, params: AllBuildingParams): void;
   zkId(): ZkId;
+
+  // stateTransition(): void;
 }
 
 export const buildingToClass = {
   [BuildingType.Empty]: Empty,
-  [BuildingType.BeltDown]: ConveyorBelt,
-  [BuildingType.BeltUp]: ConveyorBelt,
-  [BuildingType.BeltLeft]: ConveyorBelt,
-  [BuildingType.BeltRight]: ConveyorBelt,
+  [BuildingType.Belt]: ConveyorBelt,
   [BuildingType.Mine]: Mine,
   [BuildingType.Factory]: Factory,
   [BuildingType.RobotArm]: RobotArm,
@@ -53,10 +49,7 @@ export const buildingToClass = {
 // Used to draw ghosts & stuff like that
 export const allBuildings = {
   Empty: new Empty(),
-  BeltDown: new ConveyorBelt(new Vec2(0, 0), { rotation: Rotation.Down }),
-  BeltUp: new ConveyorBelt(new Vec2(0, 0), { rotation: Rotation.Up }),
-  BeltLeft: new ConveyorBelt(new Vec2(0, 0), { rotation: Rotation.Left }),
-  BeltRight: new ConveyorBelt(new Vec2(0, 0), { rotation: Rotation.Right }),
+  Belt: new ConveyorBelt(),
   Mine: new Mine(),
   Factory: new Factory(),
   RobotArm: new RobotArm(),

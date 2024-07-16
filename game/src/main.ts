@@ -56,6 +56,12 @@ window.addEventListener("resize", (_ev) => {
 
 resizeCanvas();
 
+const slotSize = renderer.tileSize * 8;
+
+let canvasXOffset = (renderer.ctx.canvas.width / 2) - (slotSize / 2);
+let canvasYOffset = (renderer.ctx.canvas.height / 2) - (slotSize / 2);
+renderer.camera.pos = new Vec2(-canvasXOffset, -canvasYOffset);
+
 let initialRobotArm = new RobotArm();
 Game.instance().buildings.push(initialRobotArm);
 Game.instance().items.push(new Item());
