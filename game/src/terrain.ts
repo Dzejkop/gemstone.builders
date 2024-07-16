@@ -1,6 +1,5 @@
 import { Vec2 } from "./math";
 import { Renderer } from "./rendering/renderer";
-import { xCoord, yCoord } from "./doc";
 import { MAP_SIZE } from "./consts";
 import {
   Resource,
@@ -9,6 +8,7 @@ import {
   TileNoise,
   TileResources,
 } from "gb-noise";
+import { GameDoc } from "./doc";
 
 type NoiseCached = { noise: TileNoise; resources: TileResources };
 
@@ -18,11 +18,11 @@ export class TerrainRenderer {
   // TODO: Cache based on map chunks not single tiles
   private cache: Map<string, NoiseCached> = new Map();
 
-  public render(renderer: Renderer) {
+  public render(doc: GameDoc, renderer: Renderer) {
     const tileOffset = new Vec2(10, 10);
     const biggestDimension = Math.max(
       renderer.ctx.canvas.width,
-      renderer.ctx.canvas.height,
+      renderer.ctx.canvas.height
     );
     const numTilesOnCanvas = biggestDimension / renderer.tileSize;
 
@@ -35,18 +35,19 @@ export class TerrainRenderer {
 
     for (let x = startTile.x; x < endTile.x; x++) {
       for (let y = startTile.y; y < endTile.y; y++) {
-        this.drawTile(renderer, new Vec2(x, y));
+        this.drawTile(doc, renderer, new Vec2(x, y));
       }
     }
   }
 
   public drawTile(
+    doc: GameDoc,
     renderer: Renderer,
     // tile position
-    pos: Vec2,
+    pos: Vec2
   ) {
-    const xOffset = xCoord * BigInt(MAP_SIZE);
-    const yOffset = yCoord * BigInt(MAP_SIZE);
+    const xOffset = doc.xCoord * BigInt(MAP_SIZE);
+    const yOffset = doc.yCoord * BigInt(MAP_SIZE);
 
     const x = xOffset + BigInt(pos.x);
     const y = yOffset + BigInt(pos.y);

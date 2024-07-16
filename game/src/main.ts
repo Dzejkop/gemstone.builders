@@ -14,7 +14,7 @@ import { Time } from "./time";
 import init from "gb-noise";
 import { TerrainRenderer } from "./terrain";
 import { Keyboard } from "./keyboard";
-import { Camera } from "lucide";
+import { GameDoc } from "./doc";
 
 // Context setup
 const canvas = querySelector<HTMLCanvasElement>("#gameCanvas");
@@ -25,6 +25,7 @@ if (!ctx) {
   throw new Error("Cannot get 2d context");
 }
 
+const doc = new GameDoc();
 const time = new Time();
 
 const tileset = new Image();
@@ -74,7 +75,7 @@ function mainLoop() {
 
   renderer.clear();
 
-  terrainRenderer.render(renderer);
+  terrainRenderer.render(doc, renderer);
   renderer.drawGrid(MAP_SIZE);
 
   // TEMP: Animation state
@@ -89,25 +90,25 @@ function mainLoop() {
   const translateSpeed = 1000.0;
   if (keyboard.isKeyDown("d")) {
     renderer.camera.pos = renderer.camera.pos.add(
-      Vec2.RIGHT.mul(time.dts * translateSpeed),
+      Vec2.RIGHT.mul(time.dts * translateSpeed)
     );
   }
 
   if (keyboard.isKeyDown("a")) {
     renderer.camera.pos = renderer.camera.pos.add(
-      Vec2.LEFT.mul(time.dts * translateSpeed),
+      Vec2.LEFT.mul(time.dts * translateSpeed)
     );
   }
 
   if (keyboard.isKeyDown("w")) {
     renderer.camera.pos = renderer.camera.pos.add(
-      Vec2.UP.mul(time.dts * translateSpeed),
+      Vec2.UP.mul(time.dts * translateSpeed)
     );
   }
 
   if (keyboard.isKeyDown("s")) {
     renderer.camera.pos = renderer.camera.pos.add(
-      Vec2.DOWN.mul(time.dts * translateSpeed),
+      Vec2.DOWN.mul(time.dts * translateSpeed)
     );
   }
 
