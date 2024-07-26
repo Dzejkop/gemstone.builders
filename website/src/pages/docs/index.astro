@@ -12,16 +12,16 @@ const docs = await getCollection("docs");
   <div class="space-y-6">
     {
       docs.map((doc) => (
-        <article class="bg-white p-6 rounded-lg shadow-md">
-          <h2 class="text-2xl font-semibold mb-2">
+        <article>
+          <h2 class="text-2xl mb-2">
             <a
               href={`/docs/${doc.slug}`}
-              class="text-sky-700 hover:text-sky-500"
+              class="text-zinc-200 hover:text-zinc-600"
             >
               {doc.data.title}
             </a>
           </h2>
-          <p class="text-gray-600">{doc.data.summary}</p>
+          <p class="text-gray-100">{doc.data.summary}</p>
         </article>
       ))
     }
