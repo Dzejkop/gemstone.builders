@@ -1,0 +1,4 @@
+noise_bitmaps/
+
+# wasm-pack output
+pkg/

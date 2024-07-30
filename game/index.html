@@ -1,18 +1,9 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <title>game.gemstone.builders</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-      #gameCanvas {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-      }
       .drawer-handle {
         writing-mode: vertical-rl;
         text-orientation: mixed;
@@ -28,32 +19,10 @@
       }
     </style>
   </head>
-  <body class="bg-gray-900 text-white font-sans overflow-hidden">
-    <canvas id="gameCanvas"></canvas>
-
-    <!-- Mode Selector -->
-    <div
-      class="fixed top-4 left-1/2 transform -translate-x-1/2 bg-gray-800 rounded-full p-1 flex space-x-1 z-10"
-    >
-      <button
-        class="mode-btn px-4 py-2 rounded-full text-sm font-medium focus:outline-none"
-        data-mode="simulate"
-      >
-        Simulate
-      </button>
-      <button
-        class="mode-btn px-4 py-2 rounded-full text-sm font-medium focus:outline-none"
-        data-mode="build"
-      >
-        Build
-      </button>
-      <button
-        class="mode-btn px-4 py-2 rounded-full text-sm font-medium focus:outline-none"
-        data-mode="program"
-      >
-        Program
-      </button>
-    </div>
+  <body
+    class="bg-gray-600 text-white font-sans overflow-hidden flex justify-center items-center h-screen"
+  >
+    <canvas id="gameCanvas" class="block border-2 border-black"></canvas>
 
     <!-- Right Drawer (Build) -->
     <div
@@ -67,132 +36,92 @@
         <span class="text-sm font-bold">Build</span>
       </div>
       <div id="buildDrawer" class="bg-gray-800 h-full w-64 p-4">
-        <div class="grid grid-cols-3 gap-4">
-          <!-- Placeholder for 9 colored rectangles -->
-          <div class="bg-red-500 aspect-square rounded-md"></div>
-          <div class="bg-blue-500 aspect-square rounded-md"></div>
-          <div class="bg-green-500 aspect-square rounded-md"></div>
-          <div class="bg-yellow-500 aspect-square rounded-md"></div>
-          <div class="bg-purple-500 aspect-square rounded-md"></div>
-          <div class="bg-pink-500 aspect-square rounded-md"></div>
-          <div class="bg-indigo-500 aspect-square rounded-md"></div>
-          <div class="bg-gray-500 aspect-square rounded-md"></div>
-          <div class="bg-orange-500 aspect-square rounded-md"></div>
-        </div>
+        <div class="grid grid-cols-3 gap-4"></div>
       </div>
     </div>
 
-    <!-- Left Drawer (Properties) -->
+    <!-- Left Drawer (Simulation controls) -->
     <div
-      id="propertiesDrawerContainer"
+      id="leftDrawerContainer"
       class="fixed top-0 left-0 h-full flex transition-transform duration-300 ease-in-out transform -translate-x-full z-20"
     >
       <div
-        id="propertiesDrawerHandle"
+        id="leftDrawerHandle"
         class="absolute left-full top-1/2 -translate-y-1/2 bg-green-600 hover:bg-green-700 cursor-pointer p-2 rounded-r-md left-drawer-handle"
       >
-        <span class="text-sm font-bold">Properties</span>
+        <span class="text-sm font-bold">Simulation</span>
       </div>
-      <div
-        id="propertiesDrawer"
-        class="bg-gray-800 h-full w-64 p-4 overflow-y-auto"
-      >
-        <h2 class="text-xl font-bold mb-4">Properties</h2>
-
-        <!-- BigInt Inputs -->
-        <div class="mb-4">
-          <label for="xCoord" class="block text-sm font-medium mb-1"
-            >X Coordinate:</label
-          >
-          <input
-            type="text"
-            id="xCoord"
-            class="w-full bg-gray-700 rounded p-2 text-white"
-            value="0"
-            placeholder="Enter BigInt value"
-          />
-        </div>
-        <div class="mb-4">
-          <label for="yCoord" class="block text-sm font-medium mb-1"
-            >Y Coordinate:</label
-          >
-          <input
-            type="text"
-            id="yCoord"
-            class="w-full bg-gray-700 rounded p-2 text-white"
-            value="0"
-            placeholder="Enter BigInt value"
-          />
-        </div>
-
-        <!-- Placeholder Select -->
-        <div class="mb-4">
-          <label for="placeholderSelect" class="block text-sm font-medium mb-1"
-            >Select Option:</label
-          >
-          <select
-            id="placeholderSelect"
-            class="w-full bg-gray-700 rounded p-2 text-white"
-          >
-            <option value="">Choose an option</option>
-            <option value="option1">Option 1</option>
-            <option value="option2">Option 2</option>
-            <option value="option3">Option 3</option>
-          </select>
-        </div>
-
-        <!-- Checkboxes -->
-        <div class="mb-4">
-          <label class="block text-sm font-medium mb-2">Options:</label>
-          <div class="space-y-2">
-            <label class="flex items-center">
-              <input type="checkbox" class="form-checkbox text-blue-600" />
-              <span class="ml-2">Option A</span>
-            </label>
-            <label class="flex items-center">
-              <input type="checkbox" class="form-checkbox text-blue-600" />
-              <span class="ml-2">Option B</span>
-            </label>
-            <label class="flex items-center">
-              <input type="checkbox" class="form-checkbox text-blue-600" />
-              <span class="ml-2">Option C</span>
-            </label>
+      <div id="leftDrawer" class="bg-gray-800 w-96 h-full p-4 overflow-y-auto">
+        <!-- Timeline Controls -->
+        <div id="timelineControls" class="mb-4 relative">
+          <div class="flex items-center justify-between mb-2">
+            <div class="flex space-x-2">
+              <button id="stepBackward" class="p-1 rounded hover:bg-gray-700">
+                <i data-lucide="skip-back" class="w-5 h-5"></i>
+              </button>
+              <button id="playPause" class="p-1 rounded hover:bg-gray-700">
+                <i id="start" data-lucide="play" class="w-5 h-5"></i>
+                <i id="stop" data-lucide="pause" class="w-5 h-5 hidden"></i>
+              </button>
+              <button id="stepForward" class="p-1 rounded hover:bg-gray-700">
+                <i data-lucide="skip-forward" class="w-5 h-5"></i>
+              </button>
+            </div>
+            <button id="record" class="p-1 rounded hover:bg-gray-700">
+              <i
+                id="start"
+                data-lucide="circle"
+                class="w-5 h-5 text-red-500"
+              ></i>
+              <i
+                id="stop"
+                data-lucide="circle-dot"
+                class="w-5 h-5 text-red-500 hidden"
+              ></i>
+            </button>
+          </div>
+          <div class="relative">
+            <input
+              type="range"
+              id="timelineSlider"
+              class="w-full"
+              min="0"
+              max="5"
+              value="0"
+            />
           </div>
         </div>
+
+        <!-- Timeline Tracks -->
+        <div id="timelineTracks" class="space-y-2 relative"></div>
       </div>
     </div>
 
-    <!-- Timeline Controls -->
+    <!-- Misc utils (e.g. coordinates) -->
     <div
-      id="timelineControls"
       class="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-gray-800 rounded-lg p-4 flex items-center space-x-4 z-10"
     >
-      <button
-        id="stepBackward"
-        class="text-white hover:text-blue-500 focus:outline-none"
-      >
-        <i id="i" data-lucide="skip-back"></i>
-      </button>
-      <button
-        id="playPause"
-        class="text-white hover:text-blue-500 focus:outline-none"
-      >
-        <i id="i" data-lucide="play"></i>
-      </button>
-      <button
-        id="stepForward"
-        class="text-white hover:text-blue-500 focus:outline-none"
-      >
-        <i id="i" data-lucide="skip-forward"></i>
-      </button>
-      <input
-        type="range"
-        id="timelineSlider"
-        class="w-64 accent-blue-500"
-        min="0"
-        max="100"
-        value="0"
-      />
+      <!-- Coordinate control -->
+      <div class="">
+        <label for="xCoord" class="text-sm font-medium">X:</label>
+        <input
+          type="text"
+          id="xCoord"
+          class="bg-gray-700 rounded p-2 text-white"
+          value="329405725753407326"
+          placeholder="Enter BigInt value"
+        />
+      </div>
+      <div class="">
+        <label for="yCoord" class="text-sm font-medium">Y:</label>
+        <input
+          type="text"
+          id="yCoord"
+          class="bg-gray-700 rounded p-2 text-white"
+          value="418419977537"
+          placeholder="Enter BigInt value"
+        />
+      </div>
     </div>
 
     <!-- Floating Info Window -->
@@ -204,105 +133,6 @@
       <p id="infoDescription" class="text-sm"></p>
     </div>
 
-    <script>
-      // Drawer functionality
-      function setupDrawer(containerId, handleId) {
-        const container = document.getElementById(containerId);
-        const handle = document.getElementById(handleId);
-        let isOpen = false;
-
-        handle.addEventListener("click", () => {
-          isOpen = !isOpen;
-          container.style.transform = isOpen
-            ? "translateX(0)"
-            : containerId === "buildDrawerContainer"
-            ? "translateX(100%)"
-            : "translateX(-100%)";
-        });
-      }
-
-      setupDrawer("buildDrawerContainer", "buildDrawerHandle");
-      setupDrawer("propertiesDrawerContainer", "propertiesDrawerHandle");
-
-      // Mode selector functionality
-      const modeButtons = document.querySelectorAll(".mode-btn");
-      const timelineControls = document.getElementById("timelineControls");
-      let currentMode = "simulate";
-
-      function setActiveMode(mode) {
-        modeButtons.forEach((btn) => {
-          if (btn.dataset.mode === mode) {
-            btn.classList.add("bg-blue-600", "text-white");
-            btn.classList.remove("text-gray-300");
-          } else {
-            btn.classList.remove("bg-blue-600", "text-white");
-            btn.classList.add("text-gray-300");
-          }
-        });
-        currentMode = mode;
-        timelineControls.style.display = mode === "simulate" ? "flex" : "none";
-        console.log("Current mode:", mode);
-      }
-
-      modeButtons.forEach((btn) => {
-        btn.addEventListener("click", () => setActiveMode(btn.dataset.mode));
-      });
-
-      // Set initial active mode
-      setActiveMode(currentMode);
-
-      // Timeline control functionality
-      const playPauseBtn = document.getElementById("playPause");
-      const stepBackwardBtn = document.getElementById("stepBackward");
-      const stepForwardBtn = document.getElementById("stepForward");
-      const timelineSlider = document.getElementById("timelineSlider");
-      let isPlaying = false;
-
-      playPauseBtn.addEventListener("click", () => {
-        isPlaying = !isPlaying;
-        playPauseBtn
-          .querySelector("#i")
-          .setAttribute("data-lucide", isPlaying ? "pause" : "play");
-        lucide.createIcons();
-        console.log(isPlaying ? "Playing" : "Paused");
-      });
-
-      stepBackwardBtn.addEventListener("click", () => {
-        console.log("Step backward");
-        timelineSlider.value = Math.max(0, parseInt(timelineSlider.value) - 1);
-      });
-
-      stepForwardBtn.addEventListener("click", () => {
-        console.log("Step forward");
-        timelineSlider.value = Math.min(
-          100,
-          parseInt(timelineSlider.value) + 1
-        );
-      });
-
-      timelineSlider.addEventListener("input", () => {
-        console.log("Timeline position:", timelineSlider.value);
-      });
-
-      // BigInt input validation
-      function validateBigIntInput(input) {
-        input.addEventListener("input", function () {
-          try {
-            BigInt(this.value);
-            this.classList.remove("border-red-500");
-          } catch (error) {
-            this.classList.add("border-red-500");
-          }
-        });
-      }
-
-      validateBigIntInput(document.getElementById("xCoord"));
-      validateBigIntInput(document.getElementById("yCoord"));
-    </script>
     <script type="module" src="src/main.ts"></script>
-    <script>
-      // Initialize Lucide icons
-      lucide.createIcons();
-    </script>
   </body>
 </html>
