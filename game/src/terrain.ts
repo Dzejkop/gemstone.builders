@@ -62,7 +62,7 @@ export class TerrainRenderer {
       noise = cached.noise;
       resources = cached.resources;
     } else {
-      console.log(`Cache miss at x: ${x}, y: ${y} - recalculating tile values`);
+      // console.log(`Cache miss at x: ${x}, y: ${y} - recalculating tile values`);
 
       noise = tile_noise(xOffset + BigInt(pos.x), yOffset + BigInt(pos.y));
       resources = tile_resources(noise);

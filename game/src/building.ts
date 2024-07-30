@@ -6,6 +6,7 @@ import { Mine } from "./building/mine";
 import { ZkId } from "./building/zkIds";
 import { Vec2 } from "./math";
 import { Renderer } from "./rendering/renderer";
+import { TrackRenderer } from "./rendering/trackRenderer";
 
 export enum BuildingType {
   Empty = "Empty",
@@ -33,6 +34,7 @@ export interface Building {
   gridPos(): Vec2;
   drawReal(renderer: Renderer, s: number): void;
   drawGhost(renderer: Renderer, pos: Vec2, params: AllBuildingParams): void;
+  drawTrack(renderer: TrackRenderer): void;
   zkId(): ZkId;
 
   // stateTransition(): void;

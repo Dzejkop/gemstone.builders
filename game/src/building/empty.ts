@@ -1,6 +1,7 @@
 import { AllBuildingParams, Building } from "../building";
 import { Vec2 } from "../math";
 import { Renderer } from "../rendering/renderer";
+import { TrackRenderer } from "../rendering/trackRenderer";
 import { ZkId } from "./zkIds";
 
 export class Empty implements Building {
@@ -10,6 +11,10 @@ export class Empty implements Building {
     public readonly pos: Vec2 = new Vec2(0, 0),
     params: AllBuildingParams = {},
   ) {}
+
+  drawTrack(renderer: TrackRenderer): void {
+    renderer.draw(this.constructor.name, this.pos);
+  }
 
   gridPos(): Vec2 {
     return this.pos;

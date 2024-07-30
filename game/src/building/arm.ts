@@ -2,6 +2,7 @@ import { AllBuildingParams, Building, Rotation } from "../building";
 import { Item } from "../item";
 import { Vec2 } from "../math";
 import { Renderer } from "../rendering/renderer";
+import { TrackRenderer } from "../rendering/trackRenderer";
 import { ZkId } from "./zkIds";
 
 export class RobotArm implements Building {
@@ -20,6 +21,10 @@ export class RobotArm implements Building {
   ) {
     this.armFlipped = params.armFlipped || false;
     this.rotation = params.rotation || Rotation.Up;
+  }
+
+  drawTrack(renderer: TrackRenderer): void {
+    renderer.draw(this.constructor.name, this.pos);
   }
 
   gridPos(): Vec2 {

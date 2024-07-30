@@ -8,7 +8,7 @@ import {
   Circle,
   CircleDot,
 } from "lucide";
-import { BuildingType } from "./building";
+import { Building, BuildingType } from "./building";
 import { Game } from "./game";
 
 createIcons({

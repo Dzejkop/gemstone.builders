@@ -3,10 +3,9 @@ import "./doc";
 
 import { Vec2 } from "./math";
 import { BTN, Mouse } from "./mouse";
-import { Rotation, allBuildings } from "./building";
+import { Building, Rotation, allBuildings } from "./building";
 import { Game } from "./game";
 import { Renderer } from "./rendering/renderer";
-import { RobotArm } from "./building/arm";
 import { Item } from "./item";
 import { querySelector } from "./utils";
 import { MAP_SIZE } from "./consts";
@@ -15,6 +14,7 @@ import init from "gb-noise";
 import { TerrainRenderer } from "./terrain";
 import { Keyboard } from "./keyboard";
 import { GameDoc } from "./doc";
+import { TrackRenderer } from "./rendering/trackRenderer";
 
 // Context setup
 const canvas = querySelector<HTMLCanvasElement>("#gameCanvas");
@@ -31,7 +31,10 @@ const time = new Time();
 const tileset = new Image();
 tileset.src = "/tileset.png";
 
+const trackContainer = querySelector("#timelineTracks") as HTMLElement;
+
 const renderer = new Renderer(ctx, tileset);
+const trackRenderer = new TrackRenderer(trackContainer);
 const terrainRenderer = new TerrainRenderer();
 
 let mouse = new Mouse();
@@ -62,8 +65,6 @@ let canvasXOffset = (renderer.ctx.canvas.width / 2) - (slotSize / 2);
 let canvasYOffset = (renderer.ctx.canvas.height / 2) - (slotSize / 2);
 renderer.camera.pos = new Vec2(-canvasXOffset, -canvasYOffset);
 
-let initialRobotArm = new RobotArm();
-Game.instance().buildings.push(initialRobotArm);
 Game.instance().items.push(new Item());
 
 // TODO: Temporary, we should a nullable object/enum in the future
@@ -80,6 +81,7 @@ function mainLoop() {
   time.update();
 
   renderer.clear();
+  trackRenderer.clear();
 
   terrainRenderer.render(doc, renderer);
   renderer.drawGrid(MAP_SIZE);
@@ -91,6 +93,7 @@ function mainLoop() {
 
   for (const building of game.buildings) {
     building.drawReal(renderer, animState);
+    building.drawTrack(trackRenderer);
   }
 
   const translateSpeed = 1000.0;
