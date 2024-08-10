@@ -15,9 +15,9 @@ const { Content, headings } = await entry.render();
 ---
 
 <BlogLayout title={entry.data.title} headers={headings}>
-  <h1 class="text-3xl font-bold mb-4">{entry.data.title}</h1>
-  <p class="text-gray-600 mb-8">{entry.data.description}</p>
-  <div class="prose max-w-none">
+  <h1 class="text-3xl mb-4">{entry.data.title}</h1>
+  <p class="text-xl mb-8">{entry.data.description}</p>
+  <div class="prose max-w-none text-gray-100">
     <Content />
   </div>
 </BlogLayout>

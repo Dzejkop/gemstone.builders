@@ -50,7 +50,7 @@ const getTextSizeClass = (depth: number) => {
               <li>
                 <a
                   href={`/docs/${doc.slug}`}
-                  class="text-sky-600 hover:text-sky-800"
+                  class="text-zinc-200 hover:text-zinc-600"
                 >
                   {doc.data.title}
                 </a>
@@ -70,7 +70,7 @@ const getTextSizeClass = (depth: number) => {
                 >
                   <a
                     href={`#${slugify(header.text)}`}
-                    class="text-sky-600 hover:text-sky-800"
+                    class="text-zinc-200 hover:text-zinc-600"
                   >
                     {header.text}
                   </a>
@@ -82,7 +82,7 @@ const getTextSizeClass = (depth: number) => {
       }
     </aside>
     <main class="flex-1">
-      <div class="bg-white p-8 rounded-lg shadow-md">
+      <div class="text-gray-100 font-fira-mono">
         <slot />
       </div>
     </main>
