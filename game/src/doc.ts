@@ -8,8 +8,10 @@ import {
   Circle,
   CircleDot,
 } from "lucide";
-import { Building, BuildingType } from "./building";
+import { allBuildings, BuildingType } from "./building";
 import { Game } from "./game";
+import { Renderer } from "./rendering/renderer";
+import { tileset } from "./tileset";
 
 createIcons({
   icons: {
@@ -52,9 +54,17 @@ function setupDrawer(
 }
 
 function renderBuildingList(buildingsList: HTMLElement) {
-  for (const buildingName of Object.values(BuildingType)) {
-    let building = createBuildingMenuItem(buildingsList, buildingName);
-    buildingsList.appendChild(building);
+  const renderBuildings = () => {
+    for (const buildingName of Object.values(BuildingType)) {
+      let building = createBuildingMenuItem(buildingsList, buildingName);
+      buildingsList.appendChild(building);
+    }
+  };
+
+  if (tileset.complete) {
+    renderBuildings();
+  } else {
+    tileset.onload = renderBuildings;
   }
 }
 
@@ -64,8 +74,23 @@ function createBuildingMenuItem(
 ): HTMLElement {
   let building = document.createElement("div");
   building.className =
-    "flex items-center justify-center bg-gray-700 aspect-square rounded-md cursor-pointer";
-  building.textContent = buildingName;
+    "flex items-center justify-center bg-gray-700 aspect-square rounded-md cursor-pointer relative";
+
+  const canvas = document.createElement("canvas");
+  canvas.width = 46;
+  canvas.height = 46;
+  canvas.className = "absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2";
+  building.appendChild(canvas);
+
+  const ctx = canvas.getContext("2d");
+  if (ctx) {
+    ctx.imageSmoothingEnabled = false;
+    const tempRenderer = new Renderer(ctx, tileset);
+    tempRenderer.tileSize = 46;
+    const buildingInstance = allBuildings[buildingName as BuildingType];
+    buildingInstance.drawReal(tempRenderer, 0);
+  }
+
   building.addEventListener("click", () => {
     const selected = buildingName as BuildingType;
     deselectAllBuildings(buildingsList);

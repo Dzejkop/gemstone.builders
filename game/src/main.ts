@@ -3,7 +3,7 @@ import "./doc";
 
 import { Vec2 } from "./math";
 import { BTN, Mouse } from "./mouse";
-import { Building, Rotation, allBuildings } from "./building";
+import { Rotation, allBuildings } from "./building";
 import { Game } from "./game";
 import { Renderer } from "./rendering/renderer";
 import { Item } from "./item";
@@ -14,7 +14,8 @@ import init from "gb-noise";
 import { TerrainRenderer } from "./terrain";
 import { Keyboard } from "./keyboard";
 import { GameDoc } from "./doc";
-import { TrackRenderer } from "./rendering/trackRenderer";
+import { tileset } from "./tileset";
+// import { TrackRenderer } from "./rendering/trackRenderer";
 
 // Context setup
 const canvas = querySelector<HTMLCanvasElement>("#gameCanvas");
@@ -28,13 +29,10 @@ if (!ctx) {
 const doc = new GameDoc();
 const time = new Time();
 
-const tileset = new Image();
-tileset.src = "/tileset.png";
-
 const trackContainer = querySelector("#timelineTracks") as HTMLElement;
 
 const renderer = new Renderer(ctx, tileset);
-const trackRenderer = new TrackRenderer(trackContainer);
+// const trackRenderer = new TrackRenderer(trackContainer);
 const terrainRenderer = new TerrainRenderer();
 
 let mouse = new Mouse();
@@ -81,7 +79,7 @@ function mainLoop() {
   time.update();
 
   renderer.clear();
-  trackRenderer.clear();
+  // trackRenderer.clear();
 
   terrainRenderer.render(doc, renderer);
   renderer.drawGrid(MAP_SIZE);
@@ -93,7 +91,7 @@ function mainLoop() {
 
   for (const building of game.buildings) {
     building.drawReal(renderer, animState);
-    building.drawTrack(trackRenderer);
+    // building.drawTrack(trackRenderer);
   }
 
   const translateSpeed = 1000.0;
