@@ -85,8 +85,4 @@ export class RobotArm implements Building {
       }
     }
   }
-
-  toggle() {
-    this.active = !this.active;
-  }
 }

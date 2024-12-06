@@ -28,8 +28,4 @@ export class Factory implements Building {
   public zkId() {
     return ZkId.Factory;
   }
-
-  toggle() {
-    this.active = !this.active;
-  }
 }

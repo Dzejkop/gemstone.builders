@@ -27,8 +27,4 @@ export class Mine implements Building {
   public zkId() {
     return ZkId.Mine;
   }
-
-  toggle() {
-    this.active = !this.active;
-  }
 }

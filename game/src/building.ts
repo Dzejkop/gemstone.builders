@@ -34,7 +34,6 @@ export interface Building {
   drawGhost(renderer: Renderer, pos: Vec2, params: AllBuildingParams): void;
   zkId(): ZkId;
   active?: boolean;
-  toggle?(): void;
   cycles: boolean[];
 }
 

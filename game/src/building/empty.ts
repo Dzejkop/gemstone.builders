@@ -28,8 +28,4 @@ export class Empty implements Building {
   public zkId() {
     return ZkId.Empty;
   }
-
-  toggle() {
-    this.active = !this.active;
-  }
 }

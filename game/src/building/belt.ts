@@ -66,8 +66,4 @@ export class ConveyorBelt implements Building {
         return Math.PI / 2;
     }
   }
-
-  toggle() {
-    this.active = !this.active;
-  }
 }
