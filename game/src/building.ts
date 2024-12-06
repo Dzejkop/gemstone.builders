@@ -29,13 +29,12 @@ export type AllBuildingParams = {
 };
 
 export interface Building {
-  // update(s: number): void;
   gridPos(): Vec2;
   drawReal(renderer: Renderer, s: number): void;
   drawGhost(renderer: Renderer, pos: Vec2, params: AllBuildingParams): void;
   zkId(): ZkId;
-
-  // stateTransition(): void;
+  active?: boolean;
+  toggle?(): void;
 }
 
 export const buildingToClass = {

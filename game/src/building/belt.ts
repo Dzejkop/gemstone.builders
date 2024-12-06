@@ -6,6 +6,7 @@ import { ZkId } from "./zkIds";
 export class ConveyorBelt implements Building {
   private static readonly baseTile = new Vec2(1, 3);
   private static readonly tileSize = new Vec2(1, 1);
+  active: boolean = false;
 
   private readonly rotation: Rotation;
 
@@ -63,5 +64,9 @@ export class ConveyorBelt implements Building {
       case Rotation.Left:
         return Math.PI / 2;
     }
+  }
+
+  toggle() {
+    this.active = !this.active;
   }
 }

@@ -13,6 +13,7 @@ export class RobotArm implements Building {
   private readonly rotation: Rotation;
 
   public heldItem: Item | null = null;
+  active: boolean = false;
 
   constructor(
     public readonly pos: Vec2 = new Vec2(0, 0),
@@ -82,5 +83,9 @@ export class RobotArm implements Building {
         return ZkId.RobotArmRU;
       }
     }
+  }
+
+  toggle() {
+    this.active = !this.active;
   }
 }

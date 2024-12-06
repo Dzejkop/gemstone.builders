@@ -5,6 +5,7 @@ import { ZkId } from "./zkIds";
 
 export class Mine implements Building {
   private static readonly baseTile = new Vec2(3, 2);
+  active: boolean = false;
 
   constructor(
     public readonly pos: Vec2 = new Vec2(0, 0),
@@ -25,5 +26,9 @@ export class Mine implements Building {
 
   public zkId() {
     return ZkId.Mine;
+  }
+
+  toggle() {
+    this.active = !this.active;
   }
 }
