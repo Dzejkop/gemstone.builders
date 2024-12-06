@@ -5,6 +5,8 @@ import { Vec2 } from "./math";
 
 let singleton: Game | null = null;
 
+export const CYCLE_STEPS = 16;
+
 export class Game {
   public buildings: Building[] = [];
   public items: Item[] = [];
@@ -56,7 +58,9 @@ export class Game {
 
     if (this.selectedBuilding !== BuildingType.Empty) {
       const buildingClass = buildingToClass[this.selectedBuilding];
-      this.buildings.push(new buildingClass(tilePos));
+      const building = new buildingClass(tilePos);
+      building.cycles = Array(CYCLE_STEPS).fill(true);
+      this.buildings.push(building);
       updateTimelineTracks(this.selectedBuilding, tilePos);
     }
   }
@@ -79,6 +83,26 @@ export class Game {
   }
 }
 
+function createCycleCheckbox(cycleStep: number, pos: Vec2): HTMLInputElement {
+  var checkbox = document.createElement("input");
+  checkbox.type = "checkbox";
+  checkbox.checked = true;
+  checkbox.style.margin = "0 2px";
+  checkbox.dataset.step = cycleStep.toString();
+  
+  checkbox.addEventListener("change", (e) => {
+    const building = Game.instance().buildings.find(
+      (b: Building) => b.gridPos().x === pos.x && b.gridPos().y === pos.y
+    );
+    if (building) {
+      building.cycles[cycleStep] = (e.target as HTMLInputElement).checked;
+    }
+    console.log(building?.cycles);
+  });
+
+  return checkbox;
+}
+
 function updateTimelineTracks(buildingType: BuildingType, pos: Vec2): void {
   const timelineTracks = document.getElementById("timelineTracks");
   if (!timelineTracks) return;
@@ -96,7 +120,19 @@ function updateTimelineTracks(buildingType: BuildingType, pos: Vec2): void {
   const buildingItem = document.createElement("div");
   buildingItem.dataset.pos = `${pos.x}-${pos.y}`;
   buildingItem.className = "building-item";
-  buildingItem.textContent = buildingName;
+  const nameSpan = document.createElement("span");
+  nameSpan.textContent = buildingName;
+  buildingItem.appendChild(nameSpan);
+
+  const checkboxesContainer = document.createElement("div");
+  checkboxesContainer.style.display = "inline-block";
+  checkboxesContainer.style.marginLeft = "10px";
+
+  for (let i = 0; i < CYCLE_STEPS; i++) {
+    checkboxesContainer.appendChild(createCycleCheckbox(i, pos));
+  }
+  
+  buildingItem.appendChild(checkboxesContainer);
   group.appendChild(buildingItem);
 
   const buildingItems = Array.from(group.querySelectorAll('.building-item')) as HTMLElement[];
@@ -122,13 +158,4 @@ function removeFromTimelineTracks(buildingType: BuildingType, pos: Vec2): void {
   if (buildingItem) {
     group.removeChild(buildingItem);
   }
-}
-
-function getBuildingTypeFromClass(building: Building): BuildingType {
-  for (const [type, cls] of Object.entries(buildingToClass)) {
-    if (building instanceof cls) {
-      return type as BuildingType;
-    }
-  }
-  return BuildingType.Empty;
 }

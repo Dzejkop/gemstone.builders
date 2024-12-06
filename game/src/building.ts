@@ -35,6 +35,7 @@ export interface Building {
   zkId(): ZkId;
   active?: boolean;
   toggle?(): void;
+  cycles: boolean[];
 }
 
 export const buildingToClass = {

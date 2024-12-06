@@ -13,7 +13,7 @@ export class RobotArm implements Building {
   private readonly rotation: Rotation;
 
   public heldItem: Item | null = null;
-  active: boolean = false;
+  cycles: boolean[] = [];
 
   constructor(
     public readonly pos: Vec2 = new Vec2(0, 0),
@@ -22,6 +22,7 @@ export class RobotArm implements Building {
     this.armFlipped = params.armFlipped || false;
     this.rotation = params.rotation || Rotation.Up;
   }
+  active?: boolean | undefined;
 
   gridPos(): Vec2 {
     return this.pos;

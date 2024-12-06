@@ -5,7 +5,7 @@ import { ZkId } from "./zkIds";
 
 export class Factory implements Building {
   private static readonly baseTile = new Vec2(2, 1);
-  active: boolean = false;
+  cycles: boolean[] = [];
 
   constructor(
     public readonly pos: Vec2 = new Vec2(0, 0),
