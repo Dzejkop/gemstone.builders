@@ -45,6 +45,14 @@ export const buildingToClass = {
   [BuildingType.RobotArm]: RobotArm,
 };
 
+export const buildingClassToType: Record<string, BuildingType> = {
+  [Empty.name]: BuildingType.Empty,
+  [ConveyorBelt.name]: BuildingType.Belt,
+  [Mine.name]: BuildingType.Mine,
+  [Factory.name]: BuildingType.Factory,
+  [RobotArm.name]: BuildingType.RobotArm,
+};
+
 // Used to draw ghosts & stuff like that
 export const allBuildings = {
   Empty: new Empty(),
