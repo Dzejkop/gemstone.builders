@@ -1,7 +1,6 @@
 import { AllBuildingParams, Building, Rotation } from "../building";
 import { Vec2 } from "../math";
 import { Renderer } from "../rendering/renderer";
-import { TrackRenderer } from "../rendering/trackRenderer";
 import { ZkId } from "./zkIds";
 
 export class ConveyorBelt implements Building {
@@ -15,10 +14,6 @@ export class ConveyorBelt implements Building {
     params: AllBuildingParams = {},
   ) {
     this.rotation = params.rotation || Rotation.Down;
-  }
-
-  drawTrack(renderer: TrackRenderer): void {
-    renderer.draw(this.constructor.name, this.pos);
   }
 
   public gridPos(): Vec2 {
