@@ -1,10 +1,8 @@
 import "./style.css";
-import "./doc";
 
 import { Vec2 } from "./math";
 import { BTN, Mouse } from "./mouse";
 import { Rotation, allBuildings } from "./building";
-import { Game } from "./game";
 import { Renderer } from "./rendering/renderer";
 import { Item } from "./item";
 import { querySelector } from "./utils";
@@ -15,6 +13,7 @@ import { TerrainRenderer } from "./terrain";
 import { Keyboard } from "./keyboard";
 import { GameDoc } from "./doc";
 import { tileset } from "./tileset";
+import { Game } from "./game";
 
 // Context setup
 const canvas = querySelector<HTMLCanvasElement>("#gameCanvas");
