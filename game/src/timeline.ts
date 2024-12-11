@@ -11,6 +11,10 @@ function createStepCheckbox(cycleStep: number, pos: Vec2): HTMLInputElement {
   checkbox.style.margin = "0 2px";
   checkbox.dataset.step = cycleStep.toString();
   
+  if (cycleStep === Game.instance().currentStep) {
+    checkbox.classList.add("current-step");
+  }
+  
   checkbox.addEventListener("change", (e) => {
     const building = Game.instance().buildings.find(
       (b: Building) => b.gridPos().x === pos.x && b.gridPos().y === pos.y
@@ -18,7 +22,6 @@ function createStepCheckbox(cycleStep: number, pos: Vec2): HTMLInputElement {
     if (building) {
       building.cycles[cycleStep] = (e.target as HTMLInputElement).checked;
     }
-    console.log(building?.cycles);
   });
 
   return checkbox;
@@ -79,4 +82,16 @@ export function removeFromTimelineTracks(buildingType: BuildingType, pos: Vec2):
   if (buildingItem) {
     group.removeChild(buildingItem);
   }
+}
+
+export function updateTimelineHighlight() {
+  const allCheckboxes = document.querySelectorAll('input[type="checkbox"]');
+  allCheckboxes.forEach((checkbox: Element) => {
+    const step = parseInt((checkbox as HTMLInputElement).dataset.step || "0");
+    if (step === Game.instance().currentStep) {
+      checkbox.classList.add("current-step");
+    } else {
+      checkbox.classList.remove("current-step");
+    }
+  });
 }

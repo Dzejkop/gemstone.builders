@@ -8,3 +8,46 @@
   padding: 0;
   box-sizing: border-box;
 }
+
+.timeline-controls {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 10px;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.timeline-controls button {
+  padding: 5px 15px;
+  font-size: 20px;
+  cursor: pointer;
+  background: #333;
+  border: 1px solid #666;
+  color: white;
+  border-radius: 3px;
+}
+
+.timeline-controls button:hover {
+  background: #444;
+}
+
+input[type="checkbox"].current-step {
+  position: relative;
+}
+
+input[type="checkbox"].current-step::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background-color: rgba(255, 152, 0, 0.2);
+  border-radius: 3px;
+  box-shadow: 0 0 4px rgba(255, 152, 0, 0.5);
+  pointer-events: none;
+}

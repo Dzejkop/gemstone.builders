@@ -63,6 +63,31 @@ Game.instance().items.push(new Item());
 // TODO: Temporary, we should a nullable object/enum in the future
 let isBuilding = true;
 
+function setupTimelineControls() {
+  const timelineControls = document.getElementById('timelineControls')!;
+  const stepBackwardBtn = timelineControls.querySelector('#stepBackward')!;
+  const playPauseBtn = timelineControls.querySelector('#playPause')!;
+  const stepForwardBtn = timelineControls.querySelector('#stepForward')!;
+
+  stepBackwardBtn.addEventListener('click', () => {
+    Game.instance().stepBackward();
+  });
+
+  playPauseBtn.addEventListener('click', () => {
+    Game.instance().togglePlay();
+    playPauseBtn.textContent = Game.instance().playing ? '⏸️' : '▶️';
+  });
+
+  stepForwardBtn.addEventListener('click', () => {
+    Game.instance().stepForward();
+  });
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  setupTimelineControls();
+  // ... other initialization code
+});
+
 async function main() {
   await init();
 
